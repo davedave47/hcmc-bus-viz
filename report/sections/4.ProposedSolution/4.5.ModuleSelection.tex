@@ -1,139 +1,151 @@
 \section{Module Selection}
 \label{sec:proposed:modules}
 
-The brainstorming phase produced a catalogue of nineteen
-analytical modules grouped under five lenses: Network Overview,
-Route Explorer, Stop Analysis, Financial \& Operations, and
-Metro Connectivity. Each module is grounded in one of the
-literature sources reviewed in Chapter~\ref{chapter:related}: the
-QoS framework of Srisakaokul~\textit{et
-al.}~\cite{srisakaokul2023}, the FuzzyCut, GroupSet, and Gridify
-primitives of Liu~\cite{liu2022}, and the analytical
-specification of the advisor~\cite{thoai2025}. Not every module
-is supported by the data available locally. This section screens
-each module against the schema (Section~\ref{sec:proposed:schema})
-and the EDA findings (Section~\ref{sec:proposed:eda}), and assigns
-each one to one of three categories.
-
-\begin{description}
-\item[$\checkmark$ Adopted.] The module is supported by the local
-    sample at full coverage and is implemented in the dashboard
-    as specified.
-\item[$\sim$ Adopted with sample disclaimer.] The module is
-    supported but the local data limits it to nine GPS routes
-    and a single day. The dashboard surfaces the limitation in the
-    UI and the analyst is invited to interpret results
-    accordingly.
-\item[$\times$ Deferred.] The module requires data not present in
-    the local release (e.g., the metro timetable, multi-day GPS
-    coverage). It is documented as planned future work in
-    Chapter~\ref{chapter:conclusion}.
-\end{description}
-
-The full screening result is given in
-Table~\ref{tab:proposed:modules}; the subsections that follow
-walk through the rationale for each lens.
+The thirty-one chart catalogue is the result of screening every
+analytical idea from the brainstorming phase against three
+constraints: the SDVF tier (Section~\ref{sec:proposed:sdvf}),
+the EDA-derived data availability
+(Section~\ref{sec:proposed:eda_to_design}), and the
+chart-to-aggregate data contract
+(Section~\ref{sec:proposed:warehouse_local}). The result is six
+cards, each containing five or six charts, all rendered against
+eight aggregate tables (plus the fact layer for the single-trip
+Marey diagram). The mapping is shown in
+Table~\ref{tab:proposed:chart_aggregate}; this table is the hard
+data contract between the dashboard and the warehouse.
 
 \begin{table}[H]
 \centering
-\caption{Analytics-module screening against the local data sample.}
-\label{tab:proposed:modules}
-\renewcommand{\arraystretch}{1.20}
-\begin{tabularx}{\linewidth}{p{3.5cm}p{2cm}X}
+\caption{The thirty-one chart catalogue, by card, with primary
+data source and SDVF tier indicator (FL = flagship, MU = must,
+SH = should, CO = could).}
+\label{tab:proposed:chart_aggregate}
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{p{0.9cm}Xp{4.2cm}p{1.0cm}}
 \hline
-\textbf{Module} & \textbf{Status} & \textbf{Reason} \\
+\textbf{Chart} & \textbf{Title} & \textbf{Source} & \textbf{Tier} \\
 \hline
-\multicolumn{3}{l}{\emph{Network Overview}} \\
-KPI strip                & $\checkmark$ & AFC supplies boardings, revenue, ghost\%, busiest route. Network-wide QoS-3 deferred (needs schedule + GPS at scale). \\
-Demand cluster (GroupSet) & $\checkmark$ & Hourly demand per route across 90 days is sufficient for GroupSet. \\
-Route health treemap     & $\checkmark$ & Ghost-rate substituted for QoS-3 as the colour scale. \\
-Operator benchmarking    & $\checkmark$ & 10 companies $\times$ 128 routes provides enough density for the scatter. \\
+\multicolumn{4}{l}{\textbf{Card~1 --- School-Aware Demand} (flagship)} \\
 \hline
-\multicolumn{3}{l}{\emph{Route Explorer}} \\
-QoS-1 reliability        & $\sim$       & Schedule data exists for 9 GPS routes; trend visible only on those. \\
-QoS-2 accessibility      & $\sim$       & Aggregate on-path rate of 25.1\% is low because of urban-canyon noise; relative interpretation only. \\
-QoS-3 availability       & $\sim$       & Headway deviation requires schedule; 9 GPS routes only. \\
-Speed profile (FuzzyCut) & $\sim$       & GPS speed exists on 9 routes. Noise filter applied at HMM stage. \\
-Trip Gantt timeline      & $\sim$       & 9 routes, 1 day. \\
-Hourly demand            & $\checkmark$ & AFC-driven; works for any of 128 routes. \\
-Holiday vs.\ normal      & $\sim$       & Adapted: AFC-side comparison around Tet (2026-02-17) replaces the GPS-side parade-period comparison until full data lands. \\
+1.1 & Top schools by bus dependency & \texttt{agg\_school\_route} & FL \\
+1.2 & Schools $\rightarrow$ Routes treemap & \texttt{agg\_school\_route} & FL \\
+1.3 & Student vs non-student week & \texttt{agg\_route\_hour} & FL \\
+1.4 & School-routeness classifier & \texttt{agg\_route\_profile} & FL \\
+1.5 & School proximity \& equity & \texttt{dim\_school} + \texttt{dim\_stop} & FL \\
 \hline
-\multicolumn{3}{l}{\emph{Stop Analysis}} \\
-Stop detail panel        & $\checkmark$ & Boardings + routes from AFC; dwell as enrichment when stop is in GPS sample. \\
-Spatial accessibility (Gridify) & $\checkmark$ & Stops master with lat/lng covers all 4{,}710 HCMC stops. \\
-Multi-stop comparison    & $\sim$       & Punctuality dimension is GPS-only; other dimensions (boardings, dwell, routes served) work everywhere. \\
+\multicolumn{4}{l}{\textbf{Card~2 --- Demand \& Crowding}} \\
 \hline
-\multicolumn{3}{l}{\emph{Financial \& Operations}} \\
-Ghost trip analysis      & $\checkmark$ & 17.8\% near-ghost rate at network scale; per-route ranking with $>40\%$ outliers. \\
-Revenue \& ticket breakdown & $\checkmark$ & AFC + payments fully populated. \\
-Revenue efficiency (FuzzyCut) & $\checkmark$ & Revenue-per-trip distribution exists for all 128 routes. \\
+2.1 & Hourly demand curve & \texttt{agg\_route\_hour} (rollup) & MU \\
+2.2 & Route $\times$ Hour heatmap & \texttt{agg\_route\_hour} & MU \\
+2.3 & Weekly rhythm & \texttt{agg\_route\_hour} & MU \\
+2.4 & Top routes by demand & \texttt{agg\_route\_day} & MU \\
+2.5 & 14-day demand forecast & \texttt{agg\_route\_day} + ETS & SH \\
 \hline
-\multicolumn{3}{l}{\emph{Metro Connectivity}} \\
-Feeder catchment rings    & $\checkmark$ & Geometric: stops master + metro station coordinates. \\
-Transfer timing analysis  & $\times$    & Requires the metro Line 1 timetable, which is not in the data release. \\
-QoS-3 at metro interfaces & $\times$    & Requires schedule + GPS coverage of metro-adjacent stops. Both deferred. \\
-Feeder headway alignment (GroupSet) & $\times$ & Same dependency on schedule data. \\
+\multicolumn{4}{l}{\textbf{Card~3 --- Spatial \& Connectivity}} \\
+\hline
+3.1 & Network overview map & \texttt{dim\_route} + \texttt{dim\_stop} & MU \\
+3.2 & Boarding density grid (HexagonLayer) & \texttt{agg\_stop\_hour} & MU \\
+3.3 & Stop Demand Explorer & \texttt{agg\_stop\_hour} + \texttt{dim\_stop} & MU \\
+3.4 & Effective vs ghost stops & \texttt{dim\_stop} (door\_open\_ratio) & SH \\
+3.5 & Bus $\leftrightarrow$ Metro connectivity & \texttt{metro\_transfer\_matrix} & MU \\
+\hline
+\multicolumn{4}{l}{\textbf{Card~4 --- Financial \& Operations}} \\
+\hline
+4.1 & P\&L Quadrant & \texttt{agg\_route\_day} + \texttt{dim\_route} & MU \\
+4.2 & Financial signatures & \texttt{agg\_route\_profile} & MU \\
+4.3 & Operator P\&L scorecard & \texttt{agg\_company\_route} & MU \\
+4.4 & Payment adoption curve & \texttt{agg\_payment\_day} & CO \\
+4.5 & Promotion lift & \texttt{dim\_promotion} + \texttt{agg\_route\_day} & CO \\
+\hline
+\multicolumn{4}{l}{\textbf{Card~5 --- Network Health}} \\
+\hline
+5.1 & Network at a glance & \texttt{agg\_network\_day} & MU \\
+5.2 & Volume composition treemap & \texttt{agg\_company\_route} & MU \\
+5.3 & Service-day calendar & \texttt{agg\_network\_day} & MU \\
+5.4 & QoS-1/2/3 scorecard & \texttt{fact\_gps\_trips} (rollup) & SH \\
+5.5 & Anomaly Lab + threshold~$T$ & \texttt{agg\_network\_day} & MU \\
+\hline
+\multicolumn{4}{l}{\textbf{Card~6 --- Routes} (drill-down spine)} \\
+\hline
+6.1 & Route constellation (UMAP) & \texttt{agg\_route\_profile} + UMAP & SH \\
+6.2 & Archetype UpSet matrix & \texttt{dim\_route.archetype} & SH \\
+6.3 & Multi-route compare & \texttt{agg\_route\_profile} & MU \\
+6.4 & Route summary page & \texttt{agg\_route\_day} (filtered) & MU \\
+6.5 & Marey time--distance diagram & \texttt{fact\_gps\_trips} + \texttt{fact\_stop\_visits} & SH \\
+6.6 & Stop-by-stop boardings + dwell & \texttt{fact\_stop\_visits} & SH \\
 \hline
 \end{tabularx}
 \end{table}
 
-\subsection{Network Overview}
+The contract documents the data-shape from the design level: any
+chart added to the catalogue must specify both its aggregate
+source and its SDVF tier before the warehouse build can be
+extended. At warehouse-build time, the schema of each
+\texttt{agg\_*} table is asserted against the schema the
+corresponding chart query expects; at app start, the eight
+aggregates are read in a smoke check and the app refuses to
+render any card until all reads succeed.
 
-All four Network modules are adopted. The KPI strip drops the
-network-wide QoS-3 indicator that the original brainstorm proposed
-because the schedule-side data exists only for nine routes and
-a single day; with that exclusion, the strip is fully populated
-from AFC-side aggregates alone (boardings, revenue, ghost rate,
-busiest route, and the demographic split). The treemap is sized
-by total boardings, but it is coloured by ghost rate rather than by
-QoS-3 because the former is computable for all 128 routes.
-The GroupSet demand-pattern clusterer operates on AFC hourly
-demand per route across the 90-day window, which is the data
-density the technique was originally designed for.
+\subsection{Data-availability milestones}
+\label{sec:proposed:milestones}
 
-\subsection{Route Explorer}
+The thirty-one charts split into three groups by the data
+milestone that unlocks them:
 
-All three QoS indicators are adopted with a sample disclaimer.
-QoS-2 is interpreted relatively rather than absolutely because of
-the 25.1\% baseline on-path rate. The Speed Profile FuzzyCut
-corridor and the Trip Gantt timeline are likewise restricted to
-the nine GPS routes. Hourly demand from AFC is unaffected by the
-GPS limitation and is available for any of the 128 routes.
-The Holiday vs.\ Normal comparison is adapted: instead of the
-GPS-side Apr 30 parade period (which falls outside the local
-sample), the lens compares AFC demand around Tet
-(2026-02-17, the Lunar New Year) to a normal weekday baseline.
-The original GPS-side comparison is queued for the full-dataset
-release.
+\begin{itemize}
+\item \textbf{Demoable today (twenty-three charts):} all charts
+    in Cards~1, 2, 4, 5.1--5.3, 5.5, plus 6.3 and 6.4. These
+    require only the local AFC ninety-day window and the
+    dimension tables; they are demonstrated against the
+    warehouse skeleton in
+    Section~\ref{sec:prototype:warehouse}.
+\item \textbf{Unlocks with school geocoding (one chart):} 1.5
+    School proximity, which requires verified school coordinates
+    rather than the current district-level approximation.
+\item \textbf{Unlocks with full 50-day GPS (seven charts):} 3.4
+    ghost stops, 3.5 bus--metro arrival timing, 5.4 QoS-1/2/3
+    scorecard, 6.1 UMAP constellation (needs GPS-derived
+    features), 6.2 archetype matrix, 6.5 Marey diagram, 6.6
+    stop-by-stop dwell. These are the seven charts whose absence
+    would otherwise limit the dashboard's scope below the
+    requirements in Chapter~\ref{chapter:proposed}; their
+    activation is scheduled in
+    Section~\ref{sec:future:gps}.
+\end{itemize}
 
-\subsection{Stop Analysis}
+\subsection{Module-selection rationale}
+\label{sec:proposed:module_rationale}
 
-The Stop Detail panel and the Gridify accessibility view are
-adopted at full coverage. The Multi-Stop Comparison radar is
-adopted with the punctuality dimension surfaced only when both
-selected stops fall within the nine-route GPS sample;
-boardings, dwell, and routes-served are computable for every
-stop in the master.
+Per Câu~4 of the rubric~\cite{rubric}, the module catalogue is
+the product of choosing among multiple candidates rather than
+defaulting to the obvious. Three classes of candidate were
+considered and discarded.
 
-\subsection{Financial and Operations}
+\paragraph{Candidate A: One mega-card per role.}
+Carving the dashboard into one card per user role (four cards
+total: passenger, driver, company, MCPT) would have surfaced
+the role-aware design but would have forced cross-role analytics
+(e.g., school-aware demand serves both passengers and admins)
+into a single card or duplicated across multiple, both
+unsatisfying. Discarded in favour of the six theme-cards with
+internal role anchors.
 
-All three modules are adopted. The Ghost Trip analysis is
-particularly well-supported: the 17.8\% network-wide near-ghost
-rate provides a defendable headline number, and per-route ranking
-identifies several routes above 40\%. The Revenue Efficiency
-FuzzyCut applies the same primitive as the Route Explorer's Speed
-Profile, which is one of the design wins of using literature
-primitives: the analyst learns the FuzzyCut interaction once and
-reuses it for two unrelated quantities.
+\paragraph{Candidate B: One card per chart type.}
+An alternative is to organise by chart primitive (a heatmap card,
+a parcoord card, a treemap card, $\dots$), which would expose the
+analytical primitives directly. Discarded because users do not
+think in chart primitives; they think in questions
+(``how do schools shape demand?''), and the card titles must
+match that mental model.
 
-\subsection{Metro Connectivity}
-
-The Metro lens is the most data-dependent of the five.
-The Feeder Catchment rings are computable from the stops master and
-the published metro station coordinates. The remaining three modules
-(Transfer Timing, QoS-3 at Metro Interfaces, Feeder Headway
-Alignment) all require either the metro Line 1 timetable, multi-day
-GPS coverage of metro-adjacent stops, or both. They are documented
-as planned next steps in Chapter~\ref{chapter:conclusion} and the
-lens icon carries an ``in progress'' badge in the dashboard until
-the dependencies are resolved.
+\paragraph{Chosen: Six theme-cards anchored to data narratives.}
+The chosen catalogue elevates one analytical narrative per card,
+with charts inside the card composing a multi-perspective answer
+to that narrative's question. The FLAGSHIP card answers ``how
+do schools shape demand''; Card~2 answers ``when do people
+ride''; Card~3 answers ``where''; Card~4 answers ``how does the
+network earn and lose money''; Card~5 answers ``is the network
+healthy''; Card~6 answers ``what does this specific route look
+like''. The chart primitives are subordinate to the narrative,
+not the other way round.
