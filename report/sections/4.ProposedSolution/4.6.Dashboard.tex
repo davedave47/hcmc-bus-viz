@@ -1,340 +1,301 @@
 \section{Dashboard}
 \label{sec:proposed:dashboard}
 
-The dashboard is the visible surface of the proposed solution. Its
-design is governed by three concerns. First, the dashboard must
-serve five stakeholder groups whose analytical questions overlap
-only partially. Second, every analyst must be able to bound the
-analysis to the slice of the dataset that matters for their
-question; the global filter set must be both expressive and
-shared across views. Third, the visual design must follow
-established storytelling principles~\cite{knaflic2015} so that the
-analytical claims of Section~\ref{sec:proposed:modules} are
-legible to non-technical stakeholders.
+The dashboard is the visible surface of the proposed solution.
+This section specifies its information architecture, the
+behavioural invariants every chart obeys, the app-wide features
+that compose across cards, the filter system, and the
+scrollytelling Stories layer. The visual language is locked in
+the high-fidelity mockup at
+\texttt{docs/design/app-layouts.html}; this section describes
+\emph{what the design is} and \emph{why}, while the mockup is
+shown in Section~\ref{sec:prototype:mockups}.
 
-\subsection{Stakeholders and questions}
+\subsection{Information architecture}
+\label{sec:proposed:ia}
 
-Five stakeholder groups are in scope. Each group asks a
-different set of analytical questions; the dashboard maps each
-group to a primary lens while leaving the remaining lenses
-accessible. The mapping is summarised in
-Table~\ref{tab:proposed:stakeholders}; the questions themselves
-are taken from the advisor specification~\cite{thoai2025} and
-elaborated for the HCMC operational context.
+The dashboard's information architecture is a strict three-level
+hierarchy:
+\textbf{Hub} $\rightarrow$ \textbf{Card} $\rightarrow$
+\textbf{Chart}. The hub is the entry point: a single vertical
+scroll of six theme cards plus a Stories section. Each card
+opens into an Atlas-style two-pane interior: a narrow rail on
+the left listing the five or six charts in that theme, and a
+single large-canvas chart on the right occupying approximately
+seventy percent of the viewport. The chart is the unit of
+analytical work: one canonical visualisation per chart, no
+crammed grids, every element clickable.
+
+The hierarchy is implemented in Streamlit. The hub itself
+renders as an embedded HTML component
+(\texttt{st.components.v1.html}) because Streamlit's native
+column primitives cannot reproduce the editorial layout. Each
+card is one top-level Streamlit page; charts inside a card are
+switched by clicking entries on the rail without leaving the
+page. Cross-card navigation is supported by two mechanisms: a
+top-bar drop-down menu listing the six cards plus the four
+Stories, and explicit deep-link buttons in chart pop-overs
+(``Open Route Detail'', ``See same hour, weekend'').
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Screenshot}{The hub mockup, showing six
+alternating cards on a vertical scroll. Each card has a unique
+accent colour (orange / gold / green / red / purple / slate), a
+teaser SVG matching its principal chart type, and a story-subtitle
+pull-quote. The Stories section appears below the six cards.}{Open
+\texttt{docs/design/app-layouts.html} in a browser at 1280~px
+width; take a full-page screenshot covering the entire hub
+section (top bar through the upcoming-Ask-the-Data card). Save
+as \texttt{images/screenshots/hub\_v8\_full.png}.}
+\caption{The hub: vertical editorial scroll with six alternating
+cards, each with a unique accent colour and a teaser
+visualisation of its principal chart type.}
+\label{fig:proposed:hub}
+\end{figure}
+
+\subsection{The Hub}
+\label{sec:proposed:hub}
+
+The six cards are role-anchored internally and theme-named
+externally, in line with the SDVF tiering of
+Section~\ref{sec:proposed:sdvf}:
+
+\begin{enumerate}
+\item \textbf{School-Aware Demand} (flagship; passenger~+~MCPT)
+\item \textbf{Demand \& Crowding} (passenger)
+\item \textbf{Spatial \& Connectivity} (passenger~+~MCPT)
+\item \textbf{Financial \& Operations} (company)
+\item \textbf{Network Health \& Performance} (MCPT)
+\item \textbf{Routes} (driver~+~all roles; drill-down spine)
+\end{enumerate}
+
+The card order in the hub is not the SDVF priority order but the
+\emph{narrative reading order} of the editorial layout: the
+universal question (demand) first, the differentiator (schools)
+second, the city geography third, the operator P\&L fourth, the
+network admin view fifth, and the per-route drill-down last.
+Roles are not visible in the chrome --- no role badges, no role
+switcher --- so a stakeholder can navigate freely between cards
+without identifying themselves to the tool.
+
+\subsection{The Card interior}
+\label{sec:proposed:card}
+
+A single card interior, shown in
+Figure~\ref{fig:proposed:card_interior}, is a two-pane layout.
+The left pane is a narrow vertical rail (approximately 108
+pixels wide) that lists the charts in the theme by icon-above-label.
+The right pane is the chart canvas, occupying approximately
+seventy percent of viewport. Above the canvas is a single
+breadcrumb plus a per-chart filter bar. Switching charts within
+a card is one click on the rail; the date range, global
+highlight set, and any active filters persist across the switch.
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Screenshot}{The card interior for Card~2 (Demand
+\& Crowding) with the ``Route $\times$ Hour heatmap'' chart
+active. The 108-pixel rail on the left lists the five charts in
+the theme; the filter bar above the canvas carries the
+per-chart filter chips (route filter, day-type chips, fare
+segment) and a breadcrumb (Hub $\rightarrow$ Demand $\rightarrow$
+Route $\times$ Hour heatmap); the canvas itself is a heatmap with
+a pop-up open over one cell demonstrating the A1
+linked-brushing invariant.}{Open
+\texttt{docs/design/app-layouts.html} in a browser. Scroll to
+the card-interior mockup section. Take a screenshot of the card
+interior with a pop-up active. Save as
+\texttt{images/screenshots/card\_interior\_demand.png}.}
+\caption{The card interior: a narrow rail of chart options on
+the left, a single big-canvas chart on the right with a
+per-chart filter bar, and a pop-up demonstrating one
+click-to-detail interaction.}
+\label{fig:proposed:card_interior}
+\end{figure}
+
+\subsection{Behavioural invariants}
+\label{sec:proposed:invariants}
+
+Three invariants govern every chart in the catalogue. They are
+named A1, A2, A3 and referenced by these names throughout the
+report. They are written as \emph{invariants} rather than
+\emph{features} because their violation is the design failure
+that the rest of the architecture exists to prevent.
+
+\paragraph{A1 --- Linked brushing.}
+Within a single card, selecting an entity in one chart highlights
+that entity in every other chart of the same card. Cross-card
+linking is reserved for explicit drill-down deep-links rather
+than implicit propagation, to keep the per-card mental model
+local. The implementation is server-side: a click writes to
+\texttt{st.session\_state}, \texttt{st.rerun()} triggers a
+re-render of all charts on the page, and each chart reads the
+highlight on render. The invariant operationalises Liu's
+Multiple Coordinated Views model~\cite{liu2022} for the per-card
+scope (Section~\ref{sec:theory:mcv}).
+
+\paragraph{A2 --- Story subtitle.}
+Every chart in the catalogue carries a descriptive title in
+neutral language \emph{and} a one-sentence story subtitle in
+emphasised type that tells the viewer what to notice in the
+chart. Default chart colours are kept muted; saturated colour is
+reserved for the single element the story subtitle points at;
+chart annotations underline the same finding the subtitle
+states. The invariant operationalises Knaflic's storytelling
+principles~\cite{knaflic2015} as a design constraint
+(Section~\ref{sec:theory:storytelling}).
+
+\paragraph{A3 --- Universal Entity Detail Panel.}
+Every clickable entity (route, stop, school, company, day, hour,
+hex cell, vehicle, driver) opens a rich side panel covering
+approximately forty percent of the viewport on the right. The
+panel is a self-contained multi-chart mini-dashboard about the
+entity, with tabs for Overview, Demand, Reliability, Network,
+and Context. Hover stays light (tooltip only); click is always
+the full panel. The invariant ensures that no entity in the
+data is dead-ended: any element a user can click is also
+something they can explore in depth.
+
+\subsection{App-wide features}
+\label{sec:proposed:appwide}
+
+In addition to the three invariants, six features are present
+across every card and the Stories layer:
+
+\begin{itemize}
+\item \textbf{Global highlight set.} A user-pinned selection
+    (``school-archetype routes'', ``District-1 stops'') persists
+    across card navigation until explicitly cleared.
+\item \textbf{Bookmarkable URL state.} The complete app state
+    (card $+$ chart $+$ filter values $+$ active highlight) is
+    encoded in the URL; sharing a URL re-lands a colleague on
+    the same view.
+\item \textbf{One-click export.} Every chart and every entity
+    panel exports as PNG, PDF, CSV, or shareable link from a
+    single corner control.
+\item \textbf{Comparison drawer.} Selecting two to four entities
+    of the same type (two routes, three schools) opens a drawer
+    showing them side-by-side in small-multiple form.
+\item \textbf{Annotations and auto-callouts.} The dashboard
+    auto-tags known anomalies (T\d ết dip, April~30 parade) and
+    accepts user-pinned annotations on any chart.
+\item \textbf{``Routes like this one''.} On any route detail
+    page, the UMAP nearest neighbours of Chart~6.1 are surfaced
+    with similarity scores as one-click links to comparable
+    routes.
+\end{itemize}
+
+\subsection{Filters}
+\label{sec:proposed:filters}
+
+Filters are split into two scopes: a global date-range pill
+persisting across all cards (default: 1~January--31~March~2026,
+the AFC window), and per-card filter bars whose contents are
+chart-specific. The per-card filter bars are summarised in
+Table~\ref{tab:proposed:filters_per_card}.
 
 \begin{table}[H]
 \centering
-\caption{Stakeholders, primary questions, and primary lens.}
-\label{tab:proposed:stakeholders}
+\caption{Per-card filter bars.}
+\label{tab:proposed:filters_per_card}
+\footnotesize
 \renewcommand{\arraystretch}{1.20}
-\begin{tabularx}{\linewidth}{p{3.0cm}Xp{2.4cm}}
+\begin{tabularx}{\linewidth}{p{3.4cm}X}
 \hline
-\textbf{Stakeholder} & \textbf{Primary questions} & \textbf{Primary lens} \\
+\textbf{Card} & \textbf{Filters} \\
 \hline
-MCPT operator / city planner
-    & Which routes underperform the network? Which company is the worst on ghost rate? Where is ridership trending up or down? How is subsidy distributed?
-    & Network, Financial \\
-
-Bus company analyst
-    & Are our trips actually completing? Do they keep to the planned headway? Where on the route do we lose time? Are our buses running near-empty?
-    & Route, Financial \\
-
-Student / worker commuter
-    & When is my route at its busiest? How reliable is the schedule? Is there a less-crowded alternative?
-    & Stop, Route \\
-
-Business owner
-    & When is foot-traffic high near my shop? Which routes feed the area? Is the morning commute reliable?
-    & Stop \\
-
-New bus user
-    & Which route is beginner-friendly? How crowded does it get at peak? Where do I board?
-    & Stop \\
+1. School-Aware Demand & School type $\cdot$ compare to baseline (network avg / prior period) \\
+2. Demand \& Crowding & Metric (boardings/trips) $\cdot$ day type $\cdot$ fare segment $\cdot$ compare \\
+3. Spatial \& Connectivity & Hour-of-day chips $\cdot$ day type $\cdot$ company $\cdot$ layer cell-size \\
+4. Financial \& Operations & Metric anchor $\cdot$ include free tickets $\cdot$ ghost-run threshold $\cdot$ company \\
+5. Network Health \& Performance & Metric $\cdot$ day type $\cdot$ company $\cdot$ QoS metric $\cdot$ threshold~$T$ \\
+6. Routes & Route picker (multi/single) $\cdot$ direction (inbound/outbound) \\
 \hline
 \end{tabularx}
 \end{table}
 
-The dashboard is not partitioned by stakeholder: every lens is
-available to every user. The mapping above identifies which lens
-each user starts on; once inside, the MCV interaction model
-(Section~\ref{sec:theory:mcv}) lets them drill into adjacent
-lenses without losing filter context.
+\subsection{Stories: scrollytelling layer}
+\label{sec:proposed:stories}
 
-\subsection{Filter flexibility}
+Alongside the six cards, the hub presents a Stories section:
+four curated narratives that walk a reader through a pre-authored
+sequence of chart states (filters, highlights, annotations) on
+the same chart canvases the cards expose. The four stories are:
 
-A second design concern is that the analytical questions in
-Table~\ref{tab:proposed:stakeholders} all imply different slices
-of the dataset. An MCPT operator asking ``which routes
-underperform on weekday peak hours'' wants weekdays $\times$ 06--09
-$+$ 17--20 hour bands; a student asking ``how busy is route 53 at
-17:00 on Thursdays'' wants a stricter narrowing.
-The dashboard exposes a single global filter bar that every lens
-reads from. The filters are listed in
-Table~\ref{tab:proposed:filters}; they compose multiplicatively
-(any combination is valid) and they persist across lens switches.
+\begin{itemize}
+\item \textbf{The School Story} (six scenes, flagship): the
+    thirty-four percent student-fare share; the five schools
+    that generate half of it; the route family anchored to each
+    school; the weekday morning compression; the seven
+    school-only routes; and the equity gap of schools sitting
+    more than eight hundred metres from any stop.
+\item \textbf{The T\d ết Story} (four scenes): the nine-day
+    flatline in daily ridership; the recovery completing by
+    12~February; the routes that drop ninety percent versus
+    those that drop only thirty; and the holiday-resilient
+    corridors that share airport feeders.
+\item \textbf{The Money Story} (six scenes): the seventy-two
+    billion VND quarterly revenue; the two companies that
+    capture sixty percent of it; the four-fold variation in
+    revenue per trip across routes; the twelve bleeding routes;
+    the free-fare-day promotion lift; and the cash-versus-digital
+    payment mix.
+\item \textbf{The Network Map} (five scenes): the one hundred
+    and sixty-three routes on a single map; the five hex cells
+    that capture twenty percent of city boardings; the
+    four-fold range of B\d ến Th\`anh's hourly demand; the
+    twelve percent ghost-stop rate; and the nineteen metro
+    feeders with only eight arriving in time.
+\end{itemize}
 
-\begin{table}[H]
-\centering
-\caption{Global filter set shared by all lenses.}
-\label{tab:proposed:filters}
-\begin{tabularx}{\linewidth}{p{3.0cm}p{4.4cm}X}
-\hline
-\textbf{Filter} & \textbf{Type} & \textbf{Default} \\
-\hline
-Date range          & calendar (start, end) & full available range \\
-Day type            & multiselect: Weekday / Weekend / Holiday & all \\
-Hour range          & dual slider 0--23     & 0--23 \\
-Route               & multiselect on \texttt{route\_no} & all \\
-Company             & multiselect on \texttt{company\_id} & all \\
-Zone                & multiselect (HCMC ward) & all \\
-\hline
-\multicolumn{3}{l}{\emph{Selection state (lens-driven, not user-set)}} \\
-Selected route      & set by Network treemap click or Route Explorer dropdown & none \\
-Selected stop       & set by map click or Stop Analysis search & none \\
-Active canvas       & set by canvas selector in the panel & \texttt{map} \\
-\hline
-\end{tabularx}
-\end{table}
+Stories are read-only narratives; users can break out into any
+card at any scroll position via deep-links that open the card
+in a side panel covering approximately forty percent of viewport,
+preserving the scroll context. Implementation uses the
+Scrollama scrollytelling library~\cite{scrollama} bundled into
+an HTML component injected via \texttt{st.components.v1.html}.
+Each scene is authored as one entry in a per-story JSON file
+containing the filter state, the highlight set, and the
+annotation text for that scroll position; this keeps the
+scrollytelling content separate from the chart implementation
+and lets the same chart canvases serve both interactive
+exploration (in cards) and curated narration (in Stories).
 
-The filter bar is visually pinned at the top of the analysis
-panel so it never falls below the fold. Every applied filter
-appears as a coloured chip; default values are not shown so the
-chip strip never clutters when the user has not narrowed the
-analysis. This follows Knaflic's principle of removing visual
-clutter that does not carry information~\cite{knaflic2015}.
+\subsection{Dashboard alternatives considered}
+\label{sec:proposed:dashboard_alts}
 
-\subsection{Layout}
+Per Câu~4 of the rubric~\cite{rubric}, three architectural
+alternatives were considered for the dashboard's information
+architecture and rejected in favour of the Hub-Card-Chart
+hierarchy above.
 
-The dashboard is a three-column shell on a single page,
-illustrated in Figure~\ref{fig:proposed:layout}. A 52-pixel icon
-strip on the far left switches between the five lenses (plus the
-upcoming Ask-the-Data interface). A 360-pixel analysis panel in
-the centre holds the filter bar, the lens header, the KPI grid,
-the canvas selector, and the lens-specific drill-down lists. The
-remainder of the viewport is the canvas itself, which renders one
-of two things: the geospatial map (default) or a single
-analytical chart selected from the panel.
+\paragraph{Alternative A: Single-page Hybrid-C dashboard.}
+The early brainstorm produced a single-page layout with a
+52-pixel icon strip on the far left, a 360-pixel filter panel
+in the middle, and one chart canvas on the right (``Hybrid~C''
+in the design notebook). This layout maximises screen utilisation
+on a wide monitor but breaks on a 1366$\times$768 laptop screen
+(the canvas compresses below sixty percent of viewport) and
+collapses the analytical narrative into a flat list of
+twenty-plus chart entries with no thematic grouping. Discarded
+in favour of the Hub-Card-Chart hierarchy.
 
-\begin{figure}[H]
-\centering
-\begin{tikzpicture}[
-    box/.style       ={rectangle, rounded corners=2pt,
-                        font=\footnotesize\sffamily, align=center,
-                        inner sep=4pt},
-    icon/.style      ={rectangle, rounded corners=3pt,
-                        draw=blue!50!black, fill=blue!10,
-                        font=\small, minimum width=22pt,
-                        minimum height=22pt, align=center},
-    label/.style     ={font=\scriptsize\sffamily, color=gray!60!black},
-]
+\paragraph{Alternative B: One Streamlit page per chart.}
+Streamlit's natural multi-page primitive
+(\texttt{pages/} directory) would produce a flat list of
+thirty-one top-level pages. This would surface every chart
+equally but eliminate the cross-chart narrative; A1 linked
+brushing would have to be re-implemented across page transitions
+(slow and error-prone in Streamlit's rerun model); the SDVF
+prioritisation would be invisible to the user. Discarded.
 
-\draw[draw=gray!50, rounded corners=4pt, fill=gray!2]
-    (0,0) rectangle (14, 7);
-
-% --- Icon strip ---
-\draw[draw=gray!50, fill=white]
-    (0,0) rectangle (1, 7);
-\foreach \i in {0,1,2,3,4,5} {
-    \node[icon] at (0.5, 6.4 - \i*0.7) {};
-}
-\node[label, rotate=90] at (0.45, 0.7) {52\,px strip};
-
-% --- Analysis panel ---
-\draw[draw=gray!50, fill=white]
-    (1,0) rectangle (5, 7);
-
-% Filter bar
-\draw[draw=gray!40, fill=gray!10]
-    (1.1, 6.4) rectangle (4.9, 6.85);
-\node[label] at (3, 6.62) {filters · date · day-type · routes};
-
-% Header
-\node[box, font=\small\sffamily\bfseries] at (3, 5.95) {Network Overview};
-\node[label] at (3, 5.65) {AFC · 2026-01 \(\rightarrow\) 2026-03};
-
-% KPI grid
-\foreach \r in {0,1} {
-    \foreach \c in {0,1} {
-        \draw[draw=gray!40, fill=gray!8, rounded corners=1pt]
-            (1.3 + \c*1.85, 4.6 - \r*0.85) rectangle (3.05 + \c*1.85, 5.25 - \r*0.85);
-    }
-}
-\node[label] at (1.7, 4.95) {3.3M};
-\node[label] at (3.6, 4.95) {4.1B VND};
-\node[label] at (1.7, 4.10) {8.4\%};
-\node[label] at (3.6, 4.10) {117};
-
-% Canvas selector
-\node[label, font=\scriptsize\sffamily\bfseries] at (3, 3.45) {CANVAS};
-\draw[draw=gray!40, fill=gray!18, rounded corners=1pt]
-    (1.3, 3.0) rectangle (4.7, 3.35);
-\node[label, anchor=west] at (1.45, 3.18) {Map (active)};
-\foreach \i/\name in {1/Hourly demand, 2/Passenger mix, 3/Treemap} {
-    \draw[draw=gray!40, fill=gray!4, rounded corners=1pt]
-        (1.3, 3.0 - \i*0.45) rectangle (4.7, 3.35 - \i*0.45);
-    \node[label, anchor=west] at (1.45, 3.18 - \i*0.45) {\name};
-}
-
-\node[label, rotate=90] at (1.05, 0.5) {360\,px panel};
-
-% --- Canvas (map area) ---
-\draw[draw=gray!50, fill=blue!4]
-    (5,0) rectangle (14, 7);
-
-\foreach \x in {5.5, 6.5, ..., 13.5}
-    \draw[gray!20, very thin] (\x, 0.2) -- (\x, 6.8);
-\foreach \y in {0.5, 1.3, ..., 6.5}
-    \draw[gray!20, very thin] (5.2, \y) -- (13.8, \y);
-
-\foreach \x/\y/\c in {6.5/4.5/blue, 8.0/3.8/blue, 9.5/4.2/teal,
-                      11.0/3.5/teal, 7.5/2.8/gray, 10.0/2.5/gray,
-                      12.0/2.8/teal, 8.5/5.5/blue, 11.5/5.0/teal} {
-    \fill[\c!60] (\x, \y) circle (3pt);
-}
-
-\node[label] at (9.5, 6.3) {MAP · HCMC};
-
-% Legend
-\draw[draw=gray!40, fill=white, rounded corners=2pt]
-    (12.0, 0.3) rectangle (13.8, 1.4);
-\node[label, anchor=west] at (12.1, 1.20) {Stop demand};
-\node[label, anchor=west] at (12.1, 0.85) {\(\bullet\)~high};
-\node[label, anchor=west] at (12.1, 0.55) {\(\bullet\)~low};
-
-\end{tikzpicture}
-\caption{Three-column dashboard layout. The icon strip (52~px)
-switches lenses; the analysis panel (360~px) holds filters, the
-KPI grid and the canvas selector; the canvas (remainder of the
-viewport) renders either the map or a single chart at a time.}
-\label{fig:proposed:layout}
-\end{figure}
-
-Two binding rules govern the canvas: at most one chart is shown
-at any time, and that chart fills at least 60\% of the viewport.
-Liu's MCV literature~\cite{liu2022} shows that dense panels
-crowded with small charts are a common failure mode of analytical
-dashboards; Knaflic adds that an analyst's attention should be
-directed to one analytical claim at a time~\cite{knaflic2015}.
-The canvas-swap pattern enforces both: the panel renders no
-charts of its own (only KPIs, lists, and selectors), and the
-canvas renders one chart at canvas size --- typically 1500\,px
-wide on a 1920\,px display.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{images/screenshots/dashboard_network}
-\caption{Dashboard with the Network Overview lens active and
-the geospatial canvas in the default state. The icon strip is
-on the far left; the analysis panel (filters, KPIs, canvas
-selector, top-routes list) occupies the centre column; the
-canvas occupies the remainder of the viewport.}
-\label{fig:proposed:screenshot:network}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{images/screenshots/dashboard_route}
-\caption{Dashboard with the Route Explorer lens active and
-the QoS-2 distribution chart selected as the canvas. The map
-returns one click away. Note that the panel itself contains
-no charts --- only the lens-specific KPIs and the canvas
-selector.}
-\label{fig:proposed:screenshot:route}
-\end{figure}
-
-\subsection{Chart catalogue per lens}
-
-Table~\ref{tab:proposed:charts} lists the chart that each canvas
-option produces, alongside the analytical question it answers and
-the literature primitive (where applicable) that grounds the
-visualisation choice.
-
-\begin{table}[H]
-\centering
-\caption{Chart catalogue. Each row is one canvas option in the
-dashboard.}
-\label{tab:proposed:charts}
-\renewcommand{\arraystretch}{1.20}
-\begin{tabularx}{\linewidth}{p{2.0cm}p{3.4cm}p{3.0cm}X}
-\hline
-\textbf{Lens} & \textbf{Canvas} & \textbf{Chart type} & \textbf{Question} \\
-\hline
-Network       & Hourly demand          & Stacked area, AM/PM bands & When does demand peak? \\
-Network       & Passenger mix          & Donut, four segments      & Who rides? \\
-Network       & Demand pattern cluster & Heatmap, GroupSet groups~\cite{liu2022} & Which routes share a daily shape? \\
-Network       & Route health treemap   & Treemap, ghost-rate colour & Which routes underperform? \\
-Network       & Operator scatter       & Bubble scatter            & How do companies compare? \\
-\hline
-Route         & Hourly demand          & Stacked area              & When is this route busy? \\
-Route         & QoS-1 trend            & Daily line~\cite{srisakaokul2023} & Are scheduled trips actually running? \\
-Route         & QoS-2 distribution     & Histogram~\cite{srisakaokul2023}  & How on-route are GPS trajectories? \\
-Route         & QoS-3 box plot         & Per-stop box~\cite{srisakaokul2023} & Where on the route does delay accumulate? \\
-Route         & Speed corridor         & Map polyline + FuzzyCut~\cite{liu2022} & Where is this route slow? \\
-Route         & Trip Gantt             & Gantt, anomaly highlight  & How do trips line up across the day? \\
-Route         & Tet vs.\ normal        & Side-by-side line         & How did Tet affect demand? \\
-\hline
-Stop          & Hourly demand          & Bar chart                 & When is this stop busy? \\
-Stop          & Routes $\times$ hour   & Heatmap                   & Which routes feed this stop and when? \\
-Stop          & Multi-stop comparison  & Radar, 2--4 stops         & How do these stops compare? \\
-Stop          & Spatial accessibility  & Grid choropleth, Gridify~\cite{liu2022} & Which areas are underserved? \\
-\hline
-Financial     & Daily revenue          & Bar, weekday/weekend      & When does the network earn revenue? \\
-Financial     & Payment channels       & Horizontal bar, \% labels & How do passengers pay? \\
-Financial     & Worst ghost-rate routes& Ranked horizontal bar     & Which routes waste fuel? \\
-Financial     & Revenue scatter        & Bubble scatter            & Who earns vs.\ who is subsidised? \\
-Financial     & Revenue efficiency     & Histogram + FuzzyCut~\cite{liu2022} & How do we band routes by revenue? \\
-\hline
-Metro         & Feeder catchment       & Concentric rings on map   & How well do buses feed the metro? \\
-\hline
-\end{tabularx}
-\end{table}
-
-The chart-type column is deliberately conservative: stacked area
-charts for time series, histograms for distributions, scatter
-plots for two-variable relationships, treemap for hierarchical
-size $+$ colour encoding. Knaflic argues that the analyst's
-attention should be on the data and the analytical claim, not on
-the novelty of the chart~\cite{knaflic2015}; the dashboard
-therefore prefers the canonical chart type for each question over
-a more ornate alternative.
-
-\subsection{Cross-lens interactions}
-
-The MCV interaction model (Section~\ref{sec:theory:mcv}) connects
-the lenses into a coherent dashboard. Three cross-lens
-interactions are particularly relevant in practice.
-
-\paragraph{Treemap tile $\rightarrow$ Route Explorer.}
-A click on any tile in the Network route-health treemap sets the
-\texttt{selected\_route} field in the shared session-state object
-and switches the active lens to Route Explorer. The filter bar is
-preserved, so the analyst arrives at the route-level view already
-narrowed to the date range, day type, and hour band that were
-active in the treemap.
-
-\paragraph{Map stop $\rightarrow$ Stop Analysis.}
-A click on any stop on the geospatial canvas sets
-\texttt{selected\_stop\_key} and switches to Stop Analysis. The
-panel re-populates with the boardings, dwell, and per-route
-breakdown for the chosen stop, again preserving the global
-filter context.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.95\linewidth]{images/screenshots/dashboard_stop}
-\caption{Stop Analysis lens reached by clicking a stop on the
-geospatial canvas. The selected stop's boardings, peak hour,
-average fare, and routes-served list populate the panel without
-any explicit filter change by the analyst.}
-\label{fig:proposed:screenshot:stop}
-\end{figure}
-
-\paragraph{Worst-ghost ranking $\rightarrow$ Route Explorer
-$+$ ghost-only filter.} A click on a route in the Financial
-worst-ghost ranking switches to Route Explorer with the route
-selected and an additional filter applied that scopes the canvas
-to only the trips classified as near-ghost. This is the
-``drill-from-symptom-to-cause'' pattern advocated by
-Knaflic~\cite{knaflic2015}: the analyst sees an anomaly in
-aggregate, clicks once, and lands at the trip-level view that
-explains it.
+\paragraph{Chosen: Hub $\rightarrow$ Card $\rightarrow$ Chart with
+embedded HTML for the hub.}
+The chosen architecture preserves Streamlit's strengths (a
+top-level Streamlit page per card, with native Plotly and pydeck
+charts inside) while overcoming its weaknesses (an embedded HTML
+hub for the editorial entry experience, embedded HTML components
+for the three custom chart types Marey / GroupSet / Stories). The
+hierarchy makes the SDVF tiering visible at the entry point and
+keeps linked-brushing local to a card, where it is fast.
