@@ -1,12 +1,86 @@
 \section{Related Work}
 \label{sec:background:related}
 
-% RUBRIC: This section covers Câu 3 of the grading rubric
-% (\cite{rubric}): at least three related problems and at least
-% three peer-reviewed studies. Content to be filled by subagent D2.
+\noindent\textit{This section surveys the prior research on
+which the proposed solution rests. The grading rubric
+(\cite{rubric}, Câu~3) requires at least three related problems
+and at least three peer-reviewed studies; we identify four
+distinct problem areas and seven supporting references, each of
+which a later section of this chapter develops in technical
+depth.}
 
-\noindent\textit{Stub --- this section provides the literature
-review required by Câu~3 of the grading rubric: at least three
-related problems and at least three peer-reviewed studies. The
-subsequent sections of this chapter develop the theoretical
-foundations that the proposed solution depends on.}
+\subsection{Bus operational analytics on GPS and AFC data}
+\label{sec:background:related:ops}
+
+The closest peer-reviewed work to the present thesis is
+Srisakaokul~\textit{et~al.}'s study of public-city-bus service
+quality in Bangkok~\cite{srisakaokul2023}, which derives three
+quality-of-service tiers (QoS-1 trip completion, QoS-2 on-path
+driving, QoS-3 on-schedule) from raw GPS pings and schedule
+data. The framework transfers directly to the HCMC case and is
+developed in Section~\ref{sec:background:qos}.
+A complementary line of research, exemplified by
+Derevitskiy~\textit{et~al.}~\cite{derevitskiy2016}, treats the
+bus fleet itself as a distributed traffic sensor: GPS pings are
+aggregated into road-graph edge-speed estimates and propagated
+to unsensed edges via macroscopic travel-time models. The
+authors report a mean absolute percentage error around twenty
+percent at distances under fifteen kilometres. The HCMC dataset's
+fifty-day GPS window is in principle sufficient for the same
+construction; the present thesis defers this extension to future
+work (Section~\ref{sec:future:predictive}) in order to focus on
+historical analytics in Phase~1.
+
+A third line of work, Lin~\&~Zeng~\cite{linzeng2014}, builds a
+real-time bus-arrival-time predictor on a link-node route
+representation, with dwell at time-check stops as the dominant
+predictor. The same time--distance trajectory construction
+underlies the Marey diagram adopted in this thesis as the
+Routes-card detail visualisation
+(Section~\ref{sec:background:marey}).
+
+\subsection{Visualisation of spatial--temporal traffic data}
+\label{sec:background:related:viz}
+
+The PhD work of Liu~\cite{liu2022} contributes three
+visualisation primitives that the present thesis adopts
+verbatim: \emph{Gridify} (a decoupling of data and visual grid
+abstractions, used in the dashboard's hex-grid map),
+\emph{GroupSet} (a set-intersection partitioning of routes by
+archetype, used in the Routes card's UpSet matrix), and
+\emph{FuzzyCut} (interactive categorisation). Liu also formalises
+the Multiple Coordinated Views interaction model, which the
+dashboard implements at full scope as the A1 linked-brushing
+invariant of Chapter~\ref{chapter:proposed}.
+
+A second body of work, the storytelling-with-data principles of
+Knaflic~\cite{knaflic2015}, governs the chart-selection and
+clutter-handling rules adopted in the dashboard. The A2 story
+subtitle invariant of Chapter~\ref{chapter:proposed} is the
+direct application of these principles as a design constraint
+(no chart without a story subtitle; muted defaults; bright colour
+reserved for the one element the story points at).
+
+\subsection{Bus--metro intermodal connectivity and existing
+HCMC tooling}
+\label{sec:background:related:hcmc}
+
+The advisor specification~\cite{thoai2025} names bus--metro
+intermodal connectivity as a required feature of the dashboard
+and supplies the table of nineteen bus routes that feed Metro
+Line~1. The opening of Metro Line~1 on
+22~December~2024~\cite{metro_wiki} sharpens the gap: the
+effectiveness of urban metro mobility now depends on bus feeders
+arriving on time at interchange stations, a connectivity
+relationship the existing operational tools cannot monitor.
+
+The principal existing HCMC analytical artefact is the MCPT
+public route directory~\cite{ttgtcc2024}, which is a
+navigational tool (routes can be looked up) but not an
+analytical one (no aggregation, visualisation, or temporal
+analysis). The HCMC dataset specification~\cite{hcmcgps2025}
+documents the fifty-day GPS window of thirty-one routes and the
+April~2025 parade week as a natural-experiment opportunity.
+Together these references frame what the present thesis adds to
+the local ecosystem: the first interactive analytical surface
+over the network's GPS and AFC streams.
