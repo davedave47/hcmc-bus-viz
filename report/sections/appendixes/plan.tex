@@ -2,9 +2,138 @@
 \label{appendix:plan}
 \addcontentsline{toc}{chapter}{Appendix B --- Phase 2 Plan}
 
-\noindent\textit{Stub --- this appendix presents the Phase~2
-Gantt chart, the deliverables-acceptance table per phase, the
-risk register, and the personnel/time-tracking plan. Together
-with Section~\ref{sec:future:roadmap}, it addresses Câu~5 of
-the grading rubric (\cite{rubric}). Content to be filled by
-subagent~I1.}
+This appendix details the Phase~2 plan in full, complementing the
+narrative roadmap of Section~\ref{sec:future:roadmap}. Together,
+the chapter and the appendix address Câu~5 of the grading
+rubric~\cite{rubric} on all four dimensions: content, time,
+personnel, and expected outcomes.
+
+\section*{B.1 Deliverables per phase}
+
+Each phase produces one or more deliverables that the next
+phase depends on. The acceptance criterion for each phase is
+the boolean condition under which that phase is considered
+complete and the next phase can begin.
+
+\begin{table}[H]
+\centering
+\caption{Phase 2 deliverables, expected outcomes, and acceptance
+criteria.}
+\label{tab:appendix:deliverables}
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{p{0.7cm}p{3.6cm}X}
+\hline
+\textbf{Ph.} & \textbf{Deliverable} & \textbf{Acceptance criterion} \\
+\hline
+P1 & Warehouse Layers 2--4 build
+   & \texttt{python -m src.warehouse.builder} runs in
+     $<$~30~s on local sample and emits ten \texttt{dim\_*}
+     tables, three \texttt{fact\_*} views, and eight
+     \texttt{agg\_*} tables; \texttt{notebook 05} asserts row
+     counts match facts. \\
+P2 & End-to-end Card~2 (Demand)
+   & All five charts render; linked brushing works across all
+     five; A3 entity panel opens on any route click; cold-load
+     $<$~3~s; warm render $<$~50~ms. \\
+P3 & Spatial card + pydeck
+   & H3 hex layer renders at three cell sizes; Stop Demand
+     Explorer renders 4{,}710 stops without UI lag. \\
+P4 & School flagship card
+   & Schools $\rightarrow$ Routes treemap renders;
+     school-routeness classifier renders for all 163 routes;
+     equity map renders at district resolution. \\
+P5 & Financial + Network Health cards
+   & P\&L quadrant clickable; QoS-1/2/3 scores computed on the
+     nine routes available in the local GPS sample;
+     threshold-$T$ slider snaps between the five pre-computed
+     levels. \\
+P6 & Routes card with Marey
+   & Discovery and Detail modes both render; Marey diagram is
+     interactive (zoom, hover trip); GroupSet matrix shows the
+     four archetypes correctly. \\
+P7 & Hub + entity-panel polish
+   & Hub HTML renders inside Streamlit with no layout
+     breakage; the A3 panel works for all six entity types;
+     URL state survives a browser refresh. \\
+P8 & Stories scrollytelling
+   & All four stories scroll-driven; each scene deep-links into
+     the matching card view; reading-progress bar visible. \\
+P9 & Final polish + evaluation
+   & School geocoding verified for $\geq$~50 of 64 schools;
+     full 50-day GPS loaded if available; two-minute
+     screen-recording demo produced; initial user evaluation
+     with $\geq$~3 stakeholders per role completed. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section*{B.2 Risk register}
+
+\begin{table}[H]
+\centering
+\caption{Top four risks for Phase 2.}
+\label{tab:appendix:risk}
+\footnotesize
+\renewcommand{\arraystretch}{1.2}
+\begin{tabularx}{\linewidth}{p{3.6cm}p{1.6cm}p{1.6cm}X}
+\hline
+\textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Mitigation} \\
+\hline
+Streamlit rerun latency exceeds 600~ms target
+    & Medium & Medium
+    & Pre-compute highlight sets server-side; only recompute
+      the chart's colour column on rerun, not the full data. \\
+Full 50-day GPS pull from Kaggle fails or delays
+    & Medium & High
+    & Demo with 1-day sample; document the seven charts that
+      stay at SHOULD/WON'T tier until the pull completes. \\
+School geocoding under 50/64 success rate
+    & High & Medium
+    & Ship with district-level approximation and the
+      ``verified~\checkmark'' badge; do not block on full
+      geocoding. \\
+UMAP, parallel coordinates, or treemap fail to render
+at 163 routes
+    & Low & Low
+    & Sanity-tested in EDA notebooks; all three render
+      cleanly in Plotly at less than 500 routes. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section*{B.3 Personnel and time tracking}
+
+Phase~2 is single-author. Each phase commit closes when the
+phase's acceptance criterion in
+Table~\ref{tab:appendix:deliverables} passes. The thesis
+advisor reviews at the end of P2 (first end-to-end card) and
+at the end of P6 (all cards rendering) before sign-off.
+
+Time is tracked per phase, not per task, because every phase
+is small enough for one developer to hold the full context.
+The Gantt diagram in Section~\ref{sec:future:roadmap}
+(Figure~\ref{fig:future:gantt}) shows the planned scheduling.
+
+\section*{B.4 Post-Phase-2 user-validation study}
+
+A formal user study is scheduled to begin one week after P9
+completion. The study runs in two waves:
+
+\begin{itemize}
+\item \emph{Wave 1 (think-aloud sessions):} three or four
+    members of each of the four user roles
+    (Section~\ref{sec:proposed:problem}) work through a
+    scripted set of analytical tasks while the moderator
+    observes. Each session is approximately ninety minutes.
+\item \emph{Wave 2 (free exploration):} the same participants
+    are given the dashboard with no script for two weeks, with
+    weekly check-ins. The outcome measure is the number of
+    analytical findings the participant produces that the
+    dashboard surfaced but the participant had not previously
+    articulated.
+\end{itemize}
+
+The study is the basis for the ``Đánh giá và cải tiến''
+Phase~2 deliverable required by the capstone topic
+description~\cite{capstoneDescription}.
