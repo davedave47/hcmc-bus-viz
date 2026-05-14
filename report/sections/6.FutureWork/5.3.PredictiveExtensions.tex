@@ -1,7 +1,43 @@
 \section{Predictive Extensions}
 \label{sec:future:predictive}
 
-\noindent\textit{Stub --- this section sketches three
-predictive extensions: arrival-time prediction (Lin~\&~Zeng),
-per-route anomaly detection, and the bus-as-traffic-sensor map
-(Derevitskiy). Content to be filled by subagent~G3.}
+Two predictive extensions follow naturally from the historical
+foundation laid in Phase~1 and the implementation in Phase~2.
+Both consume the existing Layer~4 aggregate tables and require
+no revisiting of Layer~1, 2, or~3 of the warehouse.
+
+\paragraph{Real-time arrival-time prediction.}
+Lin~\&~Zeng~\cite{linzeng2014} demonstrate a link-node route
+representation that projects GPS pings onto a one-dimensional
+route path, constructs time--distance trajectories, and
+predicts arrival time at downstream stops with the dwell at
+time-check stops as the dominant predictor. The same
+construction applies to HCMC's fifty-day GPS dataset: the
+link-node representation falls out of the existing
+\texttt{gps\_stop\_times} view, and the dwell distribution is
+already aggregated in \texttt{fact\_stop\_visits.dwell\_seconds}.
+The extension lifts Chart~6.5 (the Marey diagram) from a
+backward-looking visualisation to a predictive one, with
+arrival-time bands rendered on the Detail-mode Routes page.
+
+\paragraph{Anomaly detection on hourly demand.}
+The Anomaly Lab of Chart~5.5 currently flags anomalous days at
+the network level using a threshold-$T$ slider over fixed
+quantile bands. The natural extension is to flag anomalies at
+the per-route per-hour grain using statistical-control limits
+derived from the ninety-day AFC history (control charts at
+$\pm 3\sigma$ on the \texttt{agg\_route\_hour} table). The
+extension feeds back into the Network Health card without
+requiring a new aggregate.
+
+\paragraph{Bus-as-traffic-sensor map.}
+A third, more speculative extension is the bus-as-traffic-sensor
+map of
+Derevitskiy~\textit{et~al.}~\cite{derevitskiy2016}: aggregating
+GPS-derived edge speeds into a road-graph-wide speed estimate
+that covers edges where no buses run, via macroscopic
+travel-time models. The extension is feasible against the full
+fifty-day GPS dataset but is currently outside the dashboard's
+scope because the resulting map would require its own card and
+its own data contract; it is therefore WON'T-tier for Phase~2
+and a candidate for a Phase~3 if the project continues.
