@@ -1,7 +1,94 @@
 \section{Problem Statement}
 \label{sec:proposed:problem}
 
-\noindent\textit{Stub --- this section formalises the
-engineering problem the project solves, addressing
-Câu~2 of the grading rubric (\cite{rubric}). Content
-to be filled by subagent~E1.}
+The motivation in Chapter~\ref{chapter:intro} establishes that
+the HCMC bus network generates large operational and demand-side
+data streams that no existing tool turns into actionable insight.
+This section formalises the engineering problem the present
+thesis solves and is the project's response to Câu~2 of the
+grading rubric~\cite{rubric}. The problem has four dimensions:
+the data problem, the user problem, the technology problem, and
+the non-functional constraints.
+
+\subsection{The data problem}
+
+The available data is two complementary streams that cannot be
+joined at the row level. The GPS stream covers fifty days
+(2025-03-20 to 2025-05-10) over thirty-one routes; locally only
+a single-day sample (2025-03-18, 131 vehicles, 720{,}088 pings)
+is loaded. The AFC stream covers ninety days
+(2026-01-01 to 2026-03-31) over one hundred and sixty-three
+routes, with 17{,}883{,}623 boarding events and a paired
+payments table. The two streams overlap on one hundred and
+twenty-one routes but on no calendar day; row-level joining is
+ruled out by construction. Additional constraints include the
+\texttt{user\_id} field being populated for only 0.1\% of tickets
+(ruling out individual-user features), the absence of alighting
+data (ruling out live-occupancy computation), the cumulative
+nature of boarding events (no per-vehicle occupancy at time~$T$),
+and ninety-one thousand \texttt{service\_type=`unknown'} rows in
+the schedule table (requiring an adherence cleaning step). The
+solution must therefore answer cross-source questions at an
+aggregate grain
+(\texttt{route}~$\times$~\texttt{hour-of-day}~$\times$~\texttt{day-type})
+rather than per-trip or per-passenger.
+
+\subsection{The user problem}
+
+Four user roles are in scope: passengers (concerned with
+crowding, reliability, beginner-friendliness), drivers (own
+shift, route detail), bus companies (fleet performance,
+revenue, scorecard against the network), and the MCPT operator
+(network performance, anomalies, equity, capacity). Each role
+has analytical questions the existing tooling produces no answer
+for; each role also has questions outside the dashboard's scope
+(real-time arrival-time for passengers, individual loyalty for
+companies, exact fuel-cost for the operator). The solution must
+serve all four roles from a single dashboard \emph{without}
+imposing a role selector at the entry point: the dashboard is
+role-agnostic in the chrome (no role badges, no role switcher)
+and role-anchored in the feature prioritisation (each card is
+internally anchored to one or two roles but exposes the same
+chrome to every user).
+
+\subsection{The technology problem}
+
+The dashboard must run as a single-process application without
+the operational overhead of a separate API tier or a managed
+database. Charts must remain interactive --- click, brush,
+drill-down --- without per-interaction round-trips through a
+remote service. The visual language must include chart types
+that no off-the-shelf Streamlit primitive supports natively (the
+Marey time--distance diagram, the GroupSet / UpSet intersection
+matrix, scrollytelling sequences), requiring the architecture to
+permit selective embedding of custom HTML components. The Python
+data stack (DuckDB, Polars, Pandas) must be the substrate, so
+that the dashboard shares its query layer with the project's
+exploratory notebooks and report-generation scripts. Finally,
+the dashboard must be deployable as a single laptop process for
+the Phase~1 demonstration and the Phase~2 user-validation study.
+
+\subsection{Non-functional constraints}
+
+Three non-functional constraints bound the design.
+\emph{Latency}: cold boot must complete in under three seconds
+and warm chart renders in under fifty milliseconds, so that
+interaction feels immediate on a typical laptop.
+\emph{Persistence}: the warehouse must persist on disk
+(approximately one hundred megabytes total) so that subsequent
+app launches reuse pre-computed aggregates and skip the rebuild.
+\emph{Exportability}: every chart must be exportable as PNG,
+PDF, and CSV from a single one-click control, so analytical
+findings can be lifted out of the tool into reports without
+screenshots.
+
+Subsequent sections of this chapter develop the proposed
+solution against these four problem dimensions. The overall
+architecture and the solution-decision-value framework are
+introduced in Section~\ref{sec:proposed:overview}; the warehouse
+in Section~\ref{sec:proposed:dataarch}; the empirical EDA
+findings that further scope the design in
+Section~\ref{sec:proposed:eda}; the screening of modules against
+the data constraints in Section~\ref{sec:proposed:modules}; and
+the dashboard's information architecture in
+Section~\ref{sec:proposed:dashboard}.
