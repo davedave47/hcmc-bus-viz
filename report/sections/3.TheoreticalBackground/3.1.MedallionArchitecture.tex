@@ -1,0 +1,49 @@
+\section{Four-Layer Warehouse Adaptation}
+\label{sec:background:warehouse}
+
+The data architecture proposed in this thesis adopts the
+\emph{medallion} pattern of Databricks~\cite{databricksMedallion}
+as a conceptual template --- raw input, conformed intermediate
+layers, and chart-ready output --- but specialises it to a
+four-layer warehouse whose layer boundaries match the dashboard's
+data needs.
+\textbf{Layer~1} is the set of twenty-four raw views produced by
+the upstream pipeline and registered by
+\texttt{src/duckdb\_loader.py}.
+\textbf{Layer~2} is a small star of ten conformed dimensions
+(\texttt{dim\_date}, \texttt{dim\_route}, \texttt{dim\_stop},
+\texttt{dim\_school}, \texttt{dim\_company},
+\texttt{dim\_fare\_class}, \texttt{dim\_payment\_channel},
+\texttt{dim\_vehicle}, \texttt{dim\_promotion},
+\texttt{dim\_hour}) that reconciles the parallel GPS and AFC
+identifier spaces and pre-tags the calendar with natural-experiment
+windows (Tết, April-30 parade).
+\textbf{Layer~3} is three fact views (\texttt{fact\_boardings},
+\texttt{fact\_gps\_trips}, \texttt{fact\_stop\_visits}) that
+re-shape the raw boarding and trip records through the conformed
+dimensions.
+\textbf{Layer~4} is the eight pre-computed aggregate tables that
+feed the thirty-one dashboard charts: \texttt{agg\_route\_hour},
+\texttt{agg\_route\_day}, \texttt{agg\_stop\_hour},
+\texttt{agg\_school\_route}, \texttt{agg\_company\_route},
+\texttt{agg\_payment\_day}, \texttt{agg\_network\_day}, and
+\texttt{agg\_route\_profile}.
+
+The specialisation collapses the classical Bronze-Silver-Gold
+three-layer division into raw / dim / fact / agg because the
+dashboard's chart catalogue defines a fixed, finite set of
+aggregation grains. Pre-computing them once at warehouse-build
+time replaces every other Gold-layer query the classical
+pattern would otherwise need, and makes the chart-to-aggregate
+mapping (Section~\ref{sec:proposed:modules}) a hard data contract
+between the dashboard and the warehouse. The trade-off is that
+adding a new chart at the last minute is no longer cheap; the
+mitigation is the eight aggregate tables together absorb all but
+one of the thirty-one charts in the catalogue (the only exception,
+the Marey time--distance diagram of Chart~6.5, is built directly
+on the fact layer because its grain is per-trip).
+
+The whole warehouse fits in under one hundred megabytes of disk
+and is held in DuckDB's columnar memory after first access, so
+chart queries that read Layer~4 return in under twenty
+milliseconds.
