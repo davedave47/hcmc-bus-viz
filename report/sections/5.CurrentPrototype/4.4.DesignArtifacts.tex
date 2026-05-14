@@ -1,8 +1,57 @@
 \section{Design Artefacts}
 \label{sec:prototype:artifacts}
 
-\noindent\textit{Stub --- this section catalogues the durable
-Phase~1 design artefacts (CLAUDE.md project log, the brainstorm
-corpus) and explains their roles as the authoritative source of
-truth for Phase~2 implementation. Content to be filled by
-subagent~F4.}
+In addition to the executable EDA notebooks, the UI mockup, and
+the warehouse skeleton, Phase~1 produced two further design
+artefacts that the Phase~2 implementation depends on.
+
+\paragraph{The project log (\texttt{CLAUDE.md}).}
+A single-file project log (approximately 350 lines) records
+every locked design decision from the brainstorming phase. Each
+decision is annotated with its section in this report; where
+the report and the log diverge, the log is the authoritative
+source of truth (the log is updated in lockstep with every
+locked decision, while the report is regenerated less
+frequently). The log also enumerates the four EDA notebooks
+catalogued in Section~\ref{sec:prototype:eda}, the seven
+reference works that ground the design
+(Knaflic~\cite{knaflic2015}, Liu~\cite{liu2022},
+Srisakaokul~\textit{et~al.}~\cite{srisakaokul2023},
+Derevitskiy~\textit{et~al.}~\cite{derevitskiy2016},
+Lin~\&~Zeng~\cite{linzeng2014}, the HCMC dataset
+specification~\cite{hcmcgps2025}, and the advisor's analytics
+checklist~\cite{thoai2025}), and the running brainstorm record.
+
+\paragraph{The brainstorm corpus.}
+A directory of HTML files under
+\texttt{.superpowers/brainstorm/.../content/} documents the
+iterative UI explorations that converged on the v8 design
+shown in Section~\ref{sec:prototype:mockups}. The corpus is
+preserved as a design trail and is referenced from
+Section~\ref{sec:future:roadmap} as evidence that the visual
+language chosen here is the product of structured iteration
+rather than first-attempt fixation.
+
+Together with the report itself, the UI mockup, the four EDA
+notebooks, and the warehouse skeleton, these artefacts compose
+the complete Phase~1 deliverable set. The four Phase~1
+deliverables required by the capstone topic
+description~\cite{capstoneDescription} ---
+\emph{(i)~studying the HCMC bus dataset}
+(Section~\ref{sec:prototype:eda}),
+\emph{(ii)~proposing related analytical problems}
+(Section~\ref{sec:proposed:problem}),
+\emph{(iii)~designing the analysis and visualisation solution}
+(Chapters~\ref{chapter:proposed} and~\ref{chapter:prototype}),
+\emph{(iv)~researching and selecting the appropriate techniques
+and tools}
+(Chapter~\ref{chapter:background} and
+Sections~\ref{sec:proposed:warehouse_alts},
+\ref{sec:proposed:module_rationale},
+\ref{sec:proposed:dashboard_alts}) ---
+are therefore complete. The Phase~1 deliverable
+\emph{``Phát triển, thử nghiệm và đánh giá ban đầu''}
+(``develop, test, and conduct initial evaluation'') is partially
+met by the warehouse skeleton and the four executed notebooks;
+full Phase~2 development continues per the roadmap in
+Chapter~\ref{chapter:future}.
