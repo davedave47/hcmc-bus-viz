@@ -2,17 +2,107 @@
 \label{appendix:images}
 \addcontentsline{toc}{chapter}{Appendix C --- Image and Diagram Inventory}
 
-\noindent\textit{This appendix is the single master inventory of
-every image, screenshot, diagram, and chart this report needs.
-The body of the report uses the
-\texttt{\textbackslash imageplaceholder} macro to leave a labelled
-empty box wherever a visual asset will go; this appendix
-collects every such placeholder in one place with the capture
-instructions for the author. The intent is that the author can
+This appendix is the single master inventory of every image,
+screenshot, diagram, and chart this report needs. The body of
+the report uses the \texttt{\textbackslash imageplaceholder}
+macro to leave a labelled box wherever a visual asset will go;
+this appendix collects every such placeholder in one place with
+the capture instructions. The intent is that the author can
 work through this appendix once, photograph or export every
-asset, save each to the listed path, and the placeholders in the
-body will then be replaced wholesale.}
+asset, save each to the listed path, and the placeholders in
+the body will then be replaced wholesale.
 
-\noindent\textit{Stub --- this inventory will be auto-collected
-once every section is drafted. Content to be filled by
-subagent~I2 (the same subagent that writes Appendix~A).}
+\begin{longtable}{p{2.4cm}p{4.6cm}X}
+\caption{Image inventory: every placeholder in the report, by
+file path and capture instruction.}
+\label{tab:appendix:images}\\
+\hline
+\textbf{Path} & \textbf{Section} & \textbf{Capture instruction} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Path} & \textbf{Section} & \textbf{Capture instruction} \\
+\hline
+\endhead
+
+\texttt{images/screenshots/\linebreak hcmc\_bus\_photo.jpg}
+& Motivation (Section~\ref{sec:intro:motivation})
+& Photograph an HCMC bus during peak hours (District~1,
+  B\d ến Th\`anh area). Wide shot, passengers boarding,
+  route signage visible. \\
+
+\texttt{images/screenshots/\linebreak mcpt\_directory.png}
+& Motivation (Section~\ref{sec:intro:motivation})
+& Open the MCPT public route directory in a browser; capture a
+  full-page screenshot at 1440~px wide showing the route-list
+  view. \\
+
+\texttt{images/logos/\linebreak duckdb.png}
+& Analytical Stack (Section~\ref{sec:background:warehouse} ff.)
+& Download the official DuckDB logo from \url{duckdb.org}. \\
+
+\texttt{images/logos/\linebreak polars.png}
+& Analytical Stack
+& Official Polars logo from \url{pola.rs}. \\
+
+\texttt{images/logos/\linebreak jupyter.png}
+& Analytical Stack
+& Official Jupyter logo from \url{jupyter.org}. \\
+
+\texttt{images/logos/\linebreak streamlit.png}
+& Analytical Stack
+& Official Streamlit logo from \url{streamlit.io}. \\
+
+\texttt{images/logos/\linebreak pydeck.png}
+& Analytical Stack
+& Official pydeck / deck.gl logo from \url{deck.gl}. \\
+
+\texttt{images/logos/\linebreak plotly.png}
+& Analytical Stack
+& Official Plotly logo from \url{plotly.com}. \\
+
+\texttt{images/diagrams/\linebreak warehouse\_schema.png}
+& Schema (Section~\ref{sec:proposed:schema})
+& Draw the ER diagram (three swimlanes: GPS / AFC / shared
+  masters; see Figure~\ref{fig:proposed:schema} placeholder for
+  full instructions). Tool: \texttt{draw.io} or
+  \texttt{Mermaid}. PNG at 300~DPI. \\
+
+\texttt{images/screenshots/\linebreak eda\_student\_fare\_calendar.png}
+& EDA notebooks (Section~\ref{sec:prototype:eda})
+& Run notebook~03 cell ``student fare weekly heatmap''; export
+  Plotly figure as PNG $\geq$~1200~px wide. \\
+
+\texttt{images/screenshots/\linebreak hub\_v8\_full.png}
+& UI Mockups (Section~\ref{sec:prototype:mockups})
+& Open \texttt{docs/design/app-layouts.html} in browser at
+  1280~px; full-page screenshot of the hub section. \\
+
+\texttt{images/screenshots/\linebreak card\_interior\_demand.png}
+& UI Mockups (Section~\ref{sec:prototype:mockups})
+& Scroll to card-interior section of mockup; screenshot the
+  card interior with a click pop-up active. \\
+
+\texttt{images/screenshots/\linebreak entity\_panel.png}
+& UI Mockups (Section~\ref{sec:prototype:mockups})
+& Scroll to entity-panel section of mockup; screenshot panel +
+  underlying chart canvas. \\
+
+\texttt{images/diagrams/\linebreak phase2\_gantt.png}
+& Phase 2 Roadmap (Section~\ref{sec:future:roadmap})
+& Draw the Gantt chart (nine bars P1--P9 across days 0--21
+  with dependency arrows; see Figure~\ref{fig:future:gantt}
+  placeholder for full instructions). Tool: \texttt{draw.io}
+  or \texttt{Lucidchart}. PNG at 300~DPI. \\
+
+\hline
+\end{longtable}
+
+\paragraph{Workflow recommendation.}
+To replace the placeholders with real images: (i)~capture every
+asset in this table; (ii)~save each to the listed path;
+(iii)~edit the corresponding section file to swap
+\texttt{\textbackslash imageplaceholder}$\{$\dots$\}$ for
+\texttt{\textbackslash includegraphics[width=...]{path}};
+(iv)~re-run \texttt{xelatex} + \texttt{biber} +
+\texttt{xelatex} $\times$ 2.
