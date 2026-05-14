@@ -1,8 +1,76 @@
 \section{Interactive Mockup}
 \label{sec:prototype:mockups}
 
-\noindent\textit{Stub --- this section describes the locked
-high-fidelity UI mockup at
-\texttt{docs/design/app-layouts.html} with image placeholders
-for the hub, the card interior, and the entity panel. Content
-to be filled by subagent~F2.}
+The dashboard's visual language is locked in a single-file
+high-fidelity HTML mockup published at
+\texttt{docs/design/app-layouts.html}. The mockup is not a
+Streamlit prototype but a pixel-accurate reference that the
+Streamlit implementation will reproduce in Phase~2 through a
+combination of native Plotly charts (twenty-two of thirty-one
+charts), native pydeck maps (six charts), and embedded HTML
+components for the hub itself plus the three custom chart types
+(Marey, GroupSet/UpSet, scrollytelling Stories).
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Screenshot}{The hub mockup, vertical
+editorial scroll. Six alternating cards each with a unique
+accent colour (orange / gold-flagship / green / red / purple /
+slate), a teaser SVG matching the card's principal chart type,
+and a story-subtitle pull-quote. Date-range pill ``Jan~1--Mar~31,
+2026'' in the top bar; ``Cards $\downarrow$'' and ``Stories
+$\downarrow$'' dropdown menus.}{Open
+\texttt{docs/design/app-layouts.html} in a browser at 1280~px
+width; take a full-page screenshot covering the entire hub
+section. Save as
+\texttt{images/screenshots/hub\_v8\_full.png}.}
+\caption{The hub mockup: six alternating cards with per-card
+accent colours and chart-type teasers (Section~\ref{sec:proposed:hub}).}
+\label{fig:prototype:hub}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Screenshot}{The card-interior mockup for
+Card~2 (Demand \& Crowding), Route $\times$ Hour heatmap
+active. The 108-pixel rail on the left lists the five charts in
+the theme; the filter bar above the canvas carries the
+per-chart filter chips and a breadcrumb; the canvas is a
+heatmap with a click pop-up open over one cell.}{Scroll to the
+second mockup section in
+\texttt{docs/design/app-layouts.html}. Take a screenshot of the
+card interior with a pop-up active. Save as
+\texttt{images/screenshots/card\_interior\_demand.png}.}
+\caption{The card interior: a narrow rail of chart options on
+the left, a single big-canvas chart on the right with a
+per-chart filter bar, a click pop-up demonstrating the A1
+linked-brushing invariant (Section~\ref{sec:proposed:card}).}
+\label{fig:prototype:card}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Screenshot}{The A3 universal entity-detail
+panel, shown for Route~152. Side panel covers approximately
+forty percent of the viewport on the right, with tabs
+``Overview'', ``Demand'', ``Reliability'', ``Network'',
+``Context''. Shows a KPI strip, a small spark-line history, a
+``Routes like this one'' card with three UMAP neighbours, and a
+drill-down action list.}{Scroll to the entity-panel section in
+\texttt{docs/design/app-layouts.html}; take a screenshot
+covering the panel and the chart canvas it overlays. Save as
+\texttt{images/screenshots/entity\_panel.png}.}
+\caption{The A3 universal entity-detail panel, opened on a
+route click (Section~\ref{sec:proposed:invariants}).}
+\label{fig:prototype:panel}
+\end{figure}
+
+The mockup also documents the cross-card navigation drop-downs
+in the top bar, the hover-tooltip glossary for technical terms
+(QoS-1/2/3, AFC, Marey, UMAP, etc.), and the four scrollytelling
+Stories that run as a separate section of the hub
+(Section~\ref{sec:proposed:stories}). The published mockup is
+the artefactual evidence of the dashboard specification in
+Chapter~\ref{chapter:proposed}; locking it before any Streamlit
+code is written is the Phase~1 deliverable that lets Phase~2
+proceed without further visual-design work.
