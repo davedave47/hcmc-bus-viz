@@ -1,0 +1,303 @@
+\section{Data Architecture}
+\label{sec:proposed:dataarch}
+
+The data architecture has two complementary halves. The
+\emph{schema} (Section~\ref{sec:proposed:schema}) describes what
+tables exist and how they relate. The \emph{pipeline}
+(Section~\ref{sec:proposed:pipeline}) describes how those tables
+are produced from the raw exports and at what quality tier each
+table sits. The two halves together replace four ad~hoc CSV
+collections with a single queryable surface that the dashboard
+draws from.
+
+\subsection{Schema}
+\label{sec:proposed:schema}
+
+The HCMC dataset arrives as two parallel relational systems --- a
+GPS-side schema produced by the vehicle telemetry system, and an
+AFC-side schema produced by the fare-collection system --- plus a
+small set of shared master tables. The relationships between the
+two sides and the shared masters are shown in
+Figure~\ref{fig:proposed:schema}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    tbl/.style       ={rectangle, draw=#1, fill=#1!8,
+                        rounded corners=2pt,
+                        font=\scriptsize\sffamily,
+                        align=left, inner sep=4pt,
+                        text width=3.6cm},
+    hdr/.style       ={rectangle, draw=#1, fill=#1!22,
+                        rounded corners=2pt at top,
+                        font=\scriptsize\sffamily\bfseries,
+                        text width=3.6cm, align=center,
+                        inner sep=2pt, minimum height=12pt},
+    fk/.style        ={-stealth, blue!50!gray, dashed, thin},
+    arrow/.style     ={-stealth, gray!60, thick},
+    column/.style    ={font=\scriptsize\sffamily\bfseries\itshape,
+                       color=gray!60!black},
+    node distance=3pt and 6pt
+]
+
+\node[column] at (-5.0, 5.6) {GPS side};
+\node[column] at ( 0.0, 5.6) {AFC side};
+\node[column] at ( 5.0, 5.6) {Shared masters};
+
+% --- GPS side ---
+\node[hdr=orange!70!black]                       (h1) at (-5.0, 4.8) {gps\_trips};
+\node[tbl=orange!70!black, below=0pt of h1]      (t1)
+    {\textbf{PK} trip\_id\\\textbf{FK} route\_id, vehicle\_id\\start\_time, end\_time\\travel\_time, direction};
+
+\node[hdr=orange!70!black, below=4pt of t1]      (h2) {gps\_stop\_times};
+\node[tbl=orange!70!black, below=0pt of h2]      (t2)
+    {\textbf{FK} trip\_id, station\_id\\arrival\_time, dwell\_time\\departure\_time, order};
+
+\node[hdr=orange!70!black, below=4pt of t2]      (h3) {gps\_extracted};
+\node[tbl=orange!70!black, below=0pt of h3]      (t3)
+    {\textbf{FK} trip\_id\\ver\_lat, ver\_lng\\nearest\_stop\_id\\in\_buffer, hmm\_state};
+
+\node[hdr=orange!70!black, below=4pt of t3]      (h4) {gps\_routes / schedules};
+\node[tbl=orange!70!black, below=0pt of h4]      (t4)
+    {route\_id, route\_no\\headway, distance\\departure / arrival times};
+
+% --- AFC side ---
+\node[hdr=blue!70!black]                         (a1) at (0.0, 4.8) {tickets};
+\node[tbl=blue!70!black, below=0pt of a1]        (ta1)
+    {\textbf{PK} ticket\_id\\\textbf{FK} trip\_id, station\_id\\ticket\_type\\time\_created\_ticket};
+
+\node[hdr=blue!70!black, below=4pt of ta1]       (a2) {payments};
+\node[tbl=blue!70!black, below=0pt of a2]        (ta2)
+    {\textbf{PK} ticket\_id\\final\_price\\payment\_method};
+
+\node[hdr=blue!70!black, below=4pt of ta2]       (a3) {ticket\_trips};
+\node[tbl=blue!70!black, below=0pt of a3]        (ta3)
+    {\textbf{PK} trip\_id\\\textbf{FK} route\_id, bus\_id\\direction};
+
+\node[hdr=blue!70!black, below=4pt of ta3]       (a4) {ticket\_routes};
+\node[tbl=blue!70!black, below=0pt of a4]        (ta4)
+    {route\_id, route\_no\\\textbf{FK} company\_id};
+
+% --- Shared ---
+\node[hdr=green!50!black]                        (s1) at (5.0, 4.8) {stops\_master};
+\node[tbl=green!50!black, below=0pt of s1]       (ts1)
+    {stop\_id, stop\_name\\lat, lng, ward, zone\\type, routes\\(4\,710 HCMC stops)};
+
+\node[hdr=green!50!black, below=4pt of ts1]      (s2) {ticket\_stations};
+\node[tbl=green!50!black, below=0pt of s2]       (ts2)
+    {station\_id\\station\_name\\lat, lng};
+
+\node[hdr=green!50!black, below=4pt of ts2]      (s3) {gps\_stations};
+\node[tbl=green!50!black, below=0pt of s3]       (ts3)
+    {station\_id\\name, lat, lng\\type, zone};
+
+% Within-side FK arrows
+\draw[fk] (t1.south) -- (t2.north);
+\draw[fk] (t1.east)  to[bend right=25] (t3.east);
+\draw[fk] (t4.north) to[bend right=20] (t1.south);
+
+\draw[fk] (ta1.south) -- (ta2.north);
+\draw[fk] (ta1.east)  to[bend right=10] (ta3.east);
+\draw[fk] (ta3.south) -- (ta4.north);
+
+% Cross-side via shared masters (name-only match)
+\draw[fk, dotted] (t2.east)  -- (ts3.west);
+\draw[fk, dotted] (ta1.east) -- (ts2.west);
+\draw[fk, dotted] (ts1.west) to[bend left=10]  (ts2.west);
+\draw[fk, dotted] (ts1.west) to[bend right=10] (ts3.west);
+
+\end{tikzpicture}
+\caption{Data schema. GPS-side tables (left, orange) are keyed on
+\texttt{trip\_id} and \texttt{vehicle\_id}; AFC-side tables
+(centre, blue) are keyed on \texttt{ticket\_id} and a separate
+\texttt{trip\_id}; the shared master tables (right, green)
+connect the two sides only by stop-name lookup. Solid dashed
+arrows are foreign-key relationships; dotted arrows are
+name-only matches.}
+\label{fig:proposed:schema}
+\end{figure}
+
+The GPS side captures every aspect of bus operation that can be
+observed from vehicle telemetry. \texttt{gps\_raw} (not shown
+above for compactness) holds the raw ping stream; the data
+provider pre-aggregates the pings into \texttt{gps\_trips} (one
+row per detected trip), \texttt{gps\_stop\_times} (one row per
+stop visit within a trip), and \texttt{gps\_extracted} (the
+HMM-filtered ping stream that QoS-2 consumes). The dimension
+tables \texttt{gps\_routes}, \texttt{gps\_stations} and the
+planned \texttt{gps\_schedules} carry the static reference data
+that QoS-1 and QoS-3 require.
+
+The AFC side records every boarding event. \texttt{tickets}
+holds one row per scan, \texttt{payments} carries the financial
+side keyed on \texttt{ticket\_id}, and \texttt{ticket\_trips}
+provides per-trip metadata. The dimension tables
+\texttt{ticket\_routes}, \texttt{ticket\_stations},
+\texttt{ticket\_companies}, \texttt{ticket\_buses}, and the
+route-stop sequence table \texttt{ticket\_route\_stops} complete
+the side.
+
+Two shared master tables sit alongside the side-specific
+schemas. \texttt{stops\_master} is the HCMC-wide stop directory
+(4{,}710 stops with names, latitude/longitude, ward, zone, and
+the list of routes serving each stop). \texttt{vehicle\_route\_mapping}
+provides an anonymised vehicle-hash to route-number lookup. The
+two side-specific schemas cannot be joined by timestamp because
+the GPS sample covers 2025-03-18 (single day) while the AFC
+sample covers 2026-01-01 to 2026-03-31 (90 days, no overlap), and
+a \texttt{vehicle\_id} bridge is unavailable: the GPS side uses
+license-plate identifiers while the AFC side uses internal
+\texttt{bus\_id} codes. The schema is therefore reconciled
+narratively at the stop level via \texttt{stops\_master}
+stop-name matching, rather than at the trip level.
+
+\subsection{Pipeline}
+\label{sec:proposed:pipeline}
+
+The pipeline implements the medallion pattern of
+Section~\ref{sec:theory:medallion} over the schema above. It
+runs once at load time and produces the pre-aggregated
+Gold-layer views the dashboard queries during interactive use.
+Figure~\ref{fig:proposed:pipeline} shows the end-to-end flow.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    layer/.style    ={rectangle, rounded corners=4pt, draw=#1,
+                       fill=#1!10, minimum height=22pt,
+                       inner sep=4pt, font=\small\sffamily,
+                       align=center},
+    box/.style      ={rectangle, rounded corners=2pt, draw=#1,
+                       fill=#1!8, minimum height=20pt,
+                       inner xsep=4pt, font=\footnotesize\sffamily,
+                       text width=2.5cm, align=center},
+    label/.style    ={font=\footnotesize\sffamily\bfseries,
+                       rotate=90, anchor=center},
+    arrow/.style    ={-stealth, thick, draw=gray!60},
+    node distance=3pt and 6pt
+]
+
+\node[label, color=red!70!black] at (-7.4, 4.6) {Raw};
+\node[box=red!70!black] (r1) at (-5,4.6) {GPS pings\\\tiny 720 K · 1 day};
+\node[box=red!70!black, right=of r1] (r2) {GPS trips\\\tiny 1.2 K · 9 routes};
+\node[box=red!70!black, right=of r2] (r3) {AFC tickets\\\tiny 17.9 M · 90 days};
+\node[box=red!70!black, right=of r3] (r4) {GTFS / masters\\\tiny stops, routes};
+
+\node[label, color=orange!70!black] at (-7.4, 3.1) {Bronze};
+\node[layer=orange!70!black, minimum width=12cm] (b) at (-0.5, 3.1)
+    {DuckDB external views (\texttt{read\_csv\_auto}) -- zero copy};
+
+\node[label, color=gray!50!black] at (-7.4, 1.6) {Silver};
+\node[box=gray!50!black] (s1) at (-5,1.6) {gps\_raw\\gps\_trips};
+\node[box=gray!50!black, right=of s1] (s2) {gps\_extracted\\gps\_stop\_times};
+\node[box=gray!50!black, right=of s2] (s3) {tickets\\payments\\(per-day)};
+\node[box=gray!50!black, right=of s3] (s4) {dim tables\\routes, stops};
+
+\node[label, color=yellow!50!black] at (-7.4, 0.1) {Gold};
+\node[box=yellow!50!black] (g1) at (-5,0.1) {kpi\_network};
+\node[box=yellow!50!black, right=of g1] (g2) {route\_health};
+\node[box=yellow!50!black, right=of g2] (g3) {stop\_demand};
+\node[box=yellow!50!black, right=of g3] (g4) {payment\_mix\\metro\_xfer};
+
+\node[label, color=blue!70!black] at (-7.4, -1.4) {App};
+\node[layer=blue!70!black, minimum width=12cm] (app) at (-0.5, -1.4)
+    {Streamlit + pydeck atlas -- 5 lenses, MCV, single-chart canvas};
+
+\foreach \i in {r1,r2,r3,r4} \draw[arrow] (\i.south) -- (\i.south |- b.north);
+\foreach \i in {s1,s2,s3,s4} \draw[arrow] (\i.north |- b.south) -- (\i.north);
+\foreach \i/\j in {s1/g1, s2/g2, s3/g3, s4/g4} \draw[arrow] (\i.south) -- (\j.north);
+\foreach \i in {g1,g2,g3,g4} \draw[arrow] (\i.south) -- (\i.south |- app.north);
+
+\end{tikzpicture}
+\caption{Five-layer pipeline. Bronze exposes raw files as
+zero-copy DuckDB views; Silver materialises cleaned Parquet;
+Gold pre-aggregates one table per analytical question; the app
+layer consumes Gold for dashboard rendering.}
+\label{fig:proposed:pipeline}
+\end{figure}
+
+\paragraph{Raw layer.}
+The raw layer is the on-disk dataset as delivered. GPS data is
+supplied as one CSV per day in \texttt{gps/raw\_gps/}; the local
+sample is 720{,}088 rows for 2025-03-18. HMM-filtered per-trip
+CSVs are provided under \texttt{extracted\_trips\_buffer\_50m/}
+for the nine routes that GPS coverage extends to. AFC ticketing
+data covers 90 days under \texttt{tickets/\{month\}/} and is
+split into a tickets table (17.9~million rows) and a payments
+table keyed on \texttt{ticket\_id}. Static reference data is
+small and loaded as plain CSV. The raw files total approximately
+3.3~GB on disk before compression.
+
+\paragraph{Bronze layer.}
+The Bronze layer registers DuckDB external views directly
+against the raw files using \texttt{read\_csv\_auto} with
+\texttt{ignore\_errors=true} and \texttt{union\_by\_name=true}.
+No transformation occurs at this layer. Its purpose is to enable
+schema inspection, ad~hoc SQL exploration of the raw files, and
+column-level error discovery before any normalisation is
+committed. Inspection at this layer drove three Silver-layer
+transformations: the type-cast to \texttt{TIMESTAMP} for the
+\texttt{datetime} column, the rewrite of the misleading
+\texttt{`Tiền mặt'} payment label, and the per-day partitioning
+of the AFC fact streams to keep peak normalisation memory
+bounded.
+
+\paragraph{Silver layer.}
+The Silver layer normalises the Bronze views into
+ZSTD-compressed Parquet files with three substantive
+transformations. First, every column is cast to its strict type
+(\texttt{TIMESTAMP}, \texttt{DOUBLE}, \texttt{BOOLEAN}); casts
+use the \texttt{TRY\_CAST} variant so a small number of
+malformed rows do not abort the load. Second, the two large
+fact streams (\texttt{tickets} and \texttt{payments}) are
+written one Parquet file per day so DuckDB can lazily glob them
+as a single view via \texttt{read\_parquet('tickets/*.parquet')};
+this keeps peak normalisation memory to the size of one daily
+file ($\sim$30~MB) and enables DuckDB's parallel partition
+pruning when the dashboard's date filter narrows the analysis.
+Third, the \texttt{`Tiền mặt'} label is rewritten to
+\emph{Smart card / Prepaid}, and the four passenger segments
+are derived deterministically from \texttt{ticket\_type} via a
+SQL macro \texttt{SEGMENT\_EXPR} so every downstream consumer
+uses the same classification logic.
+
+\paragraph{Gold layer.}
+The Gold layer materialises one aggregated view per analytical
+question identified in Section~\ref{sec:proposed:modules}.
+Five Gold tables cover the dashboard
+(Table~\ref{tab:proposed:gold}). By aggregating once at load
+time, the Gold layer avoids repeating GROUP-BY scans of the
+17.9-million-row ticket table on every dashboard interaction.
+The resulting query latency for a typical lens render is under
+one second on a 1366$\times$768 laptop, well within the
+threshold required for interactive analysis.
+
+\begin{table}[H]
+\centering
+\caption{Gold-layer aggregates. Each table is a materialised
+DuckDB view consumed by one or more lenses.}
+\label{tab:proposed:gold}
+\begin{tabularx}{\linewidth}{p{3.4cm}p{2.4cm}X}
+\hline
+\textbf{View} & \textbf{Keys} & \textbf{Columns and consumers} \\
+\hline
+\texttt{kpi\_network}     & date, route\_no & total boardings, revenue, ghost\%, busiest route. Network KPI strip. \\
+\texttt{route\_health}    & route\_no, date & boardings, ghost\%, CoV, demographic mix, dwell stats. Network treemap, Operator scatter, Route Explorer KPIs. \\
+\texttt{stop\_demand}     & stop\_id, date, hour & boardings, avg fare, peak hour, dwell. Stop Analysis. \\
+\texttt{payment\_mix}     & date, route\_no, payment\_method & tickets, revenue, share. Financial. \\
+\texttt{metro\_xfer}      & metro\_stop\_id, route\_id & feeder coverage rings (deferred fields: trips\_on\_time, transfer\_window). Metro. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\paragraph{Reproducibility.}
+The pipeline is implemented as a single Python module
+(\texttt{src/duckdb\_loader.py}) that is reproducible from the
+raw exports. The module exposes a \texttt{normalize()} entry
+point that runs the Bronze, Silver, and Gold transformations
+in sequence and a \texttt{register\_views()} entry point that
+registers the views from existing Parquet for subsequent runs.
+A new daily delivery is integrated by dropping the new CSV
+files into the appropriate raw directory and re-running
+\texttt{normalize()}; the per-day partitioning ensures only
+the new files are rewritten.

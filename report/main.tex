@@ -1,0 +1,220 @@
+%!TEX program = xelatex
+\documentclass[12pt]{report}
+\usepackage[fontsize=13pt]{scrextend}
+\usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=2cm]{geometry}
+% \usepackage{svg}
+\usepackage{tgtermes}
+\usepackage{fontspec}
+\usepackage{biblatex}
+\addbibresource{sections/ref.bib}
+% \usepackage{pgfsys}
+% \usepackage{transparent}
+\setmainfont{Times New Roman}
+\usepackage{eso-pic}
+\usepackage{tikz}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usetikzlibrary{positioning}
+\usepackage{anyfontsize}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{listings}
+\usepackage{lscape}
+\linespread{1.5}
+\usepackage{hyperref}
+\usepackage{longtable}
+\usepackage{xcolor}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+\usepackage{subcaption}
+
+% Show subsections in the table of contents (TOC is the primary entry point for markers).
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+\lstset{
+    basicstyle=\small\ttfamily,
+    numbers=left,
+    frame=single,
+}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+
+\newcommand{\Khang}[1]{\textcolor{red!70!pink}{\textbf{\textit{#1}}}}
+
+% Image placeholder macro.
+% Usage: \imageplaceholder{Type}{What the image is}{How the author will capture it}
+% Every figure in this report uses this macro so the author can fill in real images
+% later. The master inventory of placeholders lives in Appendix C.
+\newcommand{\imageplaceholder}[3]{%
+  \begin{center}
+  \fbox{\begin{minipage}{0.86\linewidth}
+    \vspace{0.6cm}
+    \centering
+    \textbf{[IMAGE PLACEHOLDER]}\\[6pt]
+    \begin{minipage}{0.92\linewidth}
+      \raggedright
+      \textit{Type:} #1\\[3pt]
+      \textit{What:} #2\\[3pt]
+      \textit{How to capture:} #3
+    \end{minipage}\\
+    \vspace{0.6cm}
+  \end{minipage}}
+  \end{center}
+}
+
+% Chapter title formatting.
+\titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
+
+\begin{document}
+
+\input{sections/cover-page}
+\setmainfont{Times New Roman}
+
+\clearpage
+\pagenumbering{roman}
+\input{sections/ins-signature}
+
+\input{sections/decl-of-authen}
+
+\input{sections/ack}
+
+\input{sections/abstract}
+
+\input{sections/table-of-glossary}
+
+% \input{sections/list-of-abbreviations}
+
+\input{sections/contents}
+
+\listoftables
+\newpage
+
+\listoffigures
+\newpage
+
+\pagenumbering{arabic}
+
+% ============================================================
+% Chapter 1 — Introduction
+% ============================================================
+\chapter{Introduction}
+\label{chapter:intro}
+
+\textit{This chapter presents the motivation, scope, and outline
+of the project. Contributions are summarised at the end of the
+report in Chapter~\ref{chapter:conclusion} once the rest of the
+report has established the context.}
+
+\input{sections/1.Introduction/1.1.Motivation}
+\input{sections/1.Introduction/1.3.Scope}
+\input{sections/1.Introduction/1.4.Thesis-structure}
+
+% ============================================================
+% Chapter 2 — Background and Related Work
+% (combines the old "Related Works" and "Theoretical Background" chapters;
+% opens with a Related Work survey for Rubric Câu 3 coverage, then develops
+% the theoretical foundations the proposed solution rests on.)
+% ============================================================
+\chapter{Background and Related Work}
+\label{chapter:background}
+
+\textit{This chapter surveys the prior research and the
+theoretical foundations on which the proposed solution rests:
+the bodies of related work that frame the problem (Câu~3 of the
+grading rubric, see~\cite{rubric}), the four-layer warehouse
+adaptation of the medallion data architecture, the analytical
+stack that implements it, the QoS scoring framework, the
+visualisation primitives borrowed from Liu and Lin~\&~Zeng, the
+visual-storytelling principles of Knaflic, and the Multiple
+Coordinated Views interaction model.}
+
+\input{sections/3.TheoreticalBackground/2.0.RelatedWork}
+\input{sections/3.TheoreticalBackground/3.1.MedallionArchitecture}
+\input{sections/3.TheoreticalBackground/3.2.AnalyticalStack}
+\input{sections/3.TheoreticalBackground/3.3.QoSScoring}
+\input{sections/3.TheoreticalBackground/3.4.VisualizationPrimitives}
+\input{sections/3.TheoreticalBackground/3.5.Storytelling}
+\input{sections/3.TheoreticalBackground/3.6.MCV}
+
+% ============================================================
+% Chapter 3 — Proposed Solution
+% (THE highest-stakes chapter for marker review — 30 of 100 rubric points;
+% opens with a Problem Statement section per advisor's instruction.)
+% ============================================================
+\chapter{Proposed Solution}
+\label{chapter:proposed}
+
+\textit{This chapter formalises the problem the project solves
+and develops the proposed solution. It opens with a problem
+statement, then presents the SDVF tier prioritisation, the
+four-layer warehouse design, the empirical EDA findings that
+ground every design decision, the module selection that screens
+analytical modules against schema and data availability, and
+the dashboard specification (Hub~$\rightarrow$~Card~$\rightarrow$~Chart
+hierarchy, six cards, thirty-one canonical charts, three
+behavioural invariants, and the scrollytelling Stories layer).}
+
+\input{sections/4.ProposedSolution/4.1.ProblemStatement}
+\input{sections/4.ProposedSolution/4.2.Overview}
+\input{sections/4.ProposedSolution/4.3.DataArchitecture}
+\input{sections/4.ProposedSolution/4.4.EDA}
+\input{sections/4.ProposedSolution/4.5.ModuleSelection}
+\input{sections/4.ProposedSolution/4.6.Dashboard}
+
+% ============================================================
+% Chapter 4 — Current Prototype (NEW, advisor-requested)
+% ============================================================
+\chapter{Current Prototype}
+\label{chapter:prototype}
+
+\textit{This chapter presents the artefacts produced during
+Phase~1: the exploratory analysis on which the solution is
+grounded, the high-fidelity UI mockup that locks the dashboard's
+visual language, the data-pipeline skeleton that already executes
+against the local sample, and the supporting design artefacts.}
+
+\input{sections/5.CurrentPrototype/4.1.EdaNotebooks}
+\input{sections/5.CurrentPrototype/4.2.UiMockups}
+\input{sections/5.CurrentPrototype/4.3.WarehouseSkeleton}
+\input{sections/5.CurrentPrototype/4.4.DesignArtifacts}
+
+% ============================================================
+% Chapter 5 — Future Work (NEW, advisor-requested)
+% ============================================================
+\chapter{Future Work}
+\label{chapter:future}
+
+\textit{This chapter sketches the Phase~2 implementation roadmap,
+the data activations that unlock currently-deferred features, the
+predictive extensions that follow naturally from the historical
+foundation laid in Phase~1, and the external integrations and
+user-validation study that close the design loop.}
+
+\input{sections/6.FutureWork/5.1.Phase2Roadmap}
+\input{sections/6.FutureWork/5.2.FullGpsActivation}
+\input{sections/6.FutureWork/5.3.PredictiveExtensions}
+\input{sections/6.FutureWork/5.4.AskTheDataAndUserStudy}
+
+% ============================================================
+% Chapter 6 — Conclusion (Contributions section lives here per advisor's note)
+% ============================================================
+\chapter{Conclusion}
+\label{chapter:conclusion}
+
+\input{sections/5.Conclusion/summary}
+
+\input{sections/references}
+
+\input{sections/appendixes/appendix}
+\input{sections/appendixes/plan}
+\input{sections/appendixes/image-inventory}
+
+\end{document}

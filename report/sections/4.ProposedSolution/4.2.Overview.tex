@@ -1,0 +1,33 @@
+\section{Overview}
+\label{sec:proposed:overview}
+
+This chapter presents the proposed solution. It is developed in
+four steps. Section~\ref{sec:proposed:dataarch} formalises the
+data architecture --- both the schema across the GPS and AFC
+source systems and the pipeline that produces the
+pre-aggregated views the dashboard consumes.
+Section~\ref{sec:proposed:eda} reports the exploratory data
+analysis on the available HCMC sample, the findings of which
+scope every downstream design decision.
+Section~\ref{sec:proposed:modules} screens the analytics
+modules drafted in the brainstorming phase against the schema
+and the EDA findings, separating the modules that the local
+data supports from those that require additional data
+releases. Section~\ref{sec:proposed:dashboard} specifies the
+dashboard: stakeholders and their analytical questions, filter
+flexibility, the three-column layout, the canvas-swap
+interaction, and the chart catalogue per analytical lens.
+
+The solution rests on the theoretical foundations introduced
+in Chapter~\ref{chapter:theory}: the medallion data
+architecture, the analytical stack of DuckDB, Polars,
+Streamlit, pydeck and Plotly, the three QoS indicators of
+Srisakaokul~\textit{et al.}~\cite{srisakaokul2023}, the
+FuzzyCut, GroupSet and Gridify visualisation primitives of
+Liu~\cite{liu2022}, the visual storytelling principles of
+Knaflic~\cite{knaflic2015}, and the Multiple Coordinated Views
+interaction model. Where the local sample makes a literature
+method only partially applicable (notably the GPS-side QoS
+indicators which the local one-day sample limits), the
+limitation is documented at the corresponding module rather
+than silently bypassed.

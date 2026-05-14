@@ -1,0 +1,216 @@
+\section{Exploratory Data Analysis}
+\label{sec:proposed:eda}
+
+The exploratory data analysis confirms what the schema in
+Section~\ref{sec:proposed:schema} hints at: the AFC side is large,
+clean, and analytically rich, while the GPS side is small (single
+day, nine routes) and serves more as a proof-of-concept for the
+GPS-driven modules until the full 50-day external dataset is
+loaded. This section reports the dataset inventory, the AFC and
+GPS findings that scope the dashboard design, and the data quality
+issues that govern the constraints of
+Section~\ref{sec:proposed:modules}.
+
+\subsection{Dataset inventory}
+
+Table~\ref{tab:proposed:dataset} summarises the data available
+locally, confirmed against the production DuckDB instance on
+2026-05-07.
+
+\begin{table}[H]
+\centering
+\caption{Dataset inventory.}
+\label{tab:proposed:dataset}
+\begin{tabularx}{\linewidth}{lXr}
+\hline
+Stream & Period and coverage & Rows \\
+\hline
+AFC tickets        & 2026-01-01 to 2026-03-31 (90 days, 128 routes, 10 companies) & 17{,}883{,}623 \\
+AFC payments       & same                                                          & 17{,}883{,}623 \\
+GPS raw pings      & 2025-03-18 (single day, 131 vehicles)                         &    720{,}088 \\
+GPS extracted trips& 2025-03-18, 9 routes (HMM-filtered)                           &      1{,}244 \\
+GPS stop-times     & 2025-03-18                                                    &     12{,}345 \\
+HCMC stops master  & static                                                        &      4{,}710 \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{AFC findings}
+
+Five AFC-side findings shape the design.
+
+\paragraph{Passenger-segment composition.}
+The four demographic segments derived deterministically from
+\texttt{ticket\_type} (Section~\ref{sec:proposed:schema}) are
+distributed as shown in Table~\ref{tab:proposed:segments}. Three
+observations stand out: the student segment alone accounts for
+35.6\% of all boardings, free or subsidised passes account for
+15.7\%, and the full-fare segment is essentially empty at 0.02\%.
+The implication for the design is that the network operates on
+government subsidy, and any analytical module that expects a
+meaningful full-fare population on the local data is unsound.
+
+\begin{table}[H]
+\centering
+\caption{Passenger segments (AFC, 2026 Q1).}
+\label{tab:proposed:segments}
+\begin{tabularx}{\linewidth}{Xrr}
+\hline
+Segment & Tickets & Share \\
+\hline
+Regular (subsidised smart-card)              & 8{,}708{,}026 & 48.7\% \\
+Student (\texttt{HS-SV})                     & 6{,}362{,}862 & 35.6\% \\
+Free / Subsidised (\texttt{miễn phí, CCCD})  & 2{,}809{,}726 & 15.7\% \\
+Full fare (\texttt{không trợ giá})           &      3{,}009 & 0.02\% \\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.65\linewidth]{images/screenshots/eda_segment_donut}
+\caption{Passenger-segment mix as a donut. The student slice is
+the dominant single segment after subsidised regular riders;
+the full-fare slice is barely visible.
+Source: \texttt{notebooks/eda\_tickets.ipynb}.}
+\label{fig:proposed:eda:segments}
+\end{figure}
+
+\paragraph{Payment channel.}
+96.2\% of all tickets are recorded under the raw label
+\texttt{`Tiền mặt'}. Field investigation confirmed that this label
+denotes smart-card / prepaid deductions in this dataset, not
+physical cash. Mastercard (1.5\%), Visa (1.1\%), elderly CCCD
+(0.5\%), Momo (0.5\%) and ZaloPay (0.1\%) make up the remainder.
+The label is renamed to \emph{Smart card / Prepaid} at the Silver
+layer and consistently in every chart.
+
+\paragraph{Revenue and fare distribution.}
+Total revenue across the 90-day window is 72.45 billion VND,
+with an average fare of 4{,}051 VND per trip. The fare
+distribution is bimodal: a large mass at 3{,}000 VND
+(subsidised rate) and a
+secondary peak at the unsubsidised rate. Zero-price tickets (free
+passes) account for 16.9\% of the row count.
+
+\paragraph{Tri-peak temporal demand.}
+Demand peaks at three times of day rather than the conventional
+two: 06:00--07:00 (school commute), 11:00 (student midday return),
+and 15:00--17:00 (school dismissal plus work return). The
+top-six hours by total boardings are listed in
+Table~\ref{tab:proposed:peakhours}. The 11:00 peak is
+distinctively HCMC and follows directly from the high student
+share of ridership.
+
+\begin{table}[H]
+\centering
+\caption{Top six demand hours, 2026 Q1.}
+\label{tab:proposed:peakhours}
+\begin{tabularx}{0.8\linewidth}{Xrr}
+\hline
+Hour & Boardings & Network share \\
+\hline
+16:00 & 1{,}743{,}725 & 9.7\% \\
+06:00 & 1{,}685{,}255 & 9.4\% \\
+17:00 & 1{,}637{,}497 & 9.2\% \\
+11:00 & 1{,}363{,}931 & 7.6\% \\
+07:00 & 1{,}323{,}666 & 7.4\% \\
+15:00 & 1{,}157{,}028 & 6.5\% \\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{images/screenshots/eda_hourly_demand}
+\caption{Hourly boarding demand across the network, 2026 Q1.
+Three peaks are visible at 06:00--07:00, 11:00, and
+15:00--17:00 --- the distinctive HCMC tri-peak pattern.
+Source: \texttt{notebooks/eda\_tickets.ipynb}.}
+\label{fig:proposed:eda:hourly}
+\end{figure}
+
+\paragraph{Route concentration and ghost trips.}
+The top-10 routes (out of 128) carry roughly 32\% of all
+boardings, with routes 20 and 150 as clear outliers
+(6.3\% and 5.5\% respectively). At the trip level, 213{,}408 of
+1{,}199{,}766 unique trips (17.8\%) ran with fewer than five
+boardings --- the near-ghost rate. Some routes exceed 40\%,
+suggesting a structural mismatch between scheduled frequency and
+actual demand on those routes.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\linewidth]{images/screenshots/eda_ghost_distribution}
+\caption{Near-ghost rate per route (sorted descending). The
+network-wide rate of 17.8\% is exceeded by roughly a quarter
+of routes, several of which run above 40\%.
+Source: \texttt{notebooks/eda\_tickets.ipynb}.}
+\label{fig:proposed:eda:ghost}
+\end{figure}
+
+\subsection{GPS findings}
+
+The local GPS sample is a single day over nine routes. It is
+sufficient to demonstrate the GPS-driven analytical modules but
+not to compute their indicators at network scale. Three GPS
+findings are relevant.
+
+\paragraph{Raw pings.}
+720{,}088 pings from 131 vehicles. The instantaneous speed
+field is null for 49.7\% of pings: GPS devices do not emit a
+speed value when the bus is stationary at a stop, in heavy
+traffic, or parked. The non-null average is 23.9~km/h, which is
+consistent with typical urban mixed-traffic conditions.
+
+\paragraph{HMM extraction and QoS-2 caveat.}
+The HMM-filtered \texttt{gps\_extracted} table covers 1{,}244
+trips on 9 routes and contains 369{,}887 GPS points. Across this
+set, the aggregate \emph{on-path rate} (the fraction of pings
+inside the 50\,m route buffer used by QoS-2) is 25.1\%. This is
+much lower than would be expected if the metric directly measured
+service compliance: positioning noise in HCMC's dense urban
+canyons causes pings to fall outside the buffer even when the bus
+is in fact on-route. The dashboard surfaces this caveat as an
+informational callout next to the QoS-2 KPI in the Route Explorer
+lens; the metric is interpreted relatively (comparing routes to
+each other) rather than absolutely.
+
+\paragraph{Stop dwell.}
+The \texttt{gps\_stop\_times} table records 12{,}345 stop visits
+with median dwell of 30~seconds (consistent with a rapid-boarding
+system). Outliers above 300~seconds may indicate mechanical issues,
+high passenger volume, or schedule-holding behaviour at timing
+points. Dwell statistics are available only for the 9 GPS routes
+and the single sample day.
+
+\subsection{Data-quality issues and constraints}
+
+Five issues constrain the design.
+
+\begin{table}[H]
+\centering
+\caption{Data-quality issues and the resulting design constraints.}
+\label{tab:proposed:dq}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{p{4.4cm}X}
+\hline
+\textbf{Issue} & \textbf{Constraint imposed} \\
+\hline
+GPS (2025) and AFC (2026) cover different calendar windows.
+& Treat as complementary sources. Combine narratively at the stop level rather than fuse at the trip level. \\
+
+AFC records boarding events only; no alighting events.
+& All crowding metrics framed as ``boardings per stop / per trip''. ``Passengers on the bus at time T'' is not a computable quantity. \\
+
+GPS local sample = 1 day, 9 routes; full 50-day dataset is external.
+& GPS-driven modules labelled ``(sample: 2025-03-18)''. GroupSet temporal clustering and holiday-vs-normal comparison wait for the full dataset. \\
+
+QoS-2 absolute scores are systematically low (urban-canyon GPS noise).
+& Surface as a relative metric only. Document the caveat next to the KPI. \\
+
+\texttt{`Tiền mặt'} mislabel and 16.9\% zero-price tickets.
+& Rename label at the Silver layer. Keep zero-price tickets as legitimate boardings (they are free passes, not data errors). \\
+\hline
+\end{tabularx}
+\end{table}

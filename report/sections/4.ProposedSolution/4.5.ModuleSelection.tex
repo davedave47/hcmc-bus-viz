@@ -1,0 +1,139 @@
+\section{Module Selection}
+\label{sec:proposed:modules}
+
+The brainstorming phase produced a catalogue of nineteen
+analytical modules grouped under five lenses: Network Overview,
+Route Explorer, Stop Analysis, Financial \& Operations, and
+Metro Connectivity. Each module is grounded in one of the
+literature sources reviewed in Chapter~\ref{chapter:related}: the
+QoS framework of Srisakaokul~\textit{et
+al.}~\cite{srisakaokul2023}, the FuzzyCut, GroupSet, and Gridify
+primitives of Liu~\cite{liu2022}, and the analytical
+specification of the advisor~\cite{thoai2025}. Not every module
+is supported by the data available locally. This section screens
+each module against the schema (Section~\ref{sec:proposed:schema})
+and the EDA findings (Section~\ref{sec:proposed:eda}), and assigns
+each one to one of three categories.
+
+\begin{description}
+\item[$\checkmark$ Adopted.] The module is supported by the local
+    sample at full coverage and is implemented in the dashboard
+    as specified.
+\item[$\sim$ Adopted with sample disclaimer.] The module is
+    supported but the local data limits it to nine GPS routes
+    and a single day. The dashboard surfaces the limitation in the
+    UI and the analyst is invited to interpret results
+    accordingly.
+\item[$\times$ Deferred.] The module requires data not present in
+    the local release (e.g., the metro timetable, multi-day GPS
+    coverage). It is documented as planned future work in
+    Chapter~\ref{chapter:conclusion}.
+\end{description}
+
+The full screening result is given in
+Table~\ref{tab:proposed:modules}; the subsections that follow
+walk through the rationale for each lens.
+
+\begin{table}[H]
+\centering
+\caption{Analytics-module screening against the local data sample.}
+\label{tab:proposed:modules}
+\renewcommand{\arraystretch}{1.20}
+\begin{tabularx}{\linewidth}{p{3.5cm}p{2cm}X}
+\hline
+\textbf{Module} & \textbf{Status} & \textbf{Reason} \\
+\hline
+\multicolumn{3}{l}{\emph{Network Overview}} \\
+KPI strip                & $\checkmark$ & AFC supplies boardings, revenue, ghost\%, busiest route. Network-wide QoS-3 deferred (needs schedule + GPS at scale). \\
+Demand cluster (GroupSet) & $\checkmark$ & Hourly demand per route across 90 days is sufficient for GroupSet. \\
+Route health treemap     & $\checkmark$ & Ghost-rate substituted for QoS-3 as the colour scale. \\
+Operator benchmarking    & $\checkmark$ & 10 companies $\times$ 128 routes provides enough density for the scatter. \\
+\hline
+\multicolumn{3}{l}{\emph{Route Explorer}} \\
+QoS-1 reliability        & $\sim$       & Schedule data exists for 9 GPS routes; trend visible only on those. \\
+QoS-2 accessibility      & $\sim$       & Aggregate on-path rate of 25.1\% is low because of urban-canyon noise; relative interpretation only. \\
+QoS-3 availability       & $\sim$       & Headway deviation requires schedule; 9 GPS routes only. \\
+Speed profile (FuzzyCut) & $\sim$       & GPS speed exists on 9 routes. Noise filter applied at HMM stage. \\
+Trip Gantt timeline      & $\sim$       & 9 routes, 1 day. \\
+Hourly demand            & $\checkmark$ & AFC-driven; works for any of 128 routes. \\
+Holiday vs.\ normal      & $\sim$       & Adapted: AFC-side comparison around Tet (2026-02-17) replaces the GPS-side parade-period comparison until full data lands. \\
+\hline
+\multicolumn{3}{l}{\emph{Stop Analysis}} \\
+Stop detail panel        & $\checkmark$ & Boardings + routes from AFC; dwell as enrichment when stop is in GPS sample. \\
+Spatial accessibility (Gridify) & $\checkmark$ & Stops master with lat/lng covers all 4{,}710 HCMC stops. \\
+Multi-stop comparison    & $\sim$       & Punctuality dimension is GPS-only; other dimensions (boardings, dwell, routes served) work everywhere. \\
+\hline
+\multicolumn{3}{l}{\emph{Financial \& Operations}} \\
+Ghost trip analysis      & $\checkmark$ & 17.8\% near-ghost rate at network scale; per-route ranking with $>40\%$ outliers. \\
+Revenue \& ticket breakdown & $\checkmark$ & AFC + payments fully populated. \\
+Revenue efficiency (FuzzyCut) & $\checkmark$ & Revenue-per-trip distribution exists for all 128 routes. \\
+\hline
+\multicolumn{3}{l}{\emph{Metro Connectivity}} \\
+Feeder catchment rings    & $\checkmark$ & Geometric: stops master + metro station coordinates. \\
+Transfer timing analysis  & $\times$    & Requires the metro Line 1 timetable, which is not in the data release. \\
+QoS-3 at metro interfaces & $\times$    & Requires schedule + GPS coverage of metro-adjacent stops. Both deferred. \\
+Feeder headway alignment (GroupSet) & $\times$ & Same dependency on schedule data. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Network Overview}
+
+All four Network modules are adopted. The KPI strip drops the
+network-wide QoS-3 indicator that the original brainstorm proposed
+because the schedule-side data exists only for nine routes and
+a single day; with that exclusion, the strip is fully populated
+from AFC-side aggregates alone (boardings, revenue, ghost rate,
+busiest route, and the demographic split). The treemap is sized
+by total boardings, but it is coloured by ghost rate rather than by
+QoS-3 because the former is computable for all 128 routes.
+The GroupSet demand-pattern clusterer operates on AFC hourly
+demand per route across the 90-day window, which is the data
+density the technique was originally designed for.
+
+\subsection{Route Explorer}
+
+All three QoS indicators are adopted with a sample disclaimer.
+QoS-2 is interpreted relatively rather than absolutely because of
+the 25.1\% baseline on-path rate. The Speed Profile FuzzyCut
+corridor and the Trip Gantt timeline are likewise restricted to
+the nine GPS routes. Hourly demand from AFC is unaffected by the
+GPS limitation and is available for any of the 128 routes.
+The Holiday vs.\ Normal comparison is adapted: instead of the
+GPS-side Apr 30 parade period (which falls outside the local
+sample), the lens compares AFC demand around Tet
+(2026-02-17, the Lunar New Year) to a normal weekday baseline.
+The original GPS-side comparison is queued for the full-dataset
+release.
+
+\subsection{Stop Analysis}
+
+The Stop Detail panel and the Gridify accessibility view are
+adopted at full coverage. The Multi-Stop Comparison radar is
+adopted with the punctuality dimension surfaced only when both
+selected stops fall within the nine-route GPS sample;
+boardings, dwell, and routes-served are computable for every
+stop in the master.
+
+\subsection{Financial and Operations}
+
+All three modules are adopted. The Ghost Trip analysis is
+particularly well-supported: the 17.8\% network-wide near-ghost
+rate provides a defendable headline number, and per-route ranking
+identifies several routes above 40\%. The Revenue Efficiency
+FuzzyCut applies the same primitive as the Route Explorer's Speed
+Profile, which is one of the design wins of using literature
+primitives: the analyst learns the FuzzyCut interaction once and
+reuses it for two unrelated quantities.
+
+\subsection{Metro Connectivity}
+
+The Metro lens is the most data-dependent of the five.
+The Feeder Catchment rings are computable from the stops master and
+the published metro station coordinates. The remaining three modules
+(Transfer Timing, QoS-3 at Metro Interfaces, Feeder Headway
+Alignment) all require either the metro Line 1 timetable, multi-day
+GPS coverage of metro-adjacent stops, or both. They are documented
+as planned next steps in Chapter~\ref{chapter:conclusion} and the
+lens icon carries an ``in progress'' badge in the dashboard until
+the dependencies are resolved.
