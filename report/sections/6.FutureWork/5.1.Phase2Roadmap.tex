@@ -1,7 +1,144 @@
 \section{Phase 2 Implementation Roadmap}
 \label{sec:future:roadmap}
 
-\noindent\textit{Stub --- this section presents the P1--P9
-phased implementation roadmap (approximately twenty-one
-working days), addressing Câu~5 of the grading rubric
-(\cite{rubric}). Content to be filled by subagent~G1.}
+Phase~2 of this thesis is the implementation of the dashboard
+specified in Chapter~\ref{chapter:proposed}. The work is
+organised into nine phases, P1--P9, each producing a working
+demoable artefact. The phases are summarised in
+Table~\ref{tab:future:roadmap}; their critical path is
+P1~$\rightarrow$~P2 and the remaining phases are largely
+parallelisable. Per Câu~5 of the grading
+rubric~\cite{rubric}, the plan covers content, time, personnel,
+and expected outcomes; full per-phase deliverables and
+acceptance criteria are tabulated in
+Appendix~\ref{appendix:plan}.
+
+\begin{table}[H]
+\centering
+\caption{Phase 2 implementation phases, deliverables, and
+estimated effort.}
+\label{tab:future:roadmap}
+\footnotesize
+\renewcommand{\arraystretch}{1.20}
+\begin{tabularx}{\linewidth}{p{0.9cm}p{4.2cm}Xp{1.4cm}}
+\hline
+\textbf{Ph.} & \textbf{Deliverable} & \textbf{Outcome} & \textbf{Effort} \\
+\hline
+P1 & Warehouse Layers 2--4 build
+   & \texttt{dim\_*}, \texttt{fact\_*}, three \texttt{agg\_*}
+     tables; build CLI; validation notebook 05
+   & 2~days \\
+P2 & End-to-end Card~2 (Demand)
+   & Five charts render; linked brushing across all five; A3
+     entity panel for routes; cold-load $<$~3~s; warm render
+     $<$~50~ms
+   & 3~days \\
+P3 & Spatial card + pydeck
+   & Stop Demand Explorer, hex density grid, network overview;
+     \texttt{agg\_stop\_hour} populated
+   & 2~days \\
+P4 & School flagship card
+   & Schools $\rightarrow$ Routes treemap, school-routeness
+     classifier, equity map (district stubs)
+   & 2~days \\
+P5 & Financial + Network Health cards
+   & P\&L quadrant, operator scorecard, payment adoption,
+     QoS-1/2/3 scorecard, anomaly threshold-$T$ slider
+   & 3~days \\
+P6 & Routes card with Marey
+   & Discovery (UMAP, archetype) and Detail modes; embedded
+     Marey and GroupSet HTML components
+   & 3~days \\
+P7 & Hub + entity-panel polish
+   & Editorial hub HTML embedded; A3 panel for all six entity
+     types; URL state; export
+   & 2~days \\
+P8 & Stories scrollytelling
+   & Four scenes-driven stories with Scrollama; scene JSON
+     authoring
+   & 2~days \\
+P9 & Final polish + evaluation
+   & Verified school geocoding; full 50-day GPS loaded if
+     available; perf tuning; screen recording; initial user
+     evaluation
+   & 2~days \\
+\hline
+\multicolumn{3}{r}{\textbf{Total estimated:}} & 21~days \\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Diagram (Gantt chart)}{A horizontal Gantt
+chart with nine bars labelled P1--P9, the x-axis covering days
+0--21. P1 (days 0--2, blue), P2 (days 2--5, blue), P3 (days
+5--7, green; can start after P1+P2), P4 (days 5--7, gold; can
+parallel with P3), P5 (days 7--10, red), P6 (days 10--13,
+purple), P7 (days 13--15, cyan), P8 (days 15--17, orange), P9
+(days 17--21, grey). Dependency arrows: P1 $\rightarrow$ P2;
+P2 $\rightarrow$ P3, P4; P3, P4 $\rightarrow$ P5;
+P5 $\rightarrow$ P6; P6 $\rightarrow$ P7; P7 $\rightarrow$ P8;
+P8 $\rightarrow$ P9.}{Draw in a tool such as
+\texttt{draw.io}, \texttt{Lucidchart}, or \texttt{Excalidraw};
+export as PNG at $\sim$300~DPI. Save as
+\texttt{images/diagrams/phase2\_gantt.png}.}
+\caption{Phase 2 Gantt: nine phases over approximately 21
+days. P3 and P4 can run in parallel after P1+P2 complete.}
+\label{fig:future:gantt}
+\end{figure}
+
+\paragraph{Content.}
+The plan content is the nine phases above. Each phase produces
+one or two artefacts that the next phase depends on; the
+Appendix~\ref{appendix:plan} table records the exact acceptance
+criterion per phase (e.g., for P1: the build CLI runs in
+$<$~30~s on the local sample and emits eight aggregate tables).
+
+\paragraph{Time.}
+Total estimated effort is twenty-one working days at one
+developer. The critical path is P1~$\rightarrow$~P2 (five
+working days); the remaining sixteen days are parallelisable in
+P3+P4 (the spatial and the school cards run independently
+because their aggregate tables \texttt{agg\_stop\_hour} and
+\texttt{agg\_school\_route} are independent) and otherwise
+sequential.
+
+\paragraph{Personnel.}
+Phase~2 is single-author. Time tracking is per-phase rather
+than per-task because every phase is small enough for one
+developer to hold the full context. The thesis advisor reviews
+at the end of P2 (first end-to-end card) and at the end of P6
+(all cards rendering) before sign-off.
+
+\paragraph{Expected outcomes.}
+At the end of Phase~2, the dashboard renders thirty out of
+thirty-one charts at sub-fifty-millisecond warm latency;
+supports linked brushing within every card and the universal
+entity-detail panel (A3 of
+Section~\ref{sec:proposed:invariants}) on every clickable
+element; persists state to a shareable URL; and exports every
+chart as PNG/PDF/CSV with a single click. The final chart, the
+Marey time--distance diagram, depends on the full GPS pull
+(Section~\ref{sec:future:gps}) and is delivered at the start
+of P9 if the data is available, or deferred to a follow-on
+phase if not.
+
+\paragraph{Risk and mitigation.}
+Four risks dominate the schedule. (1)~Streamlit performance
+falling below the budget
+(Section~\ref{sec:proposed:problem}); the mitigation is to fall
+back to embedded HTML components for hot paths, which is
+already the case for three charts. (2)~The full GPS pull from
+Kaggle failing or taking longer than expected; the mitigation
+is to demo with the local one-day sample and document the
+seven charts that remain at SHOULD/WON'T tier until the pull
+completes. (3)~School geocoding under target before P9
+deadline; the mitigation is to ship the dashboard with
+district-level approximation and the
+``verified~\checkmark'' badge described in
+Section~\ref{sec:proposed:warehouse_local}.
+(4)~Linked-brushing latency feeling sluggish on Streamlit's
+server-side rerun model; the mitigation is to pre-compute the
+highlight sets server-side so only the chart's colour column
+is recomputed on rerun, not the data itself.
