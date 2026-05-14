@@ -1,0 +1,95 @@
+\section{Motivation}
+\label{sec:intro:motivation}
+% sections/1.Introduction/1.1.Motivation.tex
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Photograph}{A wide shot of an HCMC public bus on a busy
+street, capturing the network in context (passengers boarding, route
+signage visible)}{Photograph an HCMC bus during peak hours (e.g.,
+District~1, B\'{e}n Th\`{a}nh area). Save as
+\texttt{images/screenshots/hcmc\_bus\_photo.jpg}.}
+\caption{The HCMC public bus network --- subject of this work.}
+\label{fig:intro:bus}
+\end{figure}
+
+Ho Chi Minh City (HCMC) operates a bus network of approximately 152 urban
+routes, 90 of which are subsidized, served by a fleet of over 2,000 vehicles
+managed by the Centre for Public Transport Management~\cite{ttgtcc2024}.
+Each day, the network's electronic ticketing system records every boarding
+event, capturing when and where passengers tap in, what fare class they
+pay, and which trip and vehicle they board. Combined with GPS positioning
+and GTFS schedule data, this creates a detailed operational record of the
+entire network's activity.
+ 
+Despite this data richness, operational decisions are still largely driven by
+manual inspection of spreadsheet exports and static reports. Anomalies that
+are clearly visible in the data: a stop that is chronically delayed in the
+evening peak, a route with an excessive proportion of near-empty trips, or a
+bus that consistently misses the connection window at a metro interchange, go
+undetected until they escalate into service failures. There is no unified,
+interactive tool that allows a route administrator, a company executive, or a
+city planner to explore the network's spatial and temporal dimensions without
+data science expertise.
+
+\begin{figure}[H]
+\centering
+\imageplaceholder{Screenshot}{The MCPT public route directory web page at
+\url{buyttgtcc.com.vn} (or the official MCPT route lookup), showing a
+list/table of routes with no analytical or aggregation
+capability}{Open the MCPT public route directory in a browser, navigate
+to the main route-list view, capture a full-page screenshot at a
+typical viewport (e.g., 1440~px wide). Save as
+\texttt{images/screenshots/mcpt\_directory.png}.}
+\caption{The MCPT public route directory~\cite{ttgtcc2024} ---
+the only operational artefact for the network publicly accessible
+at the time of writing. The directory is a navigational tool,
+not an analytical one: routes can be looked up but no aggregation,
+visualisation, or temporal analysis is offered.}
+\label{fig:intro:mcpt}
+\end{figure}
+ 
+This gap is further sharpened by the opening of Metro Line~1 on 22 December 2024~\cite{metro_wiki}, which
+introduced an intermodal dependency into the network for the first time.
+The effectiveness of metro-based urban mobility now depends directly on the
+punctuality of bus feeder services: a bus arriving five minutes late at an
+interchange station translates directly into a missed metro departure for its
+passengers. Monitoring this intermodal relationship at scale requires
+integrating bus operational data with the metro timetable, a capability absent
+from existing management tools.
+
+From an operational standpoint, transport companies and city administrators
+face concrete daily questions that this data could answer but currently does
+not: Which routes are running near-empty trips that waste fuel and driver
+hours? Are scheduled trips actually departing on time, and if not, at which
+stops does delay accumulate? Which routes carry disproportionate numbers of
+subsidized passengers, including students and elderly riders, and are fare subsidies
+reaching those groups efficiently? How does ridership shift between peak and
+off-peak hours, and is the current trip frequency matched to actual demand?
+Without interactive visualization tools, answering any of these questions
+requires manual extraction and cross-referencing of multiple raw tables,
+a process that is slow, error-prone, and inaccessible to non-technical staff.
+
+This thesis develops \textbf{BusLens}, an analytics and visualisation
+platform that reconciles the three data streams behind a single
+queryable surface and exposes the network's spatial, temporal, and
+financial dimensions through six themed lenses ---
+\emph{Demand \& Crowding}, \emph{School-Aware Demand},
+\emph{Spatial \& Connectivity}, \emph{Financial \& Operations},
+\emph{Network Health \& Performance}, and \emph{Routes}. Each lens
+is one card in an interactive hub
+(Chapter~\ref{chapter:prototype}); each card is built on the same
+data pipeline (Chapter~\ref{chapter:proposed}) and obeys three
+invariants that anchor the user experience: linked brushing,
+story-subtitled charts, and a universal entity detail panel that
+opens on every entity click.
+
+Looking ahead, the 2025--2030 bus network restructuring plan targets a
+complete reorganisation of the current routes into a tiered hierarchy of
+179 routes (18 trunk, 73 branch, 88 feeder)~\cite{vnexpress2023}, alongside
+a full transition to electronic ticketing by 2025 and a 20--25\% electric
+fleet by 2030~\cite{vnexpress2023}. These reforms will substantially increase
+the volume and complexity of operational data-making the absence of visual
+analytics tools an increasingly critical problem.
+
+
