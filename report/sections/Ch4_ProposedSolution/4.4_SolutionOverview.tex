@@ -1,4 +1,32 @@
 \section{Solution Overview}
 \label{sec:solution:overview}
 
-\textit{Stub.}
+The proposed system is an analytical platform over the preprocessed Ho Chi
+Minh City bus data. The system is organised around four design components
+that compose into the analytical surface visible to the user. First, a
+layered analytical warehouse sits over the preprocessed data and produces a
+fixed set of aggregate tables that the surface reads from. Second, the
+analytical content is grouped into a fixed catalogue of six thematic views,
+each of which addresses one class of analytical question and reads from one
+cluster of aggregate tables. Third, each visualisation in the catalogue is
+matched to a single primitive chart type selected to fit the question the
+chart answers, with rejected alternatives recorded as part of the design
+record. Fourth, an interaction model connects the visualisations across each
+thematic view and provides a uniform response to user clicks on analytical
+entities.
+
+The remaining sections of this chapter develop the four components in turn.
+Section~\ref{sec:solution:architecture} describes the data architecture and
+records the architectural alternatives considered.
+Section~\ref{sec:solution:themes} catalogues the six thematic views, their
+target user roles, and the analytical questions they answer.
+Section~\ref{sec:solution:viz} records the chart-to-primitive mapping per
+theme, with rejected alternatives where relevant.
+Section~\ref{sec:solution:interaction} specifies the three interaction
+patterns the surface adopts from the literature on coordinated views and on
+visual storytelling.
+
+The implementation tools that realise each component are introduced in the
+foundations chapter (Chapter~\ref{chapter:foundations}) and are not named in
+this section, in order to keep the present discussion focused on the design
+decisions rather than the realisation technology.
