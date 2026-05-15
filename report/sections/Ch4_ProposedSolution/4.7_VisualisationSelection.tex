@@ -1,4 +1,194 @@
 \section{Visualisation Technique Selection}
 \label{sec:solution:viz}
 
-\textit{Stub.}
+Each of the six themes catalogued in Section~\ref{sec:solution:themes}
+requires several visualisations to address the analytical question that
+defines it. The selection of a primitive chart type for each visualisation
+is grounded in the survey of visualisation primitives presented in
+Chapter~\ref{chapter:foundations} and is recorded as a chart-to-primitive
+mapping. This section walks through the selection theme by theme, with
+small tables per theme; a single 31-row catalogue would obscure the
+question-to-chart correspondence and is avoided. A closing subsection
+records the alternatives that were considered and rejected for specific
+charts.
+
+\subsection{Demand and Crowding}
+\label{sec:solution:viz:demand}
+
+The Demand and Crowding theme asks when and where ridership concentrates.
+The most informative views are temporal: the daily hourly profile that
+characterises peak hours, the weekly profile that distinguishes weekdays
+from weekend days, and a route-by-hour matrix that locates which routes
+peak together. A short-horizon forecast of the next fourteen days
+complements the historical view.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Demand and Crowding visualisations}
+  \label{tab:viz:demand}
+  \begin{tabularx}{\linewidth}{l l X}
+    \hline
+    \textbf{Chart} & \textbf{Primitive} & \textbf{Primary aggregate} \\
+    \hline
+    Hourly demand curve & Stacked area over 24 hours & boardings by hour, student vs.\ non-student \\
+    Route-by-hour heatmap & Categorical heatmap & boardings by route by hour \\
+    Weekly rhythm & Two-dimensional calendar heatmap & boardings by day-of-week by hour \\
+    Top routes by demand & Ranked horizontal bar & boardings by route, top 20 \\
+    Demand forecast (14 days) & Multi-line with 80/95\% bands & ETS forecast \cite{statsforecast} per route \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{School-Aware Demand}
+\label{sec:solution:viz:school}
+
+The School-Aware Demand theme asks how the educational institutions of the
+city shape network demand. The dominant view is the school-to-route
+assignment, which is naturally expressed as a treemap, with the school as
+the outer rectangle and the routes serving it as the inner rectangles. A
+parallel coordinates plot supports the classification of routes as
+school-bearing or non-school-bearing along multiple dimensions
+simultaneously.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{School-Aware Demand visualisations}
+  \label{tab:viz:school}
+  \begin{tabularx}{\linewidth}{l l X}
+    \hline
+    \textbf{Chart} & \textbf{Primitive} & \textbf{Primary aggregate} \\
+    \hline
+    Top schools by bus dependency & Ranked horizontal bar & student boardings by school \\
+    School-to-route assignment & Treemap & student boardings by school by route \\
+    Student vs.\ non-student weekly pattern & Paired calendar heatmaps & boardings by fare class, by day-of-week by hour \\
+    School-routeness classifier & Parallel coordinates & per-route features (student share, peak compression, summer drop) \\
+    School proximity and accessibility & Annotated map with point markers & school positions and serving routes \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{Spatial and Connectivity}
+\label{sec:solution:viz:spatial}
+
+The Spatial and Connectivity theme asks how the network covers the city
+and how it feeds the metro. The base view is a point-and-line map of
+routes and stops; demand density is overlaid through a hexagonal-bin map
+using H3 cells \cite{h3}, which delivers a uniform-area aggregation
+suitable for cross-cell comparison. A sankey diagram visualises the
+connectivity between bus feeders and metro line~1.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Spatial and Connectivity visualisations}
+  \label{tab:viz:spatial}
+  \begin{tabularx}{\linewidth}{l l X}
+    \hline
+    \textbf{Chart} & \textbf{Primitive} & \textbf{Primary aggregate} \\
+    \hline
+    Network overview & Point and line map & route polylines and stop positions \\
+    Boarding density & Hexagonal-bin map \cite{h3} & boardings per H3 cell \\
+    Per-stop demand explorer & Annotated map plus per-stop drill-down & boardings per stop per hour \\
+    Effective vs.\ ghost stops & Point map coloured by door-open ratio & door events per stop visit \\
+    Bus-to-metro connectivity & Sankey diagram & feeder routes by metro station with transfer time \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{Financial and Operations}
+\label{sec:solution:viz:financial}
+
+The Financial and Operations theme asks about revenue, ridership
+concentration, payment-channel adoption, and promotion impact. A scatter
+quadrant with bubble size reveals which routes combine high waste with low
+revenue per trip; parallel coordinates reveals which operating companies
+trace distinctive financial signatures across multiple metrics.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Financial and Operations visualisations}
+  \label{tab:viz:financial}
+  \begin{tabularx}{\linewidth}{l l X}
+    \hline
+    \textbf{Chart} & \textbf{Primitive} & \textbf{Primary aggregate} \\
+    \hline
+    Profit-and-loss quadrant & Scatter quadrant with bubble size & ghost-run share vs.\ revenue per trip per route \\
+    Financial signatures & Parallel coordinates & per-company financial metrics \\
+    Operator scorecard & Ranked table & revenue and ridership per company \\
+    Payment-channel adoption over time & Stacked-area chart & boardings by channel by day \\
+    Promotion lift (before and after) & Paired bar & ridership before and after each promotion \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{Network Health and Performance}
+\label{sec:solution:viz:network}
+
+The Network Health and Performance theme asks about network-wide
+reliability, anomalies, and the service-day calendar. Reliability is
+reported following the QoS-1, QoS-2, QoS-3 decomposition surveyed in
+Chapter~\ref{chapter:foundations} and traced to
+Srisakaokul et al.~\cite{srisakaokul2023}; anomalies are reported on an
+annotated timeline with an adjustable threshold.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Network Health and Performance visualisations}
+  \label{tab:viz:network}
+  \begin{tabularx}{\linewidth}{l l X}
+    \hline
+    \textbf{Chart} & \textbf{Primitive} & \textbf{Primary aggregate} \\
+    \hline
+    Network at a glance & KPI strip and daily timeline & network-wide daily volume \\
+    Volume composition & Treemap by company and route & boardings by company by route \\
+    Service-day calendar & Calendar heatmap (3 months) & boardings by day \\
+    Reliability scorecard & Small-multiples ranked bar & QoS-1, QoS-2, QoS-3 per route \cite{srisakaokul2023} \\
+    Anomaly timeline & Annotated timeline with threshold slider & per-day deviation from baseline \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{Routes}
+\label{sec:solution:viz:routes}
+
+The Routes theme supports both per-route deep dive and cross-route
+discovery. Cross-route discovery is supported by a two-dimensional
+projection of routes through Uniform Manifold Approximation and Projection
+(UMAP) \cite{umap}, with the projected positions coloured by archetype;
+the set-intersection matrix of Liu \cite{liu2022} reveals which routes
+belong to multiple archetypes. Per-route deep dive is supported by the
+time-distance trip diagram of Lin and Zeng \cite{linzeng2014}, which plots
+time along the horizontal axis and distance along the route on the
+vertical axis, with each trip drawn as a polyline.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Routes visualisations}
+  \label{tab:viz:routes}
+  \begin{tabularx}{\linewidth}{l l X}
+    \hline
+    \textbf{Chart} & \textbf{Primitive} & \textbf{Primary aggregate} \\
+    \hline
+    Route constellation & 2-D projection scatter (UMAP) \cite{umap} & per-route feature vector \\
+    Archetype intersection matrix & Set-intersection matrix \cite{liu2022} & route assignment to archetype sets \\
+    Multi-route comparison & Parallel coordinates with small multiples & per-route metrics for selected routes \\
+    Single-route summary & Table with sparklines & per-route KPIs, stops list, schedule \\
+    Time-distance trip diagram & Polylines on time by distance \cite{linzeng2014} & GPS trips projected to a 1-D route path \\
+    Stop-by-stop boardings with door-open ratio & Dual-axis bar plus line & boardings per stop, door-open per stop \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{Alternatives considered}
+\label{sec:solution:viz:alt}
+
+Several primitives were considered and rejected for specific charts. Pie
+charts and three-dimensional bar charts were rejected throughout the
+catalogue, following the guidance of Knaflic \cite{knaflic2015} that pie
+charts compare angles poorly and that three-dimensional effects distort
+the perception of length and area. For the boarding-density chart of the
+Spatial and Connectivity theme, a choropleth keyed to administrative
+districts was rejected in favour of the H3 hexagonal-bin aggregation
+\cite{h3}, because the districts vary substantially in area and would
+produce a density figure that confounds population density with
+administrative geometry; the uniform-area H3 cells give a directly
+comparable density per cell.
