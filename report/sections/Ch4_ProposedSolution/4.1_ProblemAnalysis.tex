@@ -1,4 +1,95 @@
 \section{Problem Analysis}
 \label{sec:solution:problem}
 
-\textit{Stub.}
+Ho Chi Minh City operates one of the largest urban bus networks in Southeast
+Asia, generating large volumes of Global Positioning System (GPS) vehicle
+telemetry and Automated Fare Collection (AFC) fare records every day. The
+operating data exist, yet no current tool presents them to any stakeholder in
+an analytical form. Planners cannot inspect demand concentration along a
+corridor, operating companies cannot compare their routes against the network,
+and passengers cannot tell from the data whether a route is reliable. The
+proposed system addresses this gap. This section identifies the stakeholder
+roles the design must serve, the functional capabilities the system must
+provide, the non-functional constraints under which it must operate, and the
+analytical questions that are explicitly out of scope for the present phase.
+
+\subsection{User roles}
+\label{sec:solution:problem:roles}
+
+The design accounts for four stakeholder roles. The roles are recorded here
+as a design grounding only; the user interface of the proposed system does not
+expose role labels or a role switcher. The same analytical surface serves all
+four roles, with the date range and entity filters under shared control.
+Table~\ref{tab:problem:roles} lists the roles and two illustrative analytical
+questions each role typically asks of the bus data.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Stakeholder roles and illustrative analytical questions}
+  \label{tab:problem:roles}
+  \begin{tabularx}{\linewidth}{l X}
+    \hline
+    \textbf{Role} & \textbf{Illustrative analytical questions} \\
+    \hline
+    Passenger & Which routes are reliable at the hour I travel? Which stops near my school or workplace are crowded in the morning peak? \\
+    Driver & What is the demand profile of the route I am assigned to? Where along the route do the heaviest boardings occur? \\
+    Operating company & How does each of my routes compare in revenue and ridership concentration with comparable routes in the network? Which routes show payment-channel adoption that diverges from the network mean? \\
+    Public-transport authority & Which corridors are undersupplied at peak hours? Which routes connect effectively to the metro system, and which do not? \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The four roles motivate the analytical content of the system but do not drive
+its surface structure. Section~\ref{sec:solution:themes} returns to the roles
+when it groups the analytical content into thematic views.
+
+\subsection{Functional requirements}
+\label{sec:solution:problem:functional}
+
+The proposed system must provide the following functional capabilities. Each
+requirement is stated as a single obligation in the form ``The system shall
+\dots''.
+
+\begin{enumerate}
+  \item[\textbf{R1.}] The system shall aggregate boarding events by route and by hour of day across the available calendar window.
+  \item[\textbf{R2.}] The system shall present comparisons of ridership across days, weeks, and seasonal windows, including pre-Tết, Tết, and post-Tết periods.
+  \item[\textbf{R3.}] The system shall identify stops whose boarding volumes are disproportionately large relative to their position in the network.
+  \item[\textbf{R4.}] The system shall compute and display reliability indicators per route, following the Quality of Service (QoS) decomposition into trip completion, on-path driving, and on-schedule operation.
+  \item[\textbf{R5.}] The system shall maintain consistent route identifiers between the operational data stream and the demand data stream, so that visualisations referring to the same route refer to the same underlying entity.
+  \item[\textbf{R6.}] The system shall visualise demand density across the urban area through a spatial aggregation that is uniform in area.
+  \item[\textbf{R7.}] The system shall identify the bus routes that act as feeders to the metro system and characterise their connectivity in time and space.
+  \item[\textbf{R8.}] The system shall report financial efficiency per route through measurable proxies, including revenue per trip and the share of trips with no recorded boarding.
+  \item[\textbf{R9.}] The system shall export every chart and every entity-detail view in standard image and tabular formats (Portable Network Graphics, Portable Document Format, and comma-separated values).
+  \item[\textbf{R10.}] The system shall persist analytical state, comprising the active thematic view, the active chart, the active filters, and the active selection, in a form that is bookmarkable and shareable across sessions.
+\end{enumerate}
+
+\subsection{Non-functional requirements}
+\label{sec:solution:problem:nonfunctional}
+
+Beyond the functional obligations, the proposed system must satisfy six
+non-functional constraints. These constraints shape the architectural
+decisions discussed in Section~\ref{sec:solution:architecture}.
+
+\begin{enumerate}
+  \item[\textbf{N1.}] Interactive latency shall be under three seconds for a cold load of any thematic view and under fifty milliseconds for any warm chart re-render driven by a filter change.
+  \item[\textbf{N2.}] The system shall be deployable as a single process on commodity hardware, without dependence on a separate database server or a separate application server.
+  \item[\textbf{N3.}] The warehouse build shall be deterministic and reproducible: re-running the build on the same raw input shall produce byte-identical aggregate tables.
+  \item[\textbf{N4.}] Preprocessed data shall persist on disk under approximately one hundred megabytes for the calendar window covered in the present phase.
+  \item[\textbf{N5.}] The system shall be portable across Linux, macOS, and Microsoft Windows without operating-system-specific build steps.
+  \item[\textbf{N6.}] The system shall contain no personally identifying data about individual passengers; only the aggregate fare records published in the dataset release are used.
+\end{enumerate}
+
+\subsection{Out-of-scope constraints}
+\label{sec:solution:problem:scope}
+
+Four analytical capabilities that might reasonably belong to a bus analytics
+platform are excluded from the present phase. The exclusions follow from the
+properties of the available data and from the division of work with a
+parallel team.
+
+\begin{itemize}
+  \item Real-time arrival prediction. The data is historical; live telemetry feeds are not available to the project.
+  \item Per-passenger journey reconstruction. The user identifier field in the AFC stream is populated for only about 0.1\% of fare records (23{,}109 of 17{,}883{,}623), so individual-level features such as loyalty, churn, and journey patterns cannot be supported.
+  \item Exact financial modelling. No cost data is available, so the system reports financial efficiency through measurable proxies (revenue per trip, ghost-run share) rather than through profit and loss.
+  \item Natural-language query over the data. A separate team is developing a text-to-Structured-Query-Language (SQL) capability, which will eventually be integrated alongside the analytical surface defined in this chapter.
+\end{itemize}
