@@ -1,4 +1,36 @@
 \section{Multiple Coordinated Views Interaction Model}
 \label{sec:foundations:mcv}
 
-\textit{Stub.}
+A Multiple Coordinated Views (MCV) interface presents the same dataset
+through several visualisations simultaneously and propagates user
+interaction in one view to all of the others. The defining property is
+coordination: selecting an entity in one chart, whether by clicking a
+mark or by dragging a rectangular selection across a region of the
+plot, causes the same entity to be highlighted or filtered in every
+other chart on the same screen, so that the analyst sees the same
+selection from multiple perspectives at once. The model is introduced
+by Liu \cite{liu2022} as a general framework for multi-perspective
+exploration of complex datasets.
+
+The most common interaction primitive within MCV is brushing and
+linking. Brushing is the act of selecting a subset of records in one
+view, typically by dragging a rectangular brush over a region of the
+plot or by clicking individual marks. Linking is the immediate
+propagation of that selection to all coordinated views, so that the
+brushed records are visually distinguished in every view in which they
+appear. The combination is what gives MCV its analytical leverage: a
+brush drawn across a range of one axis in a parallel-coordinates plot
+becomes, in the linked map view, the highlighted spatial footprint of
+the records that fall within that range, without any explicit query
+having been written.
+
+The model imposes design trade-offs. Coordinated propagation is
+powerful but expensive: every view must re-render on every brush event,
+which can degrade interactive latency on large datasets. Scoping the
+coordination locally, that is, restricting the propagation to a related
+set of views that share an analytical theme rather than allowing it to
+fan out across the entire interface, bounds both the cognitive load on
+the user and the computational cost on the renderer. The analyst is not
+forced to reason about how a selection in one corner of the interface
+affects every other view, and the renderer does not have to refresh
+charts whose relationship to the current selection would be incidental.
