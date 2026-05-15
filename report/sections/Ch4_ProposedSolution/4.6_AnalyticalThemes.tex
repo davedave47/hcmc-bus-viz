@@ -1,4 +1,96 @@
 \section{Analytical Themes}
 \label{sec:solution:themes}
 
-\textit{Stub.}
+The proposed system organises its analytical content into six thematic
+views. Each theme corresponds to one class of analytical question and is
+supported by one cluster of aggregate tables produced by layer 4 of the data
+architecture (Section~\ref{sec:solution:architecture}). The themes are the
+top-level organisational units of the analytical surface; the user
+navigates between themes from an overview index, and within each theme
+selects a single visualisation that addresses the question of interest.
+
+\subsection{The six themes}
+\label{sec:solution:themes:six}
+
+Table~\ref{tab:themes:six} lists the six themes, the analytical question
+each one answers, and the primary user role to which each theme is
+internally anchored. The primary user role is a design grounding only and
+does not appear in the user interface.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{The six analytical themes of the proposed system}
+  \label{tab:themes:six}
+  \begin{tabularx}{\linewidth}{l X l}
+    \hline
+    \textbf{Theme} & \textbf{Question answered} & \textbf{Primary role} \\
+    \hline
+    Demand and Crowding & When and where does ridership concentrate across the network? & Passenger \\
+    School-Aware Demand & How do the educational institutions of the city shape demand on the bus network? & Passenger and authority \\
+    Spatial and Connectivity & How do routes and stops cover the city, and how does the bus network feed the metro? & Passenger and authority \\
+    Financial and Operations & What is the revenue, ridership concentration, payment-channel mix, and promotion impact per route and per company? & Operating company \\
+    Network Health and Performance & What is the network-wide reliability, what anomalies occur, and what does the service-day calendar look like? & Public-transport authority \\
+    Routes & What does a single route look like in detail, and how do routes compare across the network? & Driver and operational analysts \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The School-Aware Demand theme is the most distinctive component of the
+proposed system; it is the theme that no existing tool for Ho Chi Minh City
+provides, and it is the theme that connects most directly to the dominant
+fare class observed in
+Section~\ref{sec:solution:dataset:eda}. The remaining five themes cover
+network-wide demand, spatial coverage, financial operations, reliability
+and anomalies, and per-route detail respectively, so that every functional
+requirement in Section~\ref{sec:solution:problem:functional} is addressed
+by at least one theme.
+
+\subsection{Alternatives considered}
+\label{sec:solution:themes:alt}
+
+Two alternative organisations of the analytical content were considered and
+rejected.
+
+The first alternative groups content by user role rather than by analytical
+question: one theme each for passenger, operating company, public-transport
+authority, and driver. The alternative was rejected because the most
+important analytical questions cross role boundaries. The school-aware
+demand question, for example, is asked by both passengers (which route
+serves my school?) and by the authority (which corridors carry the largest
+student loads?); a role-keyed organisation would either duplicate the
+content across two themes or assign it arbitrarily to one of them, with the
+other role losing access to the question. A question-keyed organisation
+sidesteps the duplication by anchoring each theme to a single question that
+all roles can ask.
+
+The second alternative groups content by visualisation primitive: one
+theme for maps, one for time series, one for ranked bar charts, and so on.
+The alternative was rejected because end users do not formulate questions
+about chart types. A primitive-keyed catalogue would force the user to
+recognise the chart type that answers their question before they could
+locate the relevant theme, which inverts the natural exploration order. A
+question-keyed catalogue lets the user start from the question and reach
+the chart afterwards.
+
+Table~\ref{tab:themes:alternatives} summarises the comparison.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Alternative organisations of the analytical content}
+  \label{tab:themes:alternatives}
+  \begin{tabularx}{\linewidth}{l X l}
+    \hline
+    \textbf{Alternative} & \textbf{Reason for rejection} & \textbf{Status} \\
+    \hline
+    One theme per user role (four themes) & Cross-role questions duplicated or arbitrarily assigned. & Rejected \\
+    One theme per visualisation primitive & Inverts the natural exploration order; user must recognise the chart type before reaching the question. & Rejected \\
+    Six themes, one per analytical question & Each theme starts from a question end users naturally ask. & Selected \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The chosen six-theme catalogue elevates the analytical question to the
+top-level organisational unit and treats the supporting visualisations as
+subordinate to the question. The per-theme visualisation selection that
+follows in Section~\ref{sec:solution:viz} respects this subordination by
+selecting each visualisation to fit the question rather than the reverse.
