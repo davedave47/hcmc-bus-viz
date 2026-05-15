@@ -1,4 +1,124 @@
 \section{Data Architecture}
 \label{sec:solution:architecture}
 
-\textit{Stub.}
+The design problem addressed by the data architecture is the balance between
+interactive query latency on the analytical surface and the build-time cost
+of preparing the data behind that surface. Given the fixed analytical
+catalogue produced in Section~\ref{sec:solution:themes} and the latency
+target stated in requirement N1 of
+Section~\ref{sec:solution:problem:nonfunctional}, the architecture must
+guarantee bounded query cost for every chart in the catalogue while keeping
+the warehouse small enough to satisfy the on-disk size limit of requirement
+N4. This section evaluates three candidate architectures against these
+constraints and selects one.
+
+\subsection{Candidate architectures}
+\label{sec:solution:architecture:candidates}
+
+The classical three-layer medallion architecture
+\cite{databricksMedallion} arranges the data in a raw layer, a conformed
+layer of cleaned dimensions and facts, and a presentation layer in which
+aggregation is performed on demand at query time. The strength of the
+medallion is its support for open-ended ad-hoc analytical query: every
+question against the conformed layer is answerable, at the cost of a fresh
+aggregation each time. The weakness of the medallion in the present context
+is that the on-demand aggregation step cannot meet the warm-render latency
+target for an interactive analytical surface that issues hundreds of small
+queries per user session.
+
+A second candidate is a star-schema design placed directly over the raw
+views produced by preprocessing, without a conformed dimensional layer. The
+strength of this candidate is the minimal materialisation cost: only the
+fact tables and the dimension tables would need to be created. The weakness
+is that the route-identifier reconciliation between the GPS stream and the
+AFC stream must be repeated in every analytical query, with the risk that
+two visualisations referring to ``route 152'' refer to slightly different
+subsets of vehicles or trips if the reconciliation logic drifts.
+
+A third candidate, and the one selected, is a four-layer specialisation in
+which the conformed and aggregated layers are split apart. Layer 1 contains
+the raw views over the preprocessed data, layer 2 the conformed dimensions,
+layer 3 the fact views shaped through the conformed dimensions, and layer 4
+the pre-computed aggregate tables that the analytical surface reads from.
+The strength of this candidate is the combination of a single source of
+truth for the conformed identifiers (in layer 2) and bounded query cost (in
+layer 4). The weakness is that the build-time cost is higher than the other
+two alternatives, since the aggregate tables must be re-materialised
+whenever the underlying data changes.
+
+Table~\ref{tab:arch:candidates} summarises the comparison.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Comparison of three candidate data architectures}
+  \label{tab:arch:candidates}
+  \begin{tabularx}{\linewidth}{l X X X}
+    \hline
+    \textbf{Architecture} & \textbf{Strength} & \textbf{Weakness} & \textbf{Latency for analytical surface} \\
+    \hline
+    Three-layer medallion \cite{databricksMedallion} & Open-ended ad-hoc query against conformed layer. & On-demand aggregation per query is expensive. & Misses warm-render target. \\
+    Star schema over raw views & Minimal materialisation cost. & Route-identifier reconciliation repeated per query; risk of inconsistent subsets. & Variable; depends on per-query joins. \\
+    Four-layer specialisation & Single source of truth for conformed identifiers; bounded query cost at the aggregate layer. & Higher build-time cost; aggregates must be re-materialised on data change. & Meets warm-render target. \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{Chosen architecture}
+\label{sec:solution:architecture:chosen}
+
+The proposed system adopts the four-layer specialisation. The selection
+follows directly from the comparison above: only the four-layer design
+combines a guaranteed warm-render latency at the analytical surface with a
+single, centrally-defined reconciliation of route identifiers between the
+two operational data streams. The higher build-time cost is acceptable
+because the build is run rarely (once per data refresh) and because the
+preprocessed window is bounded (90 days of AFC and 50 days of GPS at the
+upper limit).
+
+Table~\ref{tab:arch:layers} summarises the four layers, their contents,
+and their materialisation mode.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Four-layer data architecture: contents and materialisation}
+  \label{tab:arch:layers}
+  \begin{tabularx}{\linewidth}{l X l}
+    \hline
+    \textbf{Layer} & \textbf{Contents} & \textbf{Materialisation} \\
+    \hline
+    Layer 1, raw views & Approximately twenty-four columnar views over the preprocessed data, registered automatically when the analytical engine opens the warehouse file. & View (non-materialised). \\
+    Layer 2, conformed dimensions & Ten dimension tables: calendar, hour, route, stop, school, company, fare class, payment channel, vehicle, promotion. Reconciles route identifiers across GPS and AFC; pre-tags Tết and parade-week windows. & Persistent table on disk. \\
+    Layer 3, fact views & Three fact views: boarding events, vehicle trip records, stop visits. Each fact view is re-shaped through the conformed dimensions of layer 2. & View (non-materialised). \\
+    Layer 4, aggregate tables & Eight aggregate tables, each pre-computed for one or more of the analytical themes catalogued in Section~\ref{sec:solution:themes}. The analytical surface reads exclusively from this layer. & Persistent table on disk. \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The aggregate layer is the analytical-surface contract. Every chart in the
+catalogue of Section~\ref{sec:solution:viz} reads from a single aggregate
+table; no chart issues a join across multiple aggregates at query time. The
+contract is the mechanism that guarantees the warm-render target of
+requirement N1.
+
+\subsection{Materialisation and refresh policy}
+\label{sec:solution:architecture:refresh}
+
+The conformed dimensions of layer 2 and the aggregate tables of layer 4 are
+persistent tables on the on-disk warehouse file. They are re-created in a
+single deterministic pass when the upstream preprocessed data changes; the
+pass is the warehouse build referenced in requirement N3. The fact views
+of layer 3 are not materialised, because the columnar storage of the
+underlying preprocessed data already supports the scan throughput required
+by the aggregate build at layer 4. The aggregate build at layer 4 therefore
+reads from layer 1 through the lightweight fact views of layer 3 and writes
+once to the persistent aggregate tables. The total on-disk size of the
+warehouse file remains below the limit set in requirement N4 because the
+aggregate layer compresses the 17.88-million-row AFC stream into a few
+hundred thousand aggregate rows.
+
+\begin{figure}[!htbp]
+  \centering
+  \imageplaceholder{Diagram}{Block diagram of four layers with arrows from raw views to dimensions to facts to aggregates, with the analytical surface reading from the aggregate layer.}{Draw in draw.io or Mermaid as a horizontal flow with four labelled blocks. PNG, 300 dpi, save as images/diagrams/architecture.png.}
+  \caption{Four-layer data architecture}
+  \label{fig:arch:diagram}
+\end{figure}
