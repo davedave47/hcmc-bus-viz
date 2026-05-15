@@ -1,4 +1,92 @@
 \section{Interaction Model}
 \label{sec:solution:interaction}
 
-\textit{Stub.}
+An analytical surface composed of independent visualisations is less useful
+than the same surface with coordinated interactions across visualisations.
+A user who selects a route in one chart expects that the same route is
+highlighted in the other charts that share the screen; a user who notices
+an unusual point in a chart expects a hint about why the point is unusual;
+a user who clicks on a single analytical entity expects a panel that
+summarises that entity in one place. The proposed system meets these
+expectations by adopting three established interaction patterns from the
+literature on coordinated views and on visual storytelling, and by
+composing them into a single interaction layer.
+
+\subsection{Multiple Coordinated Views}
+\label{sec:solution:interaction:mcv}
+
+The first pattern is Multiple Coordinated Views (MCV), described in the
+thesis of Liu \cite{liu2022} and surveyed in
+Chapter~\ref{chapter:foundations}. Under this pattern, selecting an
+analytical entity in one chart updates every other chart in the same view
+to highlight or filter the corresponding subset. A click on a route in the
+ranked-bar chart of the Demand and Crowding theme highlights the same
+route in the route-by-hour heatmap, the weekly rhythm calendar, and the
+short-horizon forecast simultaneously. The user does not need to navigate
+between charts or to remember which route was selected; the selection is a
+piece of shared state that the surface manages on behalf of the user.
+
+The design choice in the proposed system is to constrain coordinated
+updates to within a single thematic view. Cross-theme coordination is
+reserved for explicit drill-down navigation: clicking on a route in any
+chart of the Demand and Crowding theme opens the Routes theme on that
+specific route. The constraint keeps the per-theme mental model local and
+bounded, so that a user studying one theme is not surprised by silent
+changes to a chart of a theme they are not currently viewing. The
+constraint also keeps the implementation cost of the coordination logic
+proportional to the number of charts in a single theme, rather than to the
+total number of charts in the catalogue.
+
+\subsection{Visual storytelling principles}
+\label{sec:solution:interaction:storytelling}
+
+The second pattern is visual storytelling, following the principles set
+out by Knaflic \cite{knaflic2015} and summarised in
+Chapter~\ref{chapter:foundations}. Under this pattern, every chart in the
+catalogue carries both a descriptive title that names the object of the
+chart and a one-sentence interpretive caption that points the reader to
+the finding the chart supports. The default visual palette is muted, and
+saturated colour is reserved for the single element the interpretive
+caption highlights. Chart annotations (a small text label, a circle, a
+reference line) underline the same finding inline. The user reading a
+chart for the first time does not have to find the finding unaided; the
+chart guides the eye to the point the analyst intends.
+
+The principle is applied uniformly across the catalogue of
+Section~\ref{sec:solution:viz}, so that the user develops a consistent
+reading habit across the six themes. The same conventions govern the
+on-chart text, the colour palette, and the placement of annotations on
+every chart in the system.
+
+\subsection{Entity-detail interaction}
+\label{sec:solution:interaction:detail}
+
+The third pattern is the entity-detail interaction. Every clickable
+analytical entity in any chart, that is, a route, a stop, a school, an
+operating company, a calendar day, a time-of-day cell, a hexagonal-bin
+cell, or a vehicle, opens a side panel containing a small multi-chart
+dashboard about the entity. The panel summarises the entity along several
+dimensions at once (volume, reliability, network context, demand
+composition), so that the user does not have to navigate to a separate
+page to learn the basic facts about the entity. The panel is read-only
+and self-contained; closing the panel returns the user to the underlying
+thematic view without state loss. This pattern ensures that no analytical
+entity is dead-ended in the surface, and that the analytical depth of the
+catalogue is uniform across all six themes.
+
+\subsection{Composition}
+\label{sec:solution:interaction:composition}
+
+The three patterns compose into a single interaction layer. MCV governs
+in-theme cross-chart filtering: a selection in one chart of a theme
+propagates to every other chart of the same theme. Visual storytelling
+governs presentation within each chart: descriptive title plus
+interpretive caption, muted defaults with one saturated colour, and
+underlining annotations. Entity-detail interaction governs the click
+response: a click that does not naturally express a filter opens an
+entity-detail panel for the clicked entity. Together the three patterns
+form a coherent surface in which the user can move from a network-wide
+question to a single-entity answer without leaving the theme and without
+losing the selection that brought them there. The interaction layer is
+what makes the catalogue of Section~\ref{sec:solution:viz} an analytical
+platform rather than a collection of independent charts.
