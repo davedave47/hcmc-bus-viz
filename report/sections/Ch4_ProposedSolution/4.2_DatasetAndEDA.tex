@@ -179,6 +179,29 @@ routes (29, 41, 57, 61, 84, 99, 102, 141, and 151). The catalogued full
 50-day window covers a broader set of routes; replacing the local extraction
 with the full window is part of the phase 2 work.
 
+\subsubsection{Patterns visible in the exploratory statistics}
+
+Four patterns recur across the statistics reported above and are noted here
+as observation, not design decision. The architectural responses appear
+later in this chapter. First, the hourly event distribution exhibits two
+peaks of comparable magnitude near the start of the working morning and the
+end of the working afternoon, with a midday trough roughly half the peak
+magnitude; the shape is consistent with a commuter-dominated ridership and
+is not consistent with a tourist or leisure profile. Second, the fare-class
+breakdown is concentrated on three large classes (standard adult, student,
+and free pass), which together account for above 95\% of all events, with a
+long tail of minor classes; any analytical view that does not separate the
+student class from the standard adult class will mask the dominant
+sub-population. Third, the payment-channel distribution is highly skewed
+toward cash, which holds above 96\% of events across the full window; the
+skew constrains any analytical question about digital-channel adoption to
+a small-fraction analysis with limited statistical resolution at fine
+temporal granularity. Fourth, the route-level boarding distribution is
+heavy-tailed: ten routes carry roughly one third of all events while the
+remaining 153 routes form a long tail, with no single tail route exceeding
+1\% individually; analytical comparisons across routes must therefore use
+either a logarithmic axis or a top-N restriction to remain readable.
+
 \subsection{Data quality observations}
 \label{sec:solution:dataset:quality}
 
@@ -217,3 +240,17 @@ two tables to keep each table compact.
     \hline
   \end{tabularx}
 \end{table}
+
+Two of the six observations are consequential enough to shape the
+architecture of the rest of the chapter. The calendar-window mismatch
+between the GPS and AFC streams (the first row of
+Table~\ref{tab:dataset:quality1}) rules out any event-level join between
+the operational and demand sources, and forces every cross-source analysis
+to operate at the aggregate level of route by hour of day by day type. The
+absence of alighting events (the second row of the same table) rules out
+any live-occupancy view, and forces the demand-side analytical model to
+treat the boarding event as the unit of measurement throughout. The
+architecture of Section~\ref{sec:solution:architecture} addresses both
+observations directly: aggregate-grain reconciliation in the conformed
+layer answers the first, and a boarding-centric measurement model in the
+fact and aggregate layers answers the second.
