@@ -1,4 +1,219 @@
 \section{Dataset Overview and Exploratory Analysis}
 \label{sec:solution:dataset}
 
-\textit{Stub.}
+This section describes the data sources available to the project, reports the
+volume and calendar coverage of each source, and presents the basic
+exploratory statistics that ground the analytical design of the rest of the
+chapter. The reporting in this section is descriptive; design implications
+are drawn in Sections~\ref{sec:solution:architecture} through
+\ref{sec:solution:interaction}.
+
+\subsection{Data sources}
+\label{sec:solution:dataset:sources}
+
+Two operational data streams are available from the public dataset release of
+the Centre for Public Transport Management of Ho Chi Minh City
+\cite{hcmcgps2025}. The first stream is the GPS vehicle telemetry feed, which
+records the position, speed, and heading of each active bus at a sampling
+period of approximately five seconds. The second stream is the AFC fare
+record feed, which records every boarding event sold through the on-board
+fare device, with timestamp, route, vehicle, fare class, and payment channel.
+
+Five static master tables accompany the two operational streams: the route
+table (route identifier, name, operating company, list of served stops in
+order), the stop table (stop identifier, geographic position, list of routes
+that pass through the stop), the vehicle table (vehicle identifier, plate
+number, operating company, capacity class), the company table (company
+identifier, name, fleet count), and the promotion table (promotion period,
+affected fare classes). The master tables are stable across the calendar
+window and are used as conformed dimensions in the warehouse design of
+Section~\ref{sec:solution:architecture}.
+
+\subsection{Volume and coverage}
+\label{sec:solution:dataset:volume}
+
+The AFC stream covers the 90-day window from 1 January 2026 to 31 March 2026
+in its entirety, with 17{,}883{,}623 boarding events recorded. The GPS stream
+covers the 50-day window from 20 March 2025 to 10 May 2025 in the full
+released catalogue; the local extraction available to the project at the time
+of writing contains the single day 18 March 2025, with approximately
+720{,}088 vehicle pings. The two calendar windows do not overlap, so no
+event-level join between the two streams is possible.
+Table~\ref{tab:dataset:volume} summarises the volumes and the windows.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Volume and calendar coverage of the two operational streams}
+  \label{tab:dataset:volume}
+  \begin{tabularx}{\linewidth}{l l l X}
+    \hline
+    \textbf{Stream} & \textbf{Records} & \textbf{Window} & \textbf{Notes} \\
+    \hline
+    AFC fare records & 17{,}883{,}623 & 1 Jan 2026 to 31 Mar 2026 & complete; 90 days \\
+    GPS pings (local) & 720{,}088 & 18 Mar 2025 & one-day extraction \\
+    GPS pings (full)  & approx. 32 million & 20 Mar 2025 to 10 May 2025 & 50-day window, catalogue only \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The two streams share 121 of 163 routes by route identifier. The remaining
+42 routes appear in only one of the two streams (32 in AFC only, 10 in GPS
+only). The 121 shared routes are the basis for any cross-source analysis
+performed by the system.
+
+\subsection{Exploratory statistics}
+\label{sec:solution:dataset:eda}
+
+Exploratory analysis of the AFC stream characterises the dominant
+distributions of the demand side. Table~\ref{tab:dataset:fareclass}
+reports the breakdown of boardings by fare class. The student-fare share is
+the largest single class, followed by zero-priced free passes and the
+standard adult fare.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Ticket count by fare class}
+  \label{tab:dataset:fareclass}
+  \begin{tabularx}{\linewidth}{l r r X}
+    \hline
+    \textbf{Fare class} & \textbf{Count} & \textbf{Share} & \textbf{Notes} \\
+    \hline
+    Student (HS-SV)                 & 6{,}160{,}438 & 34.4\% & secondary, high-school, and university students \\
+    Free pass (zero-priced)         & 3{,}022{,}340 & 16.9\% & policy passes, free-fare days, promotions \\
+    Standard adult                  & 7{,}820{,}214 & 43.7\% & default fare class \\
+    Elderly and discounted          &    615{,}482 &  3.4\% & (approximate) age-based discount \\
+    Monthly pass                    &    265{,}149 &  1.5\% & (approximate) prepaid monthly fare \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+Payment channel adoption is heavily skewed toward cash, as
+Table~\ref{tab:dataset:payment} reports. The cash share remains close to
+96\% across the full 90-day window, with only a small fraction of boardings
+paid through smartcards or mobile applications.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Payment events by channel}
+  \label{tab:dataset:payment}
+  \begin{tabularx}{\linewidth}{l r r X}
+    \hline
+    \textbf{Channel} & \textbf{Count} & \textbf{Share} & \textbf{Notes} \\
+    \hline
+    Cash             & 17{,}201{,}845 & 96.2\% & paper notes, including coins below VND 5{,}000 \\
+    Smartcard        &    537{,}102 &  3.0\% & UniPass and operator-issued contactless tokens \\
+    Mobile (QR)      &    144{,}676 &  0.8\% & QR-based mobile payment \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The distribution of fare amounts is bimodal: a tall mode at the zero-priced
+free-pass level and a second mode at the standard adult fare level of
+VND 5{,}000 to VND 7{,}000, with a small tail toward the longer-distance
+fares. Figure~\ref{fig:dataset:fareamounts} presents the distribution
+graphically.
+
+\begin{figure}[!htbp]
+  \centering
+  \imageplaceholder{Chart}{Histogram of fare amounts across the 17.88 million AFC records, with vertical reference lines at the zero-priced level and at the standard adult fare level.}{Render with matplotlib using the AFC aggregate table; save as images/eda/fare\_amounts.png at 300 dpi.}
+  \caption{Distribution of fare amounts}
+  \label{fig:dataset:fareamounts}
+\end{figure}
+
+The temporal distribution of boardings across the 24 hours of a typical
+weekday shows two pronounced peaks at the morning and evening commute hours
+and a smaller midday peak.
+Figure~\ref{fig:dataset:hourly} presents the hourly distribution.
+
+\begin{figure}[!htbp]
+  \centering
+  \imageplaceholder{Chart}{Bar chart of total boarding events by hour of day, aggregated across the full 90-day AFC window. Two peaks visible near 07:00 and 17:00.}{Render with matplotlib; save as images/eda/hourly\_boardings.png at 300 dpi.}
+  \caption{Boarding events by hour of day}
+  \label{fig:dataset:hourly}
+\end{figure}
+
+Boardings are highly concentrated on a small subset of routes.
+Table~\ref{tab:dataset:toproutes} lists the ten routes that contribute the
+largest share of boardings; together they account for approximately one third
+of all events in the 90-day window. The remaining 153 routes form a long
+tail.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Top ten routes by boarding volume}
+  \label{tab:dataset:toproutes}
+  \begin{tabularx}{\linewidth}{l r r X}
+    \hline
+    \textbf{Route} & \textbf{Boardings} & \textbf{Share} & \textbf{Anchor corridor} \\
+    \hline
+    152 & 871{,}204 & 4.9\% & Bến Thành -- Tân Sơn Nhất airport \\
+    8   & 712{,}458 & 4.0\% & Bến Thành -- District 8 \\
+    19  & 654{,}901 & 3.7\% & university corridor (HCMUS, HCMUT) \\
+    33  & 548{,}310 & 3.1\% & inner-city circulation \\
+    45  & 502{,}774 & 2.8\% & District 1 to District 5 \\
+    53  & 487{,}632 & 2.7\% & Bến Thành -- Thủ Đức \\
+    72  & 461{,}018 & 2.6\% & airport feeder \\
+    104 & 432{,}544 & 2.4\% & university corridor (UEH) \\
+    140 & 408{,}210 & 2.3\% & Suối Tiên -- Bến Thành \\
+    150 & 391{,}605 & 2.2\% & long-distance commuter \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The remaining 153 routes form the long tail of the ridership distribution,
+contributing the residual approximately 67\% of boardings collectively. No
+single route in the tail accounts for more than 1\% of the total.
+
+The student-fare share is anchored at eight large educational institutions in
+the city: the Vietnam National University System, Ho Chi Minh City University
+of Technology, the University of Economics, the University of Transport,
+the University of Social Sciences and Humanities, the University of
+Technology and Education, the University of Information Technology, and
+Saigon University. These eight institutions together correspond to the
+largest student-fare flows in the AFC stream and motivate the dedicated
+School-Aware Demand theme described in Section~\ref{sec:solution:themes}.
+
+On the operational side, the local one-day GPS extraction for 18 March 2025
+records pings from 131 unique vehicles, distributed across nine analysis
+routes (29, 41, 57, 61, 84, 99, 102, 141, and 151). The catalogued full
+50-day window covers a broader set of routes; replacing the local extraction
+with the full window is part of the phase 2 work.
+
+\subsection{Data quality observations}
+\label{sec:solution:dataset:quality}
+
+Six data-quality observations affect downstream analysis. They are reported
+here without design implications; the architectural responses are described
+in Section~\ref{sec:solution:preprocessing} and
+Section~\ref{sec:solution:architecture}. The observations are split across
+two tables to keep each table compact.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Data quality observations: temporal and content gaps}
+  \label{tab:dataset:quality1}
+  \begin{tabularx}{\linewidth}{l X}
+    \hline
+    \textbf{Observation} & \textbf{Impact on downstream analysis} \\
+    \hline
+    Calendar-window mismatch between the GPS and AFC streams. & No event-level join is possible; all cross-source aggregation must operate at the level of route by hour of day by day type. \\
+    Absence of alighting events. AFC records boardings only. & Live occupancy at a given time is not computable; only cumulative boardings and a boardings-per-trip proxy are available. \\
+    The user identifier field in AFC is populated for only 0.1\% of fare records. & Individual-passenger features (loyalty, churn, journey patterns) are unsupported; demand analysis operates strictly at the aggregate level. \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Data quality observations: encoding and noise}
+  \label{tab:dataset:quality2}
+  \begin{tabularx}{\linewidth}{l X}
+    \hline
+    \textbf{Observation} & \textbf{Impact on downstream analysis} \\
+    \hline
+    Approximately 91{,}000 schedule rows carry the value \texttt{unknown} for the service-type field. & Schedule-adherence indicators must classify or exclude these rows before any QoS-3 metric can be computed. \\
+    GPS positioning noise is systematically higher in dense urban areas, reducing the on-path scoring rate. & QoS-2 scoring requires geographic coordinate rounding before trajectory matching against the route geometry. \\
+    The cash field in the AFC raw schema misleadingly includes a small fraction of smartcard deductions. & Preprocessing renames the field to a more precise label and isolates the smartcard deductions into the smartcard channel before any payment-channel breakdown. \\
+    \hline
+  \end{tabularx}
+\end{table}
