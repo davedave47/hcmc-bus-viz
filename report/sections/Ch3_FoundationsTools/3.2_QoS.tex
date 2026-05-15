@@ -1,4 +1,51 @@
 \section{Quality of Service Scoring for Public Transit}
 \label{sec:foundations:qos}
 
-\textit{Stub.}
+Public-transit operations are evaluated on multiple independent quality
+dimensions rather than on a single composite score. A bus that completes
+every scheduled trip but does so consistently ten minutes late is failing
+in a different way from one that runs precisely on time but skips one
+trip in five; a route whose vehicles stay on the published polyline is
+not, for that reason alone, also on schedule. The framework introduced by
+Srisakaokul \cite{srisakaokul2023} for the Bangkok bus network captures
+this separation explicitly by decomposing service quality into three
+independent indicators, each computed from vehicle telemetry recorded by
+on-board Global Positioning System (GPS) units.
+
+The first indicator is Quality of Service indicator one (QoS-1), trip
+completion. It is the fraction of scheduled trips that started and
+reached their terminus within the operating period. The indicator is
+computed by matching scheduled trip identifiers against telemetry that
+records the trip beginning and ending within bounded geographic windows
+of the scheduled start and end stops. A scheduled trip whose telemetry
+shows the vehicle never reaching the bounded window of the scheduled end
+stop is counted as not completed, irrespective of why the trip was cut
+short.
+
+The second indicator is Quality of Service indicator two (QoS-2),
+on-path operation. It is the fraction of telemetry pings emitted during
+an active trip that lie within a fixed-radius buffer around the
+scheduled route polyline. A typical buffer radius is fifty metres. The
+indicator measures route adherence: a vehicle that diverts from the
+published path to bypass congestion or to handle a deviation accumulates
+pings outside the buffer and its QoS-2 score falls accordingly.
+
+The third indicator is Quality of Service indicator three (QoS-3),
+on-schedule operation. It is the fraction of stop arrivals that fall
+within a fixed time tolerance of the scheduled arrival time at that
+stop. The tolerance is a parameter of the framework rather than a fixed
+constant; the typical choice in the published evaluation is five
+minutes. The indicator measures schedule adherence, which is independent
+of both completion and route adherence: a vehicle can complete the trip
+on the correct path and still arrive at every intermediate stop late.
+
+Two properties of the framework bear on later design. First, the three
+indicators are independent in the sense that a route can score high on
+completion while scoring low on adherence, or high on path adherence
+while scoring low on schedule adherence, so the indicators are reported
+separately rather than averaged into a single number. Second, the
+indicators are sensitive to urban-canyon GPS noise, which systematically
+lowers absolute QoS-2 scores in dense built environments because pings
+drift away from the true vehicle position. The indicator is therefore
+most informative when compared across routes operated under similar
+conditions rather than against an absolute threshold.
