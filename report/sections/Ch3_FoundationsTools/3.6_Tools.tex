@@ -1,4 +1,109 @@
 \section{Tools}
 \label{sec:foundations:tools}
 
-\textit{Stub.}
+This section introduces the named software tools that the proposed
+system draws on. Each tool is described in terms of what it is and
+which category in the analytical stack it occupies; the specific
+configuration of each tool in the proposed system is described in
+Chapter \ref{chapter:solution}.
+
+\subsection{DuckDB}
+
+DuckDB \cite{duckdb} is an in-process analytical database management
+system designed for analytical query workloads on columnar data. It is
+embedded in the application process rather than running as a separate
+server, so that queries execute in the same address space as the
+application that issues them, without the network round-trip and
+serialisation cost of a client-server database. DuckDB is suitable for
+the analytical layer of a single-process system that needs SQL
+capability over moderately large columnar datasets.
+
+\subsection{Polars}
+
+Polars \cite{polars} is a high-performance dataframe library
+implemented in Rust with bindings for Python and several other
+languages. Its execution model is lazy and parallel: a chain of
+operations on a dataframe is compiled into a query plan that is
+optimised before being executed across multiple central processing unit
+cores. Polars is suitable for tabular data processing in pipelines that
+combine relational operations such as joins and groupings with
+procedural operations expressed in the host language.
+
+\subsection{Jupyter Notebook}
+
+Jupyter Notebook \cite{jupyter} is an interactive computational
+notebook environment that supports mixed prose, code, and rendered
+output in a single document. Code cells are executed individually and
+the output of each cell, whether a numeric value, a table, or a
+rendered figure, is displayed inline beneath the cell that produced it.
+The environment is suitable for exploratory analysis where the result
+of each computation must be inspected before the next is composed.
+
+\subsection{Streamlit}
+
+Streamlit \cite{streamlit} is a Python framework for building
+interactive data applications in which user-interface elements are
+declared inline alongside the data processing code. The framework's
+execution model is whole-script re-run: each user interaction triggers
+a full server-side re-execution of the affected code path, with cached
+values reused where the framework can determine that the inputs to a
+computation have not changed.
+
+\subsection{Plotly}
+
+Plotly \cite{plotly} is a graphing library that produces interactive
+web-based visualisations. Bindings exist for several languages; the
+Python binding produces visualisations directly from dataframes and
+emits HyperText Markup Language (HTML) and JavaScript output that
+renders in the browser with built-in support for hover, zoom, and
+selection. Plotly covers the standard catalogue of statistical and
+analytical chart types.
+
+\subsection{pydeck}
+
+pydeck \cite{pydeck} is a Python binding for the deck.gl visualisation
+framework, which renders large geospatial layers using Web Graphics
+Library (WebGL) hardware acceleration. Geospatial data is expressed as
+a stack of layers, each of which has its own visual encoding, and the
+framework composes the layers into a single accelerated rendering. The
+binding supports the hexagonal-bin layer described in Section
+\ref{sec:foundations:primitives}.
+
+\subsection{statsforecast}
+
+statsforecast \cite{statsforecast} is a Python library that implements
+classical statistical forecasting models with a uniform interface. The
+included models cover exponential smoothing in its various forms,
+autoregressive integrated moving average, and the theta method, among
+others. The library is suitable for short-horizon forecasting on
+regularly sampled time series for which the cost and complexity of a
+neural model would not be justified.
+
+\subsection{The H3 system}
+
+H3 \cite{h3} is a globally consistent hexagonal hierarchical geospatial
+indexing system that maps the Earth's surface to a multi-resolution
+grid of hexagonal cells. Each cell carries a stable identifier that
+encodes both its resolution and its position, and cells at one
+resolution can be aggregated into their parent cells at a coarser
+resolution without recomputing the grid. The property enables
+consistent spatial aggregation across zoom levels.
+
+\subsection{The UMAP library}
+
+The UMAP library \cite{umap} is a Python implementation of the Uniform
+Manifold Approximation and Projection algorithm for dimensionality
+reduction. The algorithm constructs a low-dimensional embedding that
+preserves the local neighbourhood structure of the high-dimensional
+input, and the library exposes it through an interface compatible with
+the conventions of the scikit-learn ecosystem.
+
+\subsection{Stack coherence}
+
+The tools listed in this section form a coherent stack that covers data
+storage (DuckDB), data processing (Polars), exploratory analysis
+(Jupyter Notebook), application shell (Streamlit), interactive
+visualisation (Plotly), geospatial rendering (pydeck and H3), and
+forecasting (statsforecast and the UMAP library for the related task of
+projection). The specific role each tool plays in the proposed system
+is described in Chapter \ref{chapter:solution}.
