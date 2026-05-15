@@ -39,6 +39,14 @@ complements the historical view.
   \end{tabularx}
 \end{table}
 
+The route-by-hour categorical heatmap is the principal primitive for this
+theme because the underlying question is two-dimensional (route by time)
+and the heatmap is the canonical primitive for revealing co-located peaks
+across many series at once. A small-multiples grid of 184 line plots would
+require the reader to scan a long visual list before the joint peak is
+visible; the heatmap projects the same data onto a single canvas in which
+the joint peak is immediately legible.
+
 \subsection{School-Aware Demand}
 \label{sec:solution:viz:school}
 
@@ -67,6 +75,15 @@ simultaneously.
   \end{tabularx}
 \end{table}
 
+The treemap is the principal primitive for this theme because the
+analytical question is intrinsically hierarchical: a small number of
+schools each anchor a small set of routes. A treemap preserves the
+hierarchy and encodes magnitude through area, which is the visual encoding
+that most directly answers the question of how much demand each school
+contributes through each route. A pair of stacked bar charts could carry
+the same data but would split the hierarchical structure across two axes
+and would obscure the school-as-outer-grouping reading.
+
 \subsection{Spatial and Connectivity}
 \label{sec:solution:viz:spatial}
 
@@ -94,6 +111,15 @@ connectivity between bus feeders and metro line~1.
   \end{tabularx}
 \end{table}
 
+The hexagonal-bin density map is the principal primitive for this theme
+because the demand-density question requires a comparison across spatial
+cells, and the hexagonal grid provides cells of uniform area that can be
+compared directly. The alternative of a choropleth keyed to administrative
+districts is rejected because districts vary substantially in area and
+their boundaries do not align with demand corridors. The hexagonal grid is
+also independent of administrative geometry, which keeps the analytical
+reading separate from the political reading of the city.
+
 \subsection{Financial and Operations}
 \label{sec:solution:viz:financial}
 
@@ -119,6 +145,16 @@ trace distinctive financial signatures across multiple metrics.
     \hline
   \end{tabularx}
 \end{table}
+
+The two-dimensional scatter quadrant with bubble size is the principal
+primitive for this theme because the question of financial efficiency per
+route is intrinsically a two-axis comparison (waste against revenue per
+trip), and the quadrant layout makes the four interpretive regions
+visible at a glance. Bubble size encodes the third dimension of ridership
+volume without forcing a third spatial axis. A grouped bar chart could
+carry the same three variables but would not align them along
+interpretable axes and would not preserve the visual reading of "bleeding"
+versus "healthy" routes by quadrant.
 
 \subsection{Network Health and Performance}
 \label{sec:solution:viz:network}
@@ -146,6 +182,14 @@ annotated timeline with an adjustable threshold.
     \hline
   \end{tabularx}
 \end{table}
+
+The annotated timeline with an adjustable threshold slider is the
+principal primitive for this theme because the anomaly question is
+calendar-anchored: the reader needs to see a long horizontal axis of days
+and the deviations that exceed a chosen threshold. The slider exposes the
+sensitivity of the anomaly call to the threshold value, which keeps the
+reader aware that anomaly detection is a parameter-dependent operation
+rather than a binary fact about the network.
 
 \subsection{Routes}
 \label{sec:solution:viz:routes}
@@ -178,17 +222,50 @@ vertical axis, with each trip drawn as a polyline.
   \end{tabularx}
 \end{table}
 
-\subsection{Alternatives considered}
+The two-dimensional UMAP projection is the principal cross-route
+comparison primitive because the route feature vector contains a dozen
+dimensions (peak hours, student share, weekend drop, length, company, and
+others) and a single two-dimensional projection captures most of the
+between-route variance in a chart the user can scan visually. A radar plot
+with twelve spokes could carry the same dimensions but would require one
+chart per route, defeating the cross-route comparison. A grouped stacked
+bar would carry only one or two dimensions and would lose the geometric
+clustering that reveals route archetypes.
+
+\subsection{Rejected primitives and reasons}
 \label{sec:solution:viz:alt}
 
-Several primitives were considered and rejected for specific charts. Pie
-charts and three-dimensional bar charts were rejected throughout the
-catalogue, following the guidance of Knaflic \cite{knaflic2015} that pie
-charts compare angles poorly and that three-dimensional effects distort
-the perception of length and area. For the boarding-density chart of the
-Spatial and Connectivity theme, a choropleth keyed to administrative
-districts was rejected in favour of the H3 hexagonal-bin aggregation
-\cite{h3}, because the districts vary substantially in area and would
-produce a density figure that confounds population density with
-administrative geometry; the uniform-area H3 cells give a directly
-comparable density per cell.
+Six primitives were considered for one or more of the charts in the
+catalogue and rejected. Table~\ref{tab:viz:rejected} records each
+rejection with the chart where the primitive might have applied and the
+specific reason for rejecting it. The rejections follow the visualisation
+guidance of Knaflic \cite{knaflic2015} where applicable and follow the
+question-fit reasoning of the per-theme paragraphs above where the
+guidance is not specific.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Primitives considered and rejected, with reasons}
+  \label{tab:viz:rejected}
+  \begin{tabularx}{\linewidth}{l X X}
+    \hline
+    \textbf{Primitive considered} & \textbf{Where it might have applied} & \textbf{Reason for rejection} \\
+    \hline
+    Pie chart & Any composition view (fare class, payment channel, company share) & Compares angles poorly and saturates above five slices; ranked bar conveys composition more directly \cite{knaflic2015}. \\
+    Three-dimensional bar chart & Any quantitative comparison & Three-dimensional effects distort length and area perception, leading to systematic misreading of magnitudes \cite{knaflic2015}. \\
+    Choropleth keyed to districts & Boarding density across the city & Districts vary substantially in area and confound population density with administrative geometry; replaced by hexagonal-bin map \cite{h3}. \\
+    Word cloud & Any categorical-label summary (route names, stop names) & Encodes magnitude through font size, which is a poor visual channel for quantitative comparison and offers no axis for inspection. \\
+    Dendrogram & Cross-route clustering on the Routes theme & Forces a hierarchical reading on the routes that the underlying feature space does not support; replaced by two-dimensional UMAP scatter \cite{umap}. \\
+    Radial axis (radar plot) & Per-route multi-metric summary on the Routes theme & Each chart shows one route only, defeating the cross-route comparison that the theme is designed to support; replaced by parallel coordinates with small multiples. \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The visualisation catalogue is not closed. The four-layer architecture of
+Section~\ref{sec:solution:architecture} accepts additional charts without
+any change to the warehouse, provided the new chart's data source is one
+of the eight aggregate tables. New charts whose grain is not already
+covered by an existing aggregate require a new aggregate table to be added
+to the layer-4 catalogue and the new aggregate to be wired into the build
+ordering; the architecture supports such additions without disturbing the
+existing aggregates or the existing charts.
