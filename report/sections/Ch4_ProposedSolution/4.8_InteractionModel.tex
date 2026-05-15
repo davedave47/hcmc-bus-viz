@@ -37,6 +37,17 @@ constraint also keeps the implementation cost of the coordination logic
 proportional to the number of charts in a single theme, rather than to the
 total number of charts in the catalogue.
 
+As a concrete worked example, consider a user looking at the Demand and
+Crowding theme who clicks the row for route 152 in the route-by-hour
+heatmap. The selection is written to the in-theme state. The hourly
+demand curve immediately re-filters to show only route 152's hourly
+profile against a faint network-average reference line. The top-routes
+ranked bar pulls route 152 to the top of its bar and brightens its bar
+colour. The weekly-rhythm calendar heatmap re-renders for route 152
+alone. The short-horizon forecast trace switches to route 152's forecast
+with its 80 and 95\% bands. The user has issued a single click and has
+seen four other charts respond simultaneously without any navigation.
+
 \subsection{Visual storytelling principles}
 \label{sec:solution:interaction:storytelling}
 
@@ -58,6 +69,18 @@ reading habit across the six themes. The same conventions govern the
 on-chart text, the colour palette, and the placement of annotations on
 every chart in the system.
 
+As a concrete worked example, the route-by-hour heatmap of the Demand and
+Crowding theme carries a descriptive title above the chart, "Boardings by
+route and hour of day", and a one-sentence interpretive caption below it,
+"Thirty routes carry roughly 80\% of crowding events and all peak in the
+same morning hour". The body of the heatmap uses a muted blue-to-grey
+palette for the bulk of cells; the cells in the morning-peak column of
+the thirty highest-volume routes are rendered in a saturated orange that
+matches the caption. A short text annotation arrow points from the
+caption to the orange block. The reader sees both the finding and its
+location in the chart simultaneously, without having to scan the matrix
+unaided.
+
 \subsection{Entity-detail interaction}
 \label{sec:solution:interaction:detail}
 
@@ -73,6 +96,19 @@ and self-contained; closing the panel returns the user to the underlying
 thematic view without state loss. This pattern ensures that no analytical
 entity is dead-ended in the surface, and that the analytical depth of the
 catalogue is uniform across all six themes.
+
+As a concrete worked example, consider a user looking at the
+Spatial-and-Connectivity theme who clicks on the Bến Thành stop on the
+network-overview map. A side panel slides in from the right of the
+screen and occupies approximately 40\% of the viewport. The panel header
+displays the stop name, the stop identifier, the geographic coordinates,
+and the list of routes that pass through the stop. The body of the panel
+contains three small charts arranged vertically: the hourly boarding
+profile at the stop across the 90-day window, a small ranked bar listing
+the top five routes by boardings at the stop, and a small heatmap of
+day-of-week against hour-of-day for the stop. The user has obtained a
+complete entity profile in a single click and can close the panel to
+return to the map without losing the rest of the in-theme state.
 
 \subsection{Composition}
 \label{sec:solution:interaction:composition}
@@ -90,3 +126,27 @@ question to a single-entity answer without leaving the theme and without
 losing the selection that brought them there. The interaction layer is
 what makes the catalogue of Section~\ref{sec:solution:viz} an analytical
 platform rather than a collection of independent charts.
+
+\subsection{Bounded interaction}
+\label{sec:solution:interaction:bounded}
+
+The composition of the three patterns is intentionally bounded.
+Coordinated updates under the Multiple Coordinated Views pattern operate
+only within a single thematic view; a selection made on the Demand and
+Crowding theme is not propagated to charts on the Spatial and
+Connectivity theme even when the same entity (a route, a stop) is
+present in both. Cross-theme transitions are reserved for explicit
+drill-down navigation, in which the user clicks a navigation link that
+opens another theme on the same entity with a fresh selection state.
+
+The bound is a design choice rather than a technical limitation. The
+analytical context that a user builds up while reading a theme (which
+filters are active, which entities are selected, which annotations are
+visible) is local to that theme; propagating the context across themes
+would force the user to track changes on charts they are not currently
+looking at, which adds cognitive overhead disproportionate to the
+analytical value. The bound also keeps the implementation cost of the
+coordination logic proportional to the number of charts in a single
+theme, rather than to the total number of charts in the catalogue;
+adding a new chart to a theme requires wiring it only to the other
+charts of the same theme, not to the entire catalogue.
