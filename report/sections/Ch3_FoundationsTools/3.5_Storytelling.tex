@@ -1,4 +1,51 @@
 \section{Visual Storytelling Principles}
 \label{sec:foundations:storytelling}
 
-\textit{Stub.}
+Knaflic \cite{knaflic2015} codifies four principles for the construction
+of analytical charts intended to convey a specific finding to a human
+reader. The principles are stated as design imperatives rather than as
+descriptive observations: each is a rule the designer is expected to
+apply, not a property that any well-formed chart automatically
+possesses.
+
+The first principle is to declutter. Every visual element that does not
+contribute to the analytical claim of the chart is a candidate for
+removal. Gridlines, background fills, axis labels, tick marks, and
+legend entries should be inspected one at a time and removed when their
+absence does not impair reading. The rationale is that visual noise
+competes with signal for the reader's attention, so reducing the
+quantity of ink that does not carry information improves the
+intelligibility of the ink that does.
+
+The second principle is to focus attention. Saturated colour and heavy
+line weight should be used sparingly and reserved for the element of
+the chart that supports its analytical claim. Default elements are
+rendered in a single muted tone, so that the reader's eye is drawn to
+the part of the chart the designer wishes to emphasise without being
+distracted by ambient differences in hue and weight across the rest of
+the plot. The principle inverts the common default in which every
+category is assigned a distinct bright colour.
+
+The third principle is to annotate. Every chart should carry an
+explicit textual interpretation of what the reader is to look for; the
+annotation belongs on the chart itself, integrated with the marks it
+refers to, rather than relegated to a separate caption beneath the
+figure. The rationale is that a chart unread is a chart that has failed,
+and an annotation in the chart is read together with the marks it
+describes rather than as an afterthought.
+
+The fourth principle is to structure as narrative. A sequence of charts
+that together tell a story is more effective than a single dense chart
+that contains the same information. The narrative structure of a series
+of charts, that is, the order in which they appear and the transitions
+between them, is part of its design and is composed deliberately rather
+than left to emerge from the order in which the underlying queries
+happened to be written.
+
+The four principles are interpretive guides rather than strict rules,
+and they occasionally pull against one another: an aggressive declutter
+may remove an annotation, and a strong focus-attention treatment may
+require the addition of marks that the declutter principle would
+otherwise want to remove. The proposed system applies the four
+principles as design constraints in Chapter \ref{chapter:solution},
+where the specific resolution of each tension is described.
