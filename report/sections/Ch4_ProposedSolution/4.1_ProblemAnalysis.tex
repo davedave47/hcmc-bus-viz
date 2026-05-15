@@ -93,3 +93,35 @@ parallel team.
   \item Exact financial modelling. No cost data is available, so the system reports financial efficiency through measurable proxies (revenue per trip, ghost-run share) rather than through profit and loss.
   \item Natural-language query over the data. A separate team is developing a text-to-Structured-Query-Language (SQL) capability, which will eventually be integrated alongside the analytical surface defined in this chapter.
 \end{itemize}
+
+\subsection{Mapping requirements to design responses}
+\label{sec:solution:problem:mapping}
+
+The six non-functional constraints stated above shape design choices in the
+remainder of this chapter. Table~\ref{tab:problem:mapping} pairs each
+constraint with the specific design response that addresses it in the
+sections that follow, so that subsequent sections can be read as responses
+to a specification rather than as standalone proposals. Each pairing is a
+single short sentence; the detailed justifications appear in the sections
+named.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Non-functional requirements and their design responses}
+  \label{tab:problem:mapping}
+  \begin{tabularx}{\linewidth}{l X l}
+    \hline
+    \textbf{Requirement} & \textbf{Design response} & \textbf{Section} \\
+    \hline
+    N1 interactive latency & Pre-computed aggregate tables on a four-layer warehouse give bounded query cost per chart. & \ref{sec:solution:architecture} \\
+    N2 single-process deployability & In-process columnar engine over local files; no separate database or application server. & \ref{sec:solution:architecture} \\
+    N3 deterministic build & Idempotent warehouse build with conformed dimensions rebuilt before any dependent aggregate. & \ref{sec:solution:architecture:refresh} \\
+    N4 on-disk size below 100~MB & Columnar storage and aggregate compression of the 17.88-million-row AFC stream into a few hundred thousand aggregate rows. & \ref{sec:solution:preprocessing} \\
+    N5 cross-platform portability & Pure-Python pipeline and Streamlit surface; no operating-system-specific build steps. & \ref{sec:solution:overview} \\
+    N6 no personally identifying data & Only published aggregate fare records used; the user identifier field is dropped in preprocessing. & \ref{sec:solution:preprocessing} \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The mapping is referenced again where the design choices are introduced, so
+that each subsequent section can point back to the requirement it satisfies.
