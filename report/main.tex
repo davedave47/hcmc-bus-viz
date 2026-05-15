@@ -2,13 +2,10 @@
 \documentclass[12pt]{report}
 \usepackage[fontsize=13pt]{scrextend}
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=2cm]{geometry}
-% \usepackage{svg}
 \usepackage{tgtermes}
 \usepackage{fontspec}
 \usepackage{biblatex}
 \addbibresource{sections/ref.bib}
-% \usepackage{pgfsys}
-% \usepackage{transparent}
 \setmainfont{Times New Roman}
 \usepackage{eso-pic}
 \usepackage{tikz}
@@ -36,7 +33,8 @@
 }
 \usepackage{subcaption}
 
-% Show subsections in the table of contents (TOC is the primary entry point for markers).
+% Table of contents shows sections and subsections (a marker scanning the TOC must
+% see the structure of each chapter).
 \setcounter{tocdepth}{2}
 \setcounter{secnumdepth}{3}
 
@@ -48,30 +46,25 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.17}
 
-\newcommand{\Khang}[1]{\textcolor{red!70!pink}{\textbf{\textit{#1}}}}
-
-% Image placeholder macro.
-% Usage: \imageplaceholder{Type}{What the image is}{How the author will capture it}
-% Every figure in this report uses this macro so the author can fill in real images
-% later. The master inventory of placeholders lives in Appendix C.
+% Image placeholder macro. Every figure in this report uses this macro until the
+% real assets are captured. The master inventory of placeholders is in Appendix C.
 \newcommand{\imageplaceholder}[3]{%
   \begin{center}
   \fbox{\begin{minipage}{0.86\linewidth}
     \vspace{0.6cm}
     \centering
-    \textbf{[IMAGE PLACEHOLDER]}\\[6pt]
+    \textbf{[FIGURE PLACEHOLDER]}\\[6pt]
     \begin{minipage}{0.92\linewidth}
       \raggedright
       \textit{Type:} #1\\[3pt]
-      \textit{What:} #2\\[3pt]
-      \textit{How to capture:} #3
+      \textit{Content:} #2\\[3pt]
+      \textit{Capture:} #3
     \end{minipage}\\
     \vspace{0.6cm}
   \end{minipage}}
   \end{center}
 }
 
-% Chapter title formatting.
 \titleformat{\chapter}[display]{\normalfont\huge\bfseries}{\chaptertitlename\ \thechapter}{20pt}{\Huge}
 
 \begin{document}
@@ -91,8 +84,6 @@
 
 \input{sections/table-of-glossary}
 
-% \input{sections/list-of-abbreviations}
-
 \input{sections/contents}
 
 \listoftables
@@ -104,118 +95,93 @@
 \pagenumbering{arabic}
 
 % ============================================================
-% Chapter 1 — Introduction
+% Chapter 1 - Introduction
 % ============================================================
 \chapter{Introduction}
 \label{chapter:intro}
 
-\textit{This chapter presents the motivation, scope, and outline
-of the project. Contributions are summarised at the end of the
-report in Chapter~\ref{chapter:conclusion} once the rest of the
-report has established the context.}
-
-\input{sections/1.Introduction/1.1.Motivation}
-\input{sections/1.Introduction/1.3.Scope}
-\input{sections/1.Introduction/1.4.Thesis-structure}
+\input{sections/Ch1_Introduction/1.1_Motivation}
+\input{sections/Ch1_Introduction/1.2_Objectives}
+\input{sections/Ch1_Introduction/1.3_Scope}
+\input{sections/Ch1_Introduction/1.4_Outline}
 
 % ============================================================
-% Chapter 2 — Background and Related Work
-% (combines the old "Related Works" and "Theoretical Background" chapters;
-% opens with a Related Work survey for Rubric Câu 3 coverage, then develops
-% the theoretical foundations the proposed solution rests on.)
+% Chapter 2 - Related Work
 % ============================================================
-\chapter{Background and Related Work}
-\label{chapter:background}
+\chapter{Related Work}
+\label{chapter:related}
 
-\textit{This chapter surveys the prior research and the
-theoretical foundations on which the proposed solution rests:
-the bodies of related work that frame the problem (Câu~3 of the
-grading rubric, see~\cite{rubric}), the four-layer warehouse
-adaptation of the medallion data architecture, the analytical
-stack that implements it, the QoS scoring framework, the
-visualisation primitives borrowed from Liu and Lin~\&~Zeng, the
-visual-storytelling principles of Knaflic, and the Multiple
-Coordinated Views interaction model.}
-
-\input{sections/3.TheoreticalBackground/2.0.RelatedWork}
-\input{sections/3.TheoreticalBackground/3.1.MedallionArchitecture}
-\input{sections/3.TheoreticalBackground/3.2.AnalyticalStack}
-\input{sections/3.TheoreticalBackground/3.3.QoSScoring}
-\input{sections/3.TheoreticalBackground/3.4.VisualizationPrimitives}
-\input{sections/3.TheoreticalBackground/3.5.Storytelling}
-\input{sections/3.TheoreticalBackground/3.6.MCV}
+\input{sections/Ch2_RelatedWork/2.1_ExistingTools}
+\input{sections/Ch2_RelatedWork/2.2_OpsResearch}
+\input{sections/Ch2_RelatedWork/2.3_VizResearch}
+\input{sections/Ch2_RelatedWork/2.4_Gap}
 
 % ============================================================
-% Chapter 3 — Proposed Solution
-% (THE highest-stakes chapter for marker review — 30 of 100 rubric points;
-% opens with a Problem Statement section per advisor's instruction.)
+% Chapter 3 - Theoretical Foundations and Tools
+% ============================================================
+\chapter{Theoretical Foundations and Tools}
+\label{chapter:foundations}
+
+\input{sections/Ch3_FoundationsTools/3.1_LayeredArchitecture}
+\input{sections/Ch3_FoundationsTools/3.2_QoS}
+\input{sections/Ch3_FoundationsTools/3.3_VisualisationPrimitives}
+\input{sections/Ch3_FoundationsTools/3.4_MCV}
+\input{sections/Ch3_FoundationsTools/3.5_Storytelling}
+\input{sections/Ch3_FoundationsTools/3.6_Tools}
+
+% ============================================================
+% Chapter 4 - Proposed Solution (the largest chapter)
 % ============================================================
 \chapter{Proposed Solution}
-\label{chapter:proposed}
+\label{chapter:solution}
 
-\textit{This chapter formalises the problem the project solves
-and develops the proposed solution. It opens with a problem
-statement, then presents the SDVF tier prioritisation, the
-four-layer warehouse design, the empirical EDA findings that
-ground every design decision, the module selection that screens
-analytical modules against schema and data availability, and
-the dashboard specification (Hub~$\rightarrow$~Card~$\rightarrow$~Chart
-hierarchy, six cards, thirty-one canonical charts, three
-behavioural invariants, and the scrollytelling Stories layer).}
-
-\input{sections/4.ProposedSolution/4.1.ProblemStatement}
-\input{sections/4.ProposedSolution/4.2.Overview}
-\input{sections/4.ProposedSolution/4.3.DataArchitecture}
-\input{sections/4.ProposedSolution/4.4.EDA}
-\input{sections/4.ProposedSolution/4.5.ModuleSelection}
-\input{sections/4.ProposedSolution/4.6.Dashboard}
+\input{sections/Ch4_ProposedSolution/4.1_ProblemAnalysis}
+\input{sections/Ch4_ProposedSolution/4.2_DatasetAndEDA}
+\input{sections/Ch4_ProposedSolution/4.3_Preprocessing}
+\input{sections/Ch4_ProposedSolution/4.4_SolutionOverview}
+\input{sections/Ch4_ProposedSolution/4.5_DataArchitecture}
+\input{sections/Ch4_ProposedSolution/4.6_AnalyticalThemes}
+\input{sections/Ch4_ProposedSolution/4.7_VisualisationSelection}
+\input{sections/Ch4_ProposedSolution/4.8_InteractionModel}
 
 % ============================================================
-% Chapter 4 — Current Prototype (NEW, advisor-requested)
+% Chapter 5 - Phase One Implementation
 % ============================================================
-\chapter{Current Prototype}
-\label{chapter:prototype}
+\chapter{Phase One Implementation}
+\label{chapter:implementation}
 
-\textit{This chapter presents the artefacts produced during
-Phase~1: the exploratory analysis on which the solution is
-grounded, the high-fidelity UI mockup that locks the dashboard's
-visual language, the data-pipeline skeleton that already executes
-against the local sample, and the supporting design artefacts.}
-
-\input{sections/5.CurrentPrototype/4.1.EdaNotebooks}
-\input{sections/5.CurrentPrototype/4.2.UiMockups}
-\input{sections/5.CurrentPrototype/4.3.WarehouseSkeleton}
-\input{sections/5.CurrentPrototype/4.4.DesignArtifacts}
+\input{sections/Ch5_PhaseOneImpl/5.1_PipelineStatus}
+\input{sections/Ch5_PhaseOneImpl/5.2_InterfaceMockup}
+\input{sections/Ch5_PhaseOneImpl/5.3_Evaluation}
 
 % ============================================================
-% Chapter 5 — Future Work (NEW, advisor-requested)
+% Chapter 6 - Future Works
 % ============================================================
-\chapter{Future Work}
+\chapter{Future Works}
 \label{chapter:future}
 
-\textit{This chapter sketches the Phase~2 implementation roadmap,
-the data activations that unlock currently-deferred features, the
-predictive extensions that follow naturally from the historical
-foundation laid in Phase~1, and the external integrations and
-user-validation study that close the design loop.}
-
-\input{sections/6.FutureWork/5.1.Phase2Roadmap}
-\input{sections/6.FutureWork/5.2.FullGpsActivation}
-\input{sections/6.FutureWork/5.3.PredictiveExtensions}
-\input{sections/6.FutureWork/5.4.AskTheDataAndUserStudy}
+\input{sections/Ch6_FutureWorks/6.1_Roadmap}
+\input{sections/Ch6_FutureWorks/6.2_Deployment}
+\input{sections/Ch6_FutureWorks/6.3_UserEvaluation}
+\input{sections/Ch6_FutureWorks/6.4_Extensions}
 
 % ============================================================
-% Chapter 6 — Conclusion (Contributions section lives here per advisor's note)
+% Chapter 7 - Conclusion
 % ============================================================
 \chapter{Conclusion}
 \label{chapter:conclusion}
 
-\input{sections/5.Conclusion/summary}
+\input{sections/Ch7_Conclusion/7.1_Summary}
+\input{sections/Ch7_Conclusion/7.2_Contributions}
+\input{sections/Ch7_Conclusion/7.3_Limitations}
 
+% ============================================================
+% References and Appendices
+% ============================================================
 \input{sections/references}
 
-\input{sections/appendixes/appendix}
-\input{sections/appendixes/plan}
-\input{sections/appendixes/image-inventory}
+\input{sections/appendixes/AppendixA_DDL}
+\input{sections/appendixes/AppendixB_Schedule}
+\input{sections/appendixes/AppendixC_ImageInventory}
 
 \end{document}

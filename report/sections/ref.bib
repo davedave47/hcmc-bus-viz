@@ -1,32 +1,52 @@
-@misc{ttgtcc2024,
-  author       = {{Trung tâm Quản lý Giao thông Công cộng TP.HCM}},
-  title        = {Danh sách tuyến xe buýt},
+% Existing tools for the Ho Chi Minh City bus network
+@misc{mcptDirectory,
+  author       = {{Centre for Public Transport Management of Ho Chi Minh City}},
+  title        = {Bus Route Directory},
   year         = {2024},
   howpublished = {\url{http://buyttphcm.com.vn/en-us/Route}}
 }
 
-@misc{metro_wiki,
-  title        = {Ho Chi Minh City Metro},
-  author       = {{Wikipedia}},
+@misc{busmap,
+  author       = {{BusMap}},
+  title        = {BusMap --- Public Transit Routing Application for Ho Chi Minh City},
+  year         = {2024},
+  howpublished = {\url{https://busmap.vn}}
+}
+
+@misc{gobus,
+  author       = {{GoBus Vietnam}},
+  title        = {GoBus! --- Bus Routing Application for Ho Chi Minh City},
+  year         = {2024},
+  howpublished = {Mobile application}
+}
+
+@misc{multigo,
+  author       = {{MultiGo Vietnam}},
+  title        = {MultiGo --- Multimodal Routing Application},
+  year         = {2024},
+  howpublished = {Mobile application}
+}
+
+@misc{hcmcMetro,
+  title        = {Ho Chi Minh City Metro Line 1},
+  author       = {{Wikipedia contributors}},
   year         = {2024},
   howpublished = {\url{https://en.wikipedia.org/wiki/Ho_Chi_Minh_City_Metro}}
 }
 
 @misc{vnexpress2023,
   author       = {{VnExpress}},
-  title        = {Vẽ lại bản đồ buýt Sài Gòn},
+  title        = {Restructuring the Ho Chi Minh City Bus Network for 2025--2030},
   year         = {2023},
   howpublished = {\url{https://vnexpress.net/ve-lai-ban-do-buyt-sai-gon-4627850.html}}
 }
 
+% Academic research
 @phdthesis{liu2022,
   author = {Liu, Yunhai},
   title  = {Visualization of Spatial and Temporal Road Traffic Data},
-  school = {Université Paris-Saclay},
-  year   = {2022},
-  note   = {Introduces the FuzzyCut, GroupSet and Gridify visualisation
-            primitives, and the Multiple Coordinated Views (MCV)
-            interaction model used throughout BusLens.}
+  school = {Universit\'e Paris-Saclay},
+  year   = {2022}
 }
 
 @article{srisakaokul2023,
@@ -35,47 +55,14 @@
              Transportation Service Quality in Bangkok},
   journal = {Sustainability},
   volume  = {15},
-  year    = {2023},
-  note    = {Source of the QoS-1 (reliability), QoS-2 (accessibility)
-             and QoS-3 (availability) scoring framework adopted in
-             the Route Explorer lens.}
-}
-
-@misc{thoai2025,
-  author       = {Nam Thoai},
-  title        = {Bus System Analytics --- Student Specification},
-  institution  = {HCMUT High Performance Computing Lab},
-  year         = {2025},
-  howpublished = {Internal advisor specification},
-  note         = {Source of stop-level box plots, multi-route radar
-                  comparison, and bus-metro connectivity requirements.}
-}
-
-@misc{hcmcgps2025,
-  author       = {{Centre for Public Transport Management of HCMC}},
-  title        = {HCMC Bus GPS Dataset, version 1},
-  year         = {2025},
-  howpublished = {Internal dataset specification},
-  note         = {Documents the 31 routes selected for GPS data
-                  collection and the bus-metro connectivity table used
-                  to scope the Metro Connectivity lens.}
-}
-
-@misc{databricksMedallion,
-  author       = {{Databricks}},
-  title        = {What is a Medallion Architecture?},
-  year         = {2023},
-  howpublished = {\url{https://www.databricks.com/glossary/medallion-architecture}}
+  year    = {2023}
 }
 
 @article{linzeng2014,
   author    = {Lin, Wei-Hua and Zeng, Jian},
   title     = {Experimental Study on Real-Time Bus Arrival Time Prediction with GPS Data},
   journal   = {Transportation Research Record},
-  year      = {2014},
-  note      = {Time--distance trajectory diagram and dwell-time-dominant
-               predictor used in the Routes card; full version of the
-               WON'T-tier arrival-time-bands feature.}
+  year      = {2014}
 }
 
 @inproceedings{derevitskiy2016,
@@ -85,63 +72,7 @@
   booktitle = {Procedia Computer Science},
   volume    = {101},
   pages     = {130--139},
-  year      = {2016},
-  note      = {Aggregate-Based Method for road-graph edge-speed estimation
-               from bus GPS pings; documents the full version of the
-               (WON'T-tier) bus-as-traffic-sensor map.}
-}
-
-@misc{scrollama,
-  author       = {Russell Samora},
-  title        = {Scrollama --- Scrollytelling library for JavaScript},
-  howpublished = {\url{https://github.com/russellsamora/scrollama}},
-  year         = {2024}
-}
-
-@misc{h3,
-  author       = {{Uber Technologies}},
-  title        = {H3: Hexagonal Hierarchical Geospatial Indexing System},
-  howpublished = {\url{https://h3geo.org}},
-  year         = {2024}
-}
-
-@misc{statsforecast,
-  author       = {{Nixtla}},
-  title        = {statsforecast --- Lightning-fast forecasting in Python},
-  howpublished = {\url{https://github.com/Nixtla/statsforecast}},
-  year         = {2024},
-  note         = {Source of the ETS model used in Chart 2.5 Demand Forecast.}
-}
-
-@misc{umap,
-  author       = {McInnes, Leland and Healy, John and Melville, James},
-  title        = {{UMAP}: Uniform Manifold Approximation and Projection
-                  for Dimension Reduction},
-  howpublished = {\url{https://arxiv.org/abs/1802.03426}},
-  year         = {2018},
-  note         = {Used in Chart 6.1 to project the 163 routes onto a
-                  2D archetype map.}
-}
-
-@misc{rubric,
-  author       = {{Trường Đại học Bách khoa --- ĐHQG TP.HCM}},
-  title        = {Phiếu chấm đồ án --- grading rubric for capstone projects},
-  year         = {2026},
-  howpublished = {Internal grading rubric, \texttt{docs/Rubric.md}},
-  note         = {Seven criteria (Câu 1--7) totalling up to 100 points
-                  plus a 10-point bonus. Câu 4 (proposed solutions,
-                  30 pts) is the highest-weighted criterion.}
-}
-
-@misc{capstoneDescription,
-  author       = {Thoai, Nam},
-  title        = {Studying and developing tools to help analyze and
-                  visualize bus data --- Capstone Project Description},
-  year         = {2026},
-  howpublished = {HCMUT capstone topic description, Spring 2025--2026,
-                  \texttt{docs/Capstone\_Project\_Description.docx}},
-  note         = {Phase 1 = thesis outline / specification; Phase 2 =
-                  tool completion and evaluation.}
+  year      = {2016}
 }
 
 @book{knaflic2015,
@@ -149,30 +80,43 @@
   title     = {Storytelling with Data: A Data Visualization Guide
                for Business Professionals},
   publisher = {John Wiley \& Sons},
-  year      = {2015},
-  note      = {Source of the visual storytelling principles applied
-               to chart selection, filter design, and clutter
-               reduction throughout the BusLens dashboard.}
+  year      = {2015}
 }
 
+@misc{databricksMedallion,
+  author       = {{Databricks}},
+  title        = {What is a Medallion Architecture?},
+  year         = {2023},
+  howpublished = {\url{https://www.databricks.com/glossary/medallion-architecture}}
+}
+
+@article{umap,
+  author = {McInnes, Leland and Healy, John and Melville, James},
+  title  = {UMAP: Uniform Manifold Approximation and Projection for Dimension Reduction},
+  journal = {arXiv preprint arXiv:1802.03426},
+  year   = {2018}
+}
+
+% Dataset source
+@misc{hcmcgps2025,
+  author       = {{Centre for Public Transport Management of Ho Chi Minh City}},
+  title        = {Ho Chi Minh City Bus Dataset},
+  year         = {2025},
+  howpublished = {Public dataset release}
+}
+
+% Tools
 @misc{duckdb,
   author       = {{DuckDB Foundation}},
-  title        = {DuckDB --- An in-process SQL OLAP database management system},
+  title        = {DuckDB: An In-Process SQL OLAP Database Management System},
   howpublished = {\url{https://duckdb.org}},
   year         = {2024}
 }
 
 @misc{streamlit,
   author       = {{Streamlit, Inc.}},
-  title        = {Streamlit --- A faster way to build and share data apps},
+  title        = {Streamlit: An Open-Source Python Framework for Data Applications},
   howpublished = {\url{https://streamlit.io}},
-  year         = {2024}
-}
-
-@misc{jupyter,
-  author       = {{Project Jupyter}},
-  title        = {Jupyter Notebook --- Interactive computing across all programming languages},
-  howpublished = {\url{https://jupyter.org}},
   year         = {2024}
 }
 
@@ -185,22 +129,35 @@
 
 @misc{pydeck,
   author       = {{Uber Technologies}},
-  title        = {pydeck --- Large-scale interactive geospatial visualization},
+  title        = {pydeck: Large-Scale Interactive Geospatial Visualisation},
   howpublished = {\url{https://deckgl.readthedocs.io}},
   year         = {2024}
 }
 
 @misc{polars,
   author       = {{Polars}},
-  title        = {Polars --- Blazingly fast DataFrames in Rust, Python, Node.js, R \& SQL},
+  title        = {Polars: A High-Performance DataFrame Library},
   howpublished = {\url{https://pola.rs}},
   year         = {2024}
 }
 
-@misc{harvardatlas,
-  author       = {{Harvard Center for Geographic Analysis}},
-  title        = {Atlas of the Historical Geography of the United States},
-  howpublished = {\url{https://dsl.richmond.edu/historicalatlas/}},
-  note         = {Inspiration for the immersive single-page atlas
-                  layout adopted in BusLens.}
+@misc{jupyter,
+  author       = {{Project Jupyter}},
+  title        = {Jupyter Notebook},
+  howpublished = {\url{https://jupyter.org}},
+  year         = {2024}
+}
+
+@misc{h3,
+  author       = {{Uber Technologies}},
+  title        = {H3: A Hexagonal Hierarchical Geospatial Indexing System},
+  howpublished = {\url{https://h3geo.org}},
+  year         = {2024}
+}
+
+@misc{statsforecast,
+  author       = {{Nixtla}},
+  title        = {statsforecast: Time-Series Forecasting in Python},
+  howpublished = {\url{https://github.com/Nixtla/statsforecast}},
+  year         = {2024}
 }

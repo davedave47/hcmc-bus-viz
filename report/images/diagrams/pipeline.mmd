@@ -1,0 +1,69 @@
+%% Medallion data pipeline for the proposed solution.
+%% Render with:  mmdc -i pipeline.mmd -o pipeline.png -w 1500 -H 700 -b transparent
+
+flowchart LR
+
+  %% ====== Sources ======
+  subgraph RAW["Raw sources"]
+    direction TB
+    R1["GPS pings<br/>(720 K rows · 1 day)"]
+    R2["GPS trips + extracted<br/>(1.2 K trips · 9 routes)"]
+    R3["AFC tickets + payments<br/>(17.9 M rows · 90 days)"]
+    R4["Static GTFS / masters<br/>(routes, stops, vehicles)"]
+  end
+
+  %% ====== Bronze ======
+  subgraph BRONZE["Bronze · zero-copy views"]
+    direction TB
+    B["DuckDB external views<br/>read_csv_auto<br/>(no transformation)"]
+  end
+
+  %% ====== Silver ======
+  subgraph SILVER["Silver · cleaned Parquet"]
+    direction TB
+    S["ZSTD-compressed<br/>per-day for fact tables<br/>type-cast · label rewrite<br/>SEGMENT_EXPR macro"]
+  end
+
+  %% ====== Gold ======
+  subgraph GOLD["Gold · pre-aggregated"]
+    direction TB
+    G1["kpi_network"]
+    G2["route_health"]
+    G3["stop_demand"]
+    G4["payment_mix"]
+    G5["metro_xfer"]
+  end
+
+  %% ====== App ======
+  subgraph APP["BusLens dashboard"]
+    direction TB
+    A["5 lenses · MCV<br/>single-chart canvas<br/>Streamlit + pydeck + Plotly"]
+  end
+
+  R1 --> B
+  R2 --> B
+  R3 --> B
+  R4 --> B
+  B --> S
+  S --> G1
+  S --> G2
+  S --> G3
+  S --> G4
+  S --> G5
+  G1 --> A
+  G2 --> A
+  G3 --> A
+  G4 --> A
+  G5 --> A
+
+  classDef raw    fill:#fee2e2,stroke:#ef4444,color:#7f1d1d;
+  classDef bronze fill:#fed7aa,stroke:#ea580c,color:#7c2d12;
+  classDef silver fill:#e5e7eb,stroke:#6b7280,color:#1f2937;
+  classDef gold   fill:#fef3c7,stroke:#d97706,color:#78350f;
+  classDef app    fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+
+  class R1,R2,R3,R4 raw
+  class B bronze
+  class S silver
+  class G1,G2,G3,G4,G5 gold
+  class A app
