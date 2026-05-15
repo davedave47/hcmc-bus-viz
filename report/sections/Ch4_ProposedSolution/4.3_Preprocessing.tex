@@ -31,3 +31,27 @@ single-process deployability target stated in requirement N2 of
 Section~\ref{sec:solution:problem:nonfunctional}. The registered view layer
 that results from this section is the source of truth for every downstream
 layer of the warehouse described in the next section.
+
+\subsection{Validation checks}
+\label{sec:solution:preprocessing:validation}
+
+At the end of each pipeline run, four integrity checks are issued against
+the freshly preprocessed view layer. A run that fails any of these checks
+halts before the downstream warehouse build is triggered, so that the
+warehouse never refreshes against partially preprocessed input.
+
+\begin{itemize}
+  \item Row-count regression per source. The row count of each source table is compared against the row count of the previous successful run; a deviation greater than 10\% in either direction halts the pipeline and raises an inspection request.
+  \item Null-rate ceiling per column. The null rate of every column is computed and compared against a published per-column threshold; columns whose null rate exceeds the threshold halt the pipeline so that silent schema drift cannot reach the warehouse.
+  \item Referential integrity for foreign keys. Every stop identifier and every route identifier on the fact streams is required to resolve to a row in the corresponding dimension; orphan identifiers are written to a quarantine table and counted, with a non-zero count halting the pipeline.
+  \item Uniqueness of dimension primary keys. The primary key column of every dimension table is required to be unique and non-null; duplicates are written to the quarantine table and halt the pipeline.
+\end{itemize}
+
+The pipeline currently recomputes every preprocessed file from scratch on
+every run. The trade-off considered is that scratch recomputation is
+simple, fully reproducible, and free of state-management bugs, but is slow
+on the full 50-day GPS volume; an incremental implementation would be
+faster but would require a change-detection layer over the raw input
+directory and a per-source watermark column. The simpler scratch policy is
+used in the present phase; incremental processing is recorded as a
+future-work item in Chapter~\ref{chapter:future}.
