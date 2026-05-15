@@ -21,16 +21,16 @@ does not appear in the user interface.
   \centering
   \caption{The six analytical themes of the proposed system}
   \label{tab:themes:six}
-  \begin{tabularx}{\linewidth}{l X l}
+  \begin{tabularx}{\linewidth}{l X l X X}
     \hline
-    \textbf{Theme} & \textbf{Question answered} & \textbf{Primary role} \\
+    \textbf{Theme} & \textbf{Question answered} & \textbf{Primary role} & \textbf{Primary primitive} & \textbf{Cross-theme dependencies} \\
     \hline
-    Demand and Crowding & When and where does ridership concentrate across the network? & Passenger \\
-    School-Aware Demand & How do the educational institutions of the city shape demand on the bus network? & Passenger and authority \\
-    Spatial and Connectivity & How do routes and stops cover the city, and how does the bus network feed the metro? & Passenger and authority \\
-    Financial and Operations & What is the revenue, ridership concentration, payment-channel mix, and promotion impact per route and per company? & Operating company \\
-    Network Health and Performance & What is the network-wide reliability, what anomalies occur, and what does the service-day calendar look like? & Public-transport authority \\
-    Routes & What does a single route look like in detail, and how do routes compare across the network? & Driver and operational analysts \\
+    Demand and Crowding & When and where does ridership concentrate across the network? & Passenger & Route-by-hour categorical heatmap & Reads aggregates also used by Routes and by Network Health \\
+    School-Aware Demand & How do the educational institutions of the city shape demand on the bus network? & Passenger and authority & School-to-route treemap & Reads route-by-hour aggregate shared with Demand and Crowding \\
+    Spatial and Connectivity & How do routes and stops cover the city, and how does the bus network feed the metro? & Passenger and authority & Hexagonal-bin density map & Reads stop-by-hour aggregate shared with Routes \\
+    Financial and Operations & What is the revenue, ridership concentration, payment-channel mix, and promotion impact per route and per company? & Operating company & Two-dimensional scatter quadrant with bubble size & Reads company-by-route aggregate also used by Network Health \\
+    Network Health and Performance & What is the network-wide reliability, what anomalies occur, and what does the service-day calendar look like? & Public-transport authority & Annotated timeline with threshold slider & Reads route-by-day and company-by-route aggregates shared with three other themes \\
+    Routes & What does a single route look like in detail, and how do routes compare across the network? & Driver and operational analysts & Two-dimensional UMAP scatter & Reads almost every aggregate, as the cross-route drill-down spine \\
     \hline
   \end{tabularx}
 \end{table}
@@ -94,3 +94,24 @@ top-level organisational unit and treats the supporting visualisations as
 subordinate to the question. The per-theme visualisation selection that
 follows in Section~\ref{sec:solution:viz} respects this subordination by
 selecting each visualisation to fit the question rather than the reverse.
+
+\subsection{Theme prioritisation}
+\label{sec:solution:themes:prioritisation}
+
+Not all six themes carry equal weight in the phase 1 implementation. The
+themes are ordered (without changing the themes themselves) along two
+axes: how dependent each theme is on operational data that is only
+partially available locally, and how much novelty each theme contributes
+relative to the existing tools surveyed in
+Chapter~\ref{chapter:related}. The school-aware theme is the most
+distinctive contribution of the proposed system because no surveyed tool
+addresses the educational-institution dimension of demand; it is therefore
+implemented first and in full on the AFC stream, which is complete. The
+demand-and-crowding, spatial-and-connectivity, and financial-and-operations
+themes are implemented second; they also depend primarily on the AFC
+stream and on the static master tables, both of which are complete. The
+network-health theme and the per-route reliability indicators are
+implemented in a reduced form in phase 1, because the QoS-1, QoS-2 and
+QoS-3 indicators depend on the full 50-day GPS window and on the cleaned
+schedule rows; full coverage is deferred to phase 2 once the full GPS
+extraction and the schedule-row classification are complete.
