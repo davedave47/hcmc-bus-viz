@@ -1,4 +1,33 @@
 \section{Data Preprocessing}
 \label{sec:solution:preprocessing}
 
-\textit{Stub.}
+The raw inputs released with the Ho Chi Minh City bus dataset arrive as
+heterogeneous comma-separated value files with inconsistent column types,
+misleading column labels in a small number of places, and no partitioning
+suited to interactive analytical query. Before any analytical query can be
+issued against the data, a preprocessing pipeline must normalise the inputs
+to a uniform columnar storage format and register the result as queryable
+views inside the analytical engine. The pipeline produces the input layer
+consumed by the data architecture of
+Section~\ref{sec:solution:architecture}.
+
+The pipeline executes the following six steps in order:
+
+\begin{enumerate}
+  \item Ingest the raw comma-separated value files from the dataset release into staging memory frames, preserving every column as a string in the first pass to avoid silent coercion errors.
+  \item Type-cast each column to the appropriate scalar or temporal type: integer for identifiers and counts, decimal for fare amounts, timestamp with timezone for event times, and date for calendar dates. Out-of-range values are written to a quarantine table for later inspection rather than dropped silently.
+  \item Partition the two largest streams (the AFC fare records and the payments stream) by calendar day, producing one columnar file per day under the preprocessed data directory. The 90-day window thus yields 90 fare-record files and 90 payment files, which the analytical engine can prune on date predicates at query time.
+  \item Rename misleading column labels. In particular, the raw \texttt{cash} field on the AFC stream is renamed to \texttt{stored\_value\_deduction} for the subset of records where the underlying value is a stored-value balance deduction made through a smartcard rather than an actual cash payment, so that downstream payment-channel breakdowns count each channel correctly.
+  \item Tag the calendar windows that correspond to known natural-experiment periods: the Tết Lunar New Year window of 28 January 2026 to 5 February 2026 and the April 30 parade week (carried as a separate flag for the full-GPS phase). The tags are written as additional boolean columns on the calendar dimension produced by the preprocessing step.
+  \item Register every resulting columnar file as a queryable view in the analytical engine, using a view-creation script that is regenerated each time the preprocessed directory changes. The view layer is the input to layer 1 of the warehouse, the layer of raw views described in Section~\ref{sec:solution:architecture}.
+\end{enumerate}
+
+The columnar storage format reduces total volume by approximately one order
+of magnitude relative to the source comma-separated value files: the
+17.88-million-row AFC stream compresses from approximately 4.3 gigabytes of
+text to about 380 megabytes of columnar storage, and the payments stream
+compresses by a similar factor. The reduction is the primary enabler of the
+single-process deployability target stated in requirement N2 of
+Section~\ref{sec:solution:problem:nonfunctional}. The registered view layer
+that results from this section is the source of truth for every downstream
+layer of the warehouse described in the next section.
