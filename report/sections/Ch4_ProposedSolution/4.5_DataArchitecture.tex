@@ -46,19 +46,22 @@ layer 4). The weakness is that the build-time cost is higher than the other
 two alternatives, since the aggregate tables must be re-materialised
 whenever the underlying data changes.
 
-Table~\ref{tab:arch:candidates} summarises the comparison.
+Table~\ref{tab:arch:candidates} summarises the comparison along the four
+attributes that distinguish the candidates: build cost, query latency,
+consistency guarantee for cross-source identifiers, and the final
+selection.
 
 \begin{table}[!htbp]
   \centering
   \caption{Comparison of three candidate data architectures}
   \label{tab:arch:candidates}
-  \begin{tabularx}{\linewidth}{l X X X}
+  \begin{tabularx}{\linewidth}{l X X X l}
     \hline
-    \textbf{Architecture} & \textbf{Strength} & \textbf{Weakness} & \textbf{Latency for analytical surface} \\
+    \textbf{Candidate} & \textbf{Build cost} & \textbf{Query latency} & \textbf{Consistency guarantee} & \textbf{Selected} \\
     \hline
-    Three-layer medallion \cite{databricksMedallion} & Open-ended ad-hoc query against conformed layer. & On-demand aggregation per query is expensive. & Misses warm-render target. \\
-    Star schema over raw views & Minimal materialisation cost. & Route-identifier reconciliation repeated per query; risk of inconsistent subsets. & Variable; depends on per-query joins. \\
-    Four-layer specialisation & Single source of truth for conformed identifiers; bounded query cost at the aggregate layer. & Higher build-time cost; aggregates must be re-materialised on data change. & Meets warm-render target. \\
+    Three-layer medallion \cite{databricksMedallion} & Low & Variable; on-demand aggregation per query & Conformed at fact layer only & No \\
+    Star schema over raw views & Low & Variable; per-query joins on raw views & Reconciliation repeated per query & No \\
+    Four-layer specialisation & Higher (re-build on data change) & Bounded; reads from pre-computed aggregates & Single source of truth in conformed layer & Yes \\
     \hline
   \end{tabularx}
 \end{table}
@@ -122,3 +125,51 @@ hundred thousand aggregate rows.
   \caption{Four-layer data architecture}
   \label{fig:arch:diagram}
 \end{figure}
+
+\subsection{Aggregate table catalogue}
+\label{sec:solution:architecture:aggcatalogue}
+
+The aggregate layer contains eight tables. Each table is the backing store
+for one or more of the analytical themes catalogued in
+Section~\ref{sec:solution:themes}. Table~\ref{tab:arch:aggcatalogue} lists
+the eight aggregates, the columns by which each one is aggregated (the
+analytical grain), and the themes that read from each one. The catalogue
+is the data contract between the architecture and the analytical surface:
+a theme that needs a finer granularity than its backing aggregate provides
+must request a new aggregate, rather than join across aggregates at query
+time.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Aggregate tables and the themes they serve}
+  \label{tab:arch:aggcatalogue}
+  \begin{tabularx}{\linewidth}{l l X}
+    \hline
+    \textbf{Aggregate} & \textbf{Grain} & \textbf{Themes served} \\
+    \hline
+    Aggregate of route by hour          & route, hour-of-day, day-type & Demand and Crowding; Routes \\
+    Aggregate of route by day           & route, calendar day          & Network Health and Performance; Demand and Crowding \\
+    Aggregate of stop by hour           & stop, hour-of-day            & Spatial and Connectivity; Routes \\
+    Aggregate of school by route        & school, route                & School-Aware Demand \\
+    Aggregate of company by route       & company, route               & Financial and Operations; Network Health and Performance \\
+    Aggregate of payment-channel by day & payment channel, calendar day & Financial and Operations \\
+    Aggregate of network by day         & calendar day                 & Network Health and Performance \\
+    Aggregate of route profile          & route (feature vector)       & Routes (cross-route discovery) \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{Refresh and consistency guarantees}
+\label{sec:solution:architecture:guarantees}
+
+The warehouse build is idempotent: re-running the build on the same raw
+input produces byte-identical conformed-dimension tables and
+byte-identical aggregate tables, which satisfies requirement N3. The build
+ordering respects the layer dependency: conformed dimensions are rebuilt
+before any aggregate that depends on them, and aggregates are written only
+after every dimension on which they depend has been written successfully.
+At startup, the analytical surface validates the presence of all eight
+aggregate tables and refuses to render any theme whose backing aggregate
+is missing or whose modification timestamp is older than the most recent
+upstream change; the missing or stale theme is reported to the user with a
+short diagnostic note rather than rendered against incomplete data.
