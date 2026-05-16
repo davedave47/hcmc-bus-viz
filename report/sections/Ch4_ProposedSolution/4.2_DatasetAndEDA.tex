@@ -29,6 +29,61 @@ affected fare classes). The master tables are stable across the calendar
 window and are used as conformed dimensions in the warehouse design of
 Section~\ref{sec:solution:architecture}.
 
+\subsection{Data Model and Analytical Grain}
+\label{sec:solution:datamodel}
+
+The four data sources describe the bus network at different levels of granularity. Understanding the grain of each source is the prerequisite for designing the warehouse and for stating what the analytical surface can and cannot claim.
+
+\begin{itemize}
+\item An AFC record describes one boarding event: a single passenger taps in at a single stop on a single trip at a known time, paying a known fare class through a known payment channel. The AFC stream contains no alighting event. The grain of the stream is one boarding per row.
+\item A GPS ping describes one vehicle-location observation: a single vehicle is at a single longitude-latitude pair at a known time, with optional auxiliary fields (door-open state, speed). The grain of the stream is one ping per row, with a typical sampling rate of one ping every few seconds per vehicle.
+\item The stop table describes the network's static spatial reference: each row is one stop with a stable identifier, name, and geographic coordinate. The grain is one stop per row.
+\item The route table describes the network's service definition: each row is one route with an ordered sequence of stops, scheduled headway, and operating company. The grain is one route per row.
+\end{itemize}
+
+These four grains determine what each source can support. AFC can report boarding magnitude per stop, per trip, per route, per hour, and per fare class. AFC cannot report passenger journeys end-to-end because no alighting event is recorded. GPS can report vehicle position and speed at high temporal resolution. GPS cannot report passenger counts because no fare event is attached to a ping. The stop and route tables are static and do not vary by time; they serve as the dimensional reference for both event streams.
+
+\subsection{Cross-Source Joinability}
+\label{sec:solution:joinability}
+
+The two event streams (AFC boardings and GPS pings) share three nominal join keys: route identifier, vehicle identifier, and time. In principle, an analytical query that needs both passenger demand and vehicle behaviour can join on a combination of these keys. In practice, two constraints limit how the join can be performed.
+
+First, the AFC and GPS calendar windows do not overlap. The AFC stream covers 1 January to 31 March 2026 inclusive. The GPS stream covers 20 March to 10 May 2025 inclusive. No calendar day is common to both. Event-level joining (one AFC boarding to one GPS ping) is therefore impossible.
+
+Second, the route identifier spaces are not identical between the two sources. Of the 163 routes present in the AFC stream, 121 also appear in the GPS stream. The remaining 42 routes are AFC-only and have no corresponding telemetry.
+
+The consequence is that cross-source analysis is performed at an aggregate grain that absorbs the temporal mismatch. The safest such grain is the triple of route identifier, hour of day, and day type (weekday or weekend). At this grain, an AFC measure (typical boardings per route per hour) and a GPS measure (typical reliability per route per hour) can be compared without making a row-level join. Section~\ref{sec:solution:architecture} embeds this rule in the warehouse's aggregate layer.
+
+\subsection{Derived Features}
+\label{sec:solution:derived}
+
+Several analytical features are not present in the raw streams but are derived during preprocessing. Each is named here so subsequent sections can refer to it without re-explaining.
+
+\begin{itemize}
+\item \textbf{Hour of day}: the integer 0 to 23 extracted from a boarding timestamp.
+\item \textbf{Day type}: a categorical label (weekday, weekend, public holiday) derived from the calendar date and a known table of holidays.
+\item \textbf{Fare class grouping}: a small set of coarse categories derived from the more numerous raw fare class codes, for example \{student, adult, elderly, free pass, other\}.
+\item \textbf{Payment channel grouping}: a binary grouping of payment channels into cash and non-cash, for views that need to compare digital adoption.
+\item \textbf{Route-level demand}: an aggregate per route of the boarding count over a chosen time window.
+\item \textbf{Trip-level operational indicators}: per-trip quality of service scores computed from GPS pings using the framework of Section~\ref{sec:foundations:qos}.
+\item \textbf{Boardings per trip}: a proxy for crowding computed by attributing AFC boardings to the trip that the boarding belongs to. The proxy is not a direct count of passengers on the vehicle at any moment because no alighting event is recorded.
+\end{itemize}
+
+\subsection{Validity Boundaries of the Analytical Surface}
+\label{sec:solution:validity}
+
+The analytical surface built on these data sources can support certain claims and must avoid others. The boundaries are stated explicitly so that the visualisations in Section~\ref{sec:solution:viz} carry only claims the data supports.
+
+\begin{itemize}
+\item Claims about boarding magnitude (per stop, per trip, per route, per hour) are supported by AFC and can be made directly.
+\item Claims about passenger journeys (origin to destination) are not supported because alighting events are not recorded. A heuristic alighting model can be inferred from subsequent boardings of the same anonymised user identifier, but the AFC user identifier is populated for only about 0.1\% of records, so any such inference is statistically marginal.
+\item Claims about live vehicle occupancy at a given moment are not supported. The closest computable surrogate is cumulative boardings per trip, which is a proxy for crowding rather than a count of passengers on the vehicle.
+\item Claims about vehicle reliability (trip completion, on-path operation, on-schedule arrival) are supported by GPS and the schedule table, with the urban-canyon caveat noted in Section~\ref{sec:foundations:qos}.
+\item Claims that combine demand (AFC) and operations (GPS) at a finer grain than route by hour by day-type are not supported, because the two calendar windows do not overlap and event-level joining is impossible.
+\end{itemize}
+
+Section~\ref{sec:solution:viz} adopts the convention that any chart making a claim that lies outside these boundaries must explicitly label the claim as a proxy or estimate.
+
 \subsection{Volume and Calendar Coverage}
 \label{sec:solution:dataset:volume}
 
@@ -254,3 +309,16 @@ architecture of Section~\ref{sec:solution:architecture} addresses both
 observations directly: aggregate-grain reconciliation in the conformed
 layer answers the first, and a boarding-centric measurement model in the
 fact and aggregate layers answers the second.
+
+\subsection{From Exploratory Findings to Design Decisions}
+\label{sec:solution:eda_to_design}
+
+Five exploratory findings have direct, traceable effects on the design proposed in this chapter:
+
+\begin{enumerate}
+\item The concentration of student-fare tickets into morning weekday peaks is the empirical basis for the school-aware analytical theme of Section~\ref{sec:solution:themes}. Without the finding, the school-aware theme would have been one of many; with it, the theme becomes the most distinctive contribution of the proposed system relative to the existing tools surveyed in Chapter~\ref{chapter:related}.
+\item The 96\% cash share of payments justifies a payment-adoption view (to track how the share evolves over time) but limits the analytical depth available for digital-payment study; Section~\ref{sec:solution:viz} reflects this by allocating one chart to payment adoption rather than a separate theme.
+\item The heavy-tailed distribution of boardings across routes (a small number of routes carrying a disproportionate share of total volume) justifies the use of Pareto-style ranked-bar primitives for route comparison in the Demand and Crowding and Financial and Operations themes.
+\item The non-overlapping calendar windows of the GPS and AFC streams forces cross-source analysis to the aggregate grain of route by hour by day type. The warehouse architecture of Section~\ref{sec:solution:architecture} embeds this rule by materialising the aggregate-by-route-hour table as the only cross-source data product.
+\item The visible nine-day flatline in daily AFC ridership around T\d ết is a natural-experiment window for the anomaly view in the Network Health and Performance theme. The day-type dimension is tagged at warehouse build time so that anomaly visualisations can filter on the window without ad-hoc computation.
+\end{enumerate}
