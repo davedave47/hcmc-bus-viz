@@ -150,3 +150,18 @@ coordination logic proportional to the number of charts in a single
 theme, rather than to the total number of charts in the catalogue;
 adding a new chart to a theme requires wiring it only to the other
 charts of the same theme, not to the entire catalogue.
+
+\subsection{Solution Justification Summary}
+\label{sec:solution:summary}
+
+The proposed system responds to the requirements of Section~\ref{sec:solution:problem} through the following composition of decisions.
+
+\begin{enumerate}
+\item The four-layer warehouse architecture (Section~\ref{sec:solution:architecture}) keeps the analytical query path within the latency budget (N1) and ensures consistent identifier reconciliation across all themes (N3, N4).
+\item The six analytical themes (Section~\ref{sec:solution:themes}) cover the functional capabilities R1 through R10 by partitioning the analytical surface along user-question boundaries rather than user-role boundaries.
+\item The visualisation catalogue (Section~\ref{sec:solution:viz}) selects established primitives whose suitability is grounded in the literature surveyed in Chapter~\ref{chapter:foundations}.
+\item The interaction model (Multiple Coordinated Views, visual storytelling, entity-detail interaction) bounds the user's cognitive load by scoping cross-chart coordination to a single theme and reserving cross-theme navigation for explicit drill-down.
+\item The validity boundaries of Section~\ref{sec:solution:validity} are encoded in the catalogue, so no chart makes a claim the underlying data cannot support.
+\end{enumerate}
+
+The composition is the principal contribution of Phase One. Chapter~\ref{chapter:implementation} documents the parts of the proposed system that are already implemented; Chapter~\ref{chapter:future} sketches the implementation plan for the remainder.
