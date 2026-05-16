@@ -2,4 +2,64 @@
 \label{appendix:schedule}
 \addcontentsline{toc}{chapter}{Appendix B: Detailed Schedule}
 
-\textit{Stub.}
+This appendix expands the Phase Two roadmap of Section~\ref{sec:future:roadmap} with per-phase outputs, per-phase acceptance criteria, a risk register, and the planned user-evaluation timeline.
+
+\section*{B.1 Deliverables and Acceptance Criteria per Phase}
+
+Table~\ref{tab:appB:phases} restates the nine sequential phases of Phase Two in tabular form for ease of reading. Effort estimates are in working days.
+
+\begin{table}[!htbp]
+\centering
+\caption{Phase Two phases with per-phase output, acceptance criterion, and effort estimate.}
+\label{tab:appB:phases}
+\begin{tabularx}{\linewidth}{l X X l}
+\hline
+\textbf{Phase} & \textbf{Output} & \textbf{Acceptance criterion} & \textbf{Effort} \\
+\hline
+P1 & Warehouse skeleton: conformed dimensions, fact views, eight aggregate tables built end-to-end on the 90-day AFC window. & All eight aggregate tables populate without referential-integrity errors; row counts match the raw layer; cold-start build under ten minutes. & 3 days \\
+P2 & First end-to-end analytical theme (demand and crowding) wired from aggregate tables to the analytical surface. & Five charts of the demand theme render from cached aggregate queries; median chart-load latency under 500 ms; one advisor review held at the end of this phase. & 3 days \\
+P3 & Spatial and connectivity theme with H3-indexed maps rendered via pydeck. & Map layers render for the full 90-day window at 500-pixel viewport; tile-cache warm hit under 300 ms. & 2 days \\
+P4 & School-aware demand theme with school geocoding backfilled to district granularity. & At least 60 of 64 schools geocoded; school-to-route treemap and equity map render. & 2 days \\
+P5 & Financial and operational efficiency theme and network-wide health and reliability theme. & Operator profit-and-loss scorecard, profit-and-loss quadrant, and reliability scorecard render; the Quality-of-Service (QoS) metrics QoS-1, QoS-2, and QoS-3 are computed for routes covered by the GPS window. & 3 days \\
+P6 & Per-route deep-analysis theme including the Marey time-distance diagram and the per-route stop-by-stop boardings and dwell view. & Marey renders for every GPS-covered route; stop-by-stop dual-axis chart renders; one advisor review held at the end of this phase. & 3 days \\
+P7 & Overview index, cross-theme navigation, entity-detail interaction panel, and bookmarkable Uniform Resource Locator (URL) state. & A single click on any entity in any chart opens the entity-detail panel; a copied URL re-lands on the same view. & 2 days \\
+P8 & Narrative storytelling layer (four authored stories) and global highlight set. & The four authored stories scroll-lock through their scenes; the global highlight set persists across navigation. & 2 days \\
+P9 & Polish; switch from local one-day GPS to the full fifty-day GPS pull; final exports. & The full GPS window loads through the same warehouse without code change; export of every chart and every entity panel works in PNG, PDF, and CSV. & 1 day \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section*{B.2 Risk Register}
+
+Table~\ref{tab:appB:risk} records the six risks tracked across Phase Two. Likelihood and impact are each rated Low, Medium, or High.
+
+\begin{table}[!htbp]
+\centering
+\caption{Phase Two risk register.}
+\label{tab:appB:risk}
+\begin{tabularx}{\linewidth}{X l l X}
+\hline
+\textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Mitigation} \\
+\hline
+Chart-load latency exceeds the 500 ms interactive budget on the route-by-hour heatmap and the spatial hex grid. & Medium & High & Pre-materialise aggregate tables; restrict the analytical surface to read only from the aggregate layer; cache the warm queries with a configurable time-to-live. \\
+GPS pull from the upstream source fails or is delayed beyond P9. & Medium & Medium & Keep the one-day local GPS extract as a working fallback; design the warehouse so that the full pull is a transparent substitution; defer the full reliability scorecard until the pull lands. \\
+School geocoding completes below the 60-of-64 target. & Medium & Medium & Backfill with district-level approximation and mark each school with a verified-or-stubbed flag in the dimension table; display the flag in the user interface. \\
+Visualisation primitives (treemap, parallel coordinates, Marey, GroupSet matrix) fail to render at the catalogue size on Plotly or on the embedded HyperText Markup Language (HTML) custom components. & Low & High & Render each primitive on the largest expected entity set during P2 to surface scaling problems early; pre-bin or down-sample where the primitive cannot scale. \\
+Schema mismatch between AFC and GPS expands during Phase Two as new fields are observed. & Medium & Medium & Treat the AFC route number as canonical; store the GPS route number as a join field; tag routes as GPS-only or AFC-only on the route dimension. \\
+Loss of access to the operational data sources during the user-evaluation period. & Low & High & Snapshot the warehouse to a fixed read-only build before the user-evaluation window opens; run the evaluation against the snapshot. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section*{B.3 Personnel and Time Tracking}
+
+Phase Two is single-author work. Time is tracked per phase against the estimates listed in Table~\ref{tab:appB:phases}. Two advisor reviews are scheduled (at the end of P2 and at the end of P6), at which points the build is checkpointed and any scope adjustments are negotiated before the next set of phases begins.
+
+\section*{B.4 Post-Phase-Two User-Evaluation Timeline}
+
+The user evaluation is conducted in two waves across the four user roles. Outcome measures are: per-task completion rate, median time-to-answer, and the number of unsolicited findings per participant per week.
+
+\begin{itemize}
+    \item \textbf{Wave one (think-aloud sessions).} One ninety-minute session per participant, with the participant attempting a fixed set of scripted tasks while narrating reasoning aloud. Two to three participants per role.
+    \item \textbf{Wave two (free exploration).} Two weeks of self-directed use by the same participants, with weekly check-in calls. Participants log unsolicited findings; the analyst logs task-completion telemetry.
+\end{itemize}
