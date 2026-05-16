@@ -1,4 +1,51 @@
-\section{Initial Evaluation Against Requirements}
+\section{Initial Requirements Evaluation}
 \label{sec:impl:eval}
 
-\textit{Stub.}
+The requirements stated in Section~\ref{sec:solution:problem} comprise ten
+functional capability statements (R1 through R10) and six non-functional
+constraints (N1 through N6). This section reviews each requirement against
+the artefacts produced in Phase~One and records the current implementation
+status. Three status levels are used: \textit{Designed} for requirements
+whose specification is documented in Chapter~\ref{chapter:solution} but
+whose running code is Phase~Two work, \textit{Partially Implemented} for
+requirements whose underlying data plumbing is in place in Layer~1
+already, and \textit{Deferred to Phase~2} for requirements whose
+implementation depends on artefacts not yet built.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Phase one implementation status against the requirements of Section~\ref{sec:solution:problem}}
+  \label{tab:impl:eval}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.20}
+  \begin{tabularx}{\linewidth}{p{0.9cm}p{4.6cm}p{3.2cm}X}
+    \hline
+    \textbf{Req.} & \textbf{Requirement summary} & \textbf{Status} & \textbf{Note} \\
+    \hline
+    R1  & Aggregate ridership by route and hour                & Partially Implemented   & Raw boarding views registered in Layer~1; route-by-hour aggregate table scheduled for Layer~4. \\
+    R2  & Compare ridership across days, weeks, seasons        & Partially Implemented   & Calendar-day partitioning in place; calendar dimension and seasonal-window tagging scheduled for Layer~2. \\
+    R3  & Stop-level demand identification                     & Designed                & Stop-by-hour aggregate and per-stop drill-down chart specified; implementation scheduled for Phase~2. \\
+    R4  & Reliability indicators per route (QoS-1, 2, and 3)   & Designed                & Quality of Service (QoS) decomposition specified in Chapter~\ref{chapter:foundations}; aggregate table scheduled for Phase~2. \\
+    R5  & Consistent route identifiers across GPS and AFC      & Deferred to Phase~2     & Conformed route dimension is the first Layer~2 artefact in the Phase~2 roadmap. \\
+    R6  & Spatial demand density with uniform area             & Designed                & Hexagonal-bin density map specified using the H3 indexing system \cite{h3}; implementation scheduled for Phase~2. \\
+    R7  & Bus-to-metro feeder identification                   & Designed                & Feeder-routes chart and connectivity matrix specified; implementation scheduled for Phase~2. \\
+    R8  & Financial efficiency proxies per route               & Designed                & Two-dimensional scatter quadrant and parallel-coordinates chart specified; implementation scheduled for Phase~2. \\
+    R9  & Export charts and entity views in standard formats   & Designed                & Per-chart export controls specified; implementation scheduled for Phase~2 inside the Streamlit shell \cite{streamlit}. \\
+    R10 & Bookmarkable, shareable analytical state             & Designed                & State serialisation into the browser URL specified; implementation scheduled for Phase~2. \\
+    N1  & Sub-50~ms warm chart render                          & Designed                & Pre-computed aggregate-table strategy specified; measurement awaits Layer~4. \\
+    N2  & Single-process deployability on commodity hardware   & Partially Implemented   & In-process analytical engine \cite{duckdb} integrated; no separate server required at the Layer~1 stage. \\
+    N3  & Deterministic, reproducible warehouse build          & Partially Implemented   & Layer~1 build is idempotent and writes through atomic file replacement; deterministic behaviour to be re-verified after Layers~2 through~4 are built. \\
+    N4  & On-disk preprocessed size below 100~MB               & Partially Implemented   & Columnar compression of Layer~1 already meets the bound for the 90-day AFC window; bound to be re-verified after the aggregate layer is added. \\
+    N5  & Cross-platform portability                           & Partially Implemented   & Pipeline is pure Python with no operating-system-specific build step; portability target met for Layer~1 on Linux, macOS, and Microsoft Windows. \\
+    N6  & No personally identifying data                       & Partially Implemented   & User identifier field dropped during preprocessing; aggregate-only fare records retained. \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The table shows that the current artefacts of Phase~One cover the design
+in full and a portion of the data-pipeline scaffold. The principal
+Phase~One output is the specification itself (Chapters~\ref{chapter:related}
+through~\ref{chapter:solution}) together with the data preprocessing
+pipeline of Section~\ref{sec:impl:pipeline}; the corresponding software
+implementation of the analytical surface is scheduled in
+Chapter~\ref{chapter:future}.
