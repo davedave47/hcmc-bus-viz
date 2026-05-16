@@ -107,3 +107,13 @@ visualisation (Plotly), geospatial rendering (pydeck and H3), and
 forecasting (statsforecast and the UMAP library for the related task of
 projection). The specific role each tool plays in the proposed system
 is described in Chapter \ref{chapter:solution}.
+
+\begin{figure}[!htbp]
+\centering
+\imageplaceholder{Conceptual diagram}{Block diagram showing how the tools compose. Bottom layer: storage (DuckDB and Polars side by side). Middle layer: processing (Jupyter Notebook for exploratory analysis on the left, statsforecast and UMAP libraries for modelling in the middle, H3 indexing on the right). Top layer: presentation (Streamlit as the application container, with Plotly and pydeck rendering visualisations within it). Arrows showing data flow from storage through processing to presentation.}{Draw in draw.io. PNG at 300 dpi. Save as images/diagrams/foundations\_tool\_stack.png.}
+\caption{Tool stack used by the proposed system}
+\label{fig:foundations:stack}
+\end{figure}
+
+Chapter~\ref{chapter:implementation} describes how the proposed system
+uses each tool in concrete operational terms.
