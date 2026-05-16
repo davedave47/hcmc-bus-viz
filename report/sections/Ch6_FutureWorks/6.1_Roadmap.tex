@@ -1,4 +1,102 @@
 \section{Implementation Roadmap}
 \label{sec:future:roadmap}
 
-\textit{Stub.}
+Phase Two completes the proposed system specified in
+Chapter~\ref{chapter:solution}. The work is organised into nine phases,
+labelled P1 through P9. Each phase has a single named output and a single
+acceptance criterion that determines when the phase is complete. The total
+effort budget is approximately twenty-one working days at one developer.
+The roadmap introduces three abbreviations that recur in later sections:
+the Automated Fare Collection (AFC) data source, the Global Positioning
+System (GPS) data source, and the Quality of Service (QoS) reliability
+framework adopted from Chapter~\ref{chapter:foundations}.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Phase Two implementation roadmap}
+  \label{tab:future:roadmap}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{p{0.7cm}p{4.6cm}p{1.5cm}X}
+    \hline
+    \textbf{Phase} & \textbf{Output} & \textbf{Effort} & \textbf{Acceptance criterion} \\
+    \hline
+    P1 & Warehouse Layers 2 to 4 (conformed dimensions, fact views, aggregate tables)
+       & 2 days
+       & The build command runs in under 30 seconds on the local sample and emits the
+         ten dimension tables, three fact views, and eight aggregate tables; an
+         integration check asserts row counts against the fact layer. \\
+    P2 & First end-to-end theme (Demand and Crowding)
+       & 3 days
+       & All five charts in the theme render against the warehouse; the Multiple
+         Coordinated Views model propagates selection across all five; the
+         entity-detail panel opens on any route click. \\
+    P3 & Spatial and Connectivity theme
+       & 2 days
+       & The hexagonal-bin map renders at three cell sizes; the per-stop demand view
+         renders the 4{,}710 stops without user-interface lag. \\
+    P4 & School-Aware Demand theme
+       & 2 days
+       & The schools-to-routes treemap renders; the school-routeness classifier
+         renders for all routes; the school proximity map renders at district
+         resolution. \\
+    P5 & Financial and Operations plus Network Health themes
+       & 3 days
+       & The financial quadrant is interactive; the QoS-1, QoS-2, QoS-3 indicators
+         are computed on the local GPS sample; the anomaly view supports the
+         threshold control. \\
+    P6 & Routes theme with time-distance diagram
+       & 3 days
+       & Cross-route and per-route views both render; the time-distance diagram
+         supports zoom and trip hover. \\
+    P7 & Cross-theme polish (overview index, entity-detail panel for all entity
+         types, URL state)
+       & 2 days
+       & The overview index renders; the entity-detail panel works for all six
+         entity types; the URL encodes the active theme and filters. \\
+    P8 & Narrative scrollytelling layer
+       & 2 days
+       & The four planned narratives are scroll-driven; each scene deep-links to the
+         corresponding theme view. \\
+    P9 & Final polish and initial evaluation
+       & 2 days
+       & School geocoding is verified for at least 50 of the 64 schools; the full
+         fifty-day GPS dataset is loaded if available; an end-to-end demonstration
+         screencast is produced. \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\noindent\textbf{Content.} The plan content is the nine phases recorded in
+Table~\ref{tab:future:roadmap}. Each phase produces one or two artefacts that
+the next phase depends on. The acceptance criteria are verifiable by a single
+command or a single demonstrable user interaction, which avoids open-ended
+evaluation at phase boundaries and keeps the cost of declaring a phase
+complete fixed.
+
+\noindent\textbf{Time.} The total estimated effort is twenty-one working days
+at one developer. The critical path is P1 followed by P2, which together
+account for about five working days; the warehouse layers built in P1 are a
+hard prerequisite for the first end-to-end theme exercised in P2. Phases
+P3 and P4 may run in parallel after P2 completes because their underlying
+aggregate tables are independent of one another. Phases P5 through P9 each
+consume one or more aggregate tables produced in P1 and follow the order in
+which the corresponding analytical themes depend on each other.
+
+\noindent\textbf{Personnel.} Phase Two is single-author. Time is tracked per
+phase rather than per task, which matches the granularity of the acceptance
+criteria and keeps the tracking overhead small. Two advisor reviews are
+scheduled: at the end of P2, after the first end-to-end theme has been
+demonstrated, and at the end of P6, after all themes are rendering. The two
+review points coincide with the two natural integration milestones in the
+plan.
+
+\noindent\textbf{Expected outcomes.} At the end of Phase Two, the proposed
+system renders thirty out of thirty-one charts at sub-fifty-millisecond
+warm latency, supports the Multiple Coordinated Views interaction within
+every theme and the entity-detail interaction on every clickable element,
+persists state to a shareable URL, and exports every chart in three formats
+from a single one-click control. The remaining chart, the network-wide
+arrival-time prediction, is treated as an extension in
+Section~\ref{sec:future:extensions} because its underlying construction
+depends on the full fifty-day GPS window rather than on the local sample.
