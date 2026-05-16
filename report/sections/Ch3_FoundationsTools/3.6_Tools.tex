@@ -69,16 +69,6 @@ framework composes the layers into a single accelerated rendering. The
 binding supports the hexagonal-bin layer described in Section
 \ref{sec:foundations:primitives}.
 
-\subsection{statsforecast}
-
-statsforecast \cite{statsforecast} is a Python library that implements
-classical statistical forecasting models with a uniform interface. The
-included models cover exponential smoothing in its various forms,
-autoregressive integrated moving average, and the theta method, among
-others. The library is suitable for short-horizon forecasting on
-regularly sampled time series for which the cost and complexity of a
-neural model would not be justified.
-
 \subsection{The H3 system}
 
 H3 \cite{h3} is a globally consistent hexagonal hierarchical geospatial
@@ -103,10 +93,12 @@ the conventions of the scikit-learn ecosystem.
 The tools listed in this section form a coherent stack that covers data
 storage (DuckDB), data processing (Polars), exploratory analysis
 (Jupyter Notebook), application shell (Streamlit), interactive
-visualisation (Plotly), geospatial rendering (pydeck and H3), and
-forecasting (statsforecast and the UMAP library for the related task of
-projection). The specific role each tool plays in the proposed system
-is described in Chapter \ref{chapter:solution}.
+visualisation (Plotly), and geospatial rendering (pydeck and H3). A
+classical forecasting library, statsforecast \cite{statsforecast}, is
+planned for the single demand-forecast chart in the Demand and Crowding
+theme and is mentioned here only for completeness; it does not occupy
+its own layer of the stack. The specific role each tool plays in the
+proposed system is described in Chapter \ref{chapter:solution}.
 
 \begin{figure}[!htbp]
 \centering
