@@ -2,4 +2,40 @@
 \label{appendix:images}
 \addcontentsline{toc}{chapter}{Appendix C: Image and Diagram Inventory}
 
-\textit{Stub.}
+The report uses an \texttt{\textbackslash imageplaceholder} macro for every figure whose real image asset is not yet captured. This appendix is the master inventory of those placeholders with the capture instructions for each. Real images already in the report (the five exploratory analysis figures from the notebooks at \texttt{notebooks/figures/eda\_*.png}) are not listed here.
+
+\begin{longtable}{p{0.27\linewidth} p{0.13\linewidth} p{0.50\linewidth}}
+\caption{Inventory of figure placeholders in the report.}\\
+\hline
+\textbf{Figure label} & \textbf{Section} & \textbf{Capture instruction} \\
+\hline
+\endfirsthead
+
+\hline
+\textbf{Figure label} & \textbf{Section} & \textbf{Capture instruction} \\
+\hline
+\endhead
+
+\texttt{fig:intro:network} & Section 1.1 & Single street-level photograph of the Ho Chi Minh City public bus network, taken from the kerb opposite a busy stop in District 1 or District 5 during the 7~AM or 5~PM peak; landscape orientation; no identifiable faces. Save to \texttt{images/photos/\linebreak intro\_network.jpg}. \\
+\hline
+\texttt{fig:foundations:layered} & Section 3.1 & Block diagram of the four-layer analytical data architecture (raw inputs, conformed dimensions, fact tables, pre-computed aggregate tables) with an upward arrow chain and a side arrow from the aggregate layer to the analytical surface. Draw in draw.io or Mermaid; PNG at 300 dpi; save to \texttt{images/diagrams/\linebreak foundations\_layered\_architecture.png}. \\
+\hline
+\texttt{fig:foundations:mcv} & Section 3.4 & Multiple Coordinated Views schematic: one click on a route in a map propagates a labelled ``selection event'' arrow to a calendar heatmap, an hourly demand chart, and a per-route summary table, all enclosed in a box labelled ``single analytical theme''. Draw in draw.io; PNG at 300 dpi; save to \texttt{images/diagrams/\linebreak foundations\_mcv.png}. \\
+\hline
+\texttt{fig:foundations:stack} & Section 3.6 & Three-layer tool-stack block diagram: storage layer (DuckDB, Polars), processing layer (Jupyter Notebook, statsforecast, UMAP, H3 indexing), and presentation layer (Streamlit containing Plotly and pydeck). Arrows show data flow from storage upward. Draw in draw.io; PNG at 300 dpi; save to \texttt{images/diagrams/\linebreak foundations\_tool\_stack.png}. \\
+\hline
+\texttt{fig:solution:pipeline} & Section 4.3 & Linear flowchart of the seven-block data-preprocessing pipeline (raw CSV inputs, schema validation, type casting, calendar-day partitioning, label normalisation, natural-experiment window tagging, view registration) with a side branch to a four-bullet validation-checks box; the pipeline output is labelled ``analytical warehouse Layer 1''. Draw in draw.io; PNG at 300 dpi; save to \texttt{images/diagrams/\linebreak solution\_pipeline.png}. \\
+\hline
+\texttt{fig:solution:overview} & Section 4.4 & High-level system overview diagram with two raw data sources (GPS feed, AFC feed) feeding a preprocessing pipeline that outputs a four-layer warehouse; the aggregate layer feeds a horizontal row of six themed views; four user-role icons (passenger, driver, operating company, public-transport authority) connect on the right by dashed lines. Draw in draw.io; PNG at 300 dpi; save to \texttt{images/diagrams/\linebreak solution\_system\_overview.png}. \\
+\hline
+\texttt{fig:arch:diagram} & Section 4.5 & Four-layer horizontal flow diagram (raw views, conformed dimensions, facts, aggregates) with the analytical surface reading from the aggregate layer. Draw in draw.io or Mermaid; PNG at 300 dpi; save to \texttt{images/diagrams/\linebreak architecture.png}. \\
+\hline
+\texttt{fig:solution:schema} & Section 4.5 & Star-schema entity-relationship diagram with two fact tables at the centre (\texttt{fact\_boardings}, \texttt{fact\_gps\_trips}) and eight dimension tables radiating outward (\texttt{dim\_date}, \texttt{dim\_hour}, \texttt{dim\_route}, \texttt{dim\_stop}, \texttt{dim\_school}, \texttt{dim\_company}, \texttt{dim\_fare\_class}, \texttt{dim\_payment\_channel}) connected by foreign-key lines; primary keys underlined, foreign keys dashed. Draw in draw.io using ER notation; PNG at 300 dpi; save to \texttt{images/diagrams/\linebreak solution\_star\_schema.png}. \\
+\hline
+\texttt{fig:impl:overview} & Section 5.2 & Overview-index screenshot of the user-interface mockup: six themed entries arranged in vertical reading order, each with a label, a small visualisation preview thumbnail, and a one-sentence summary; date-range control in the top bar. Open the mockup in a browser at 1280-pixel width; take a full-page screenshot; save to \texttt{images/screenshots/\linebreak prototype\_overview.png}. \\
+\hline
+\texttt{fig:impl:theme} & Section 5.2 & Theme-interior screenshot of the user-interface mockup: left rail listing the charts in the theme; top filter bar; centre canvas with the selected chart; a side panel opened from the right showing the entity-detail interaction. Scroll to the theme-interior section in the same mockup at the same width with one entity-detail panel open; take a screenshot; save to \texttt{images/screenshots/\linebreak prototype\_theme.png}. \\
+\hline
+\end{longtable}
+
+Each placeholder is replaced by editing the corresponding section file to substitute \texttt{\textbackslash imageplaceholder\{...\}} with \texttt{\textbackslash includegraphics[width=...]\{path\}} once the asset is saved at the listed path; the report is then rebuilt with \texttt{xelatex + biber + xelatex + xelatex}.
