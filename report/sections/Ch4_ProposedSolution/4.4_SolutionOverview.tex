@@ -15,6 +15,13 @@ record. Fourth, an interaction model connects the visualisations across each
 thematic view and provides a uniform response to user clicks on analytical
 entities.
 
+\begin{figure}[!htbp]
+\centering
+\imageplaceholder{System overview diagram}{High-level architecture of the proposed system. Left to right: two raw data sources (GPS feed and AFC feed) feed into a preprocessing pipeline, which outputs a four-layer analytical warehouse (raw views, conformed dimensions, fact views, aggregate tables) stacked vertically. The aggregate layer feeds an analytical surface composed of six themed views arranged horizontally. Four user-role icons on the right (passenger, driver, operating company, public-transport authority) connect by dashed lines to the analytical surface.}{Draw in draw.io. PNG at 300 dpi. Save as images/diagrams/solution\_system\_overview.png.}
+\caption{System overview of the proposed analytical platform}
+\label{fig:solution:overview}
+\end{figure}
+
 The remaining sections of this chapter develop the four components in turn.
 Section~\ref{sec:solution:architecture} describes the data architecture and
 records the architectural alternatives considered.
