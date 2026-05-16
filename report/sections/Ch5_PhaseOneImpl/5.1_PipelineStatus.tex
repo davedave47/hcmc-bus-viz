@@ -1,4 +1,100 @@
 \section{Data Pipeline Status}
 \label{sec:impl:pipeline}
 
-\textit{Stub.}
+The layered analytical warehouse specified in Chapter~\ref{chapter:solution}
+is implemented to Layer~1 (raw views) in Phase~One. Layers~2, 3, and 4
+(conformed dimensions, fact views, aggregate tables) are scheduled for
+Phase~Two per the roadmap in Chapter~\ref{chapter:future}. This section
+reports the state of each layer at the close of Phase~One.
+
+\subsection{Implemented Components}
+\label{sec:impl:pipeline:implemented}
+
+Four components of the data pipeline are present in the Phase~One artefacts.
+Together they normalise the raw release files into columnar storage,
+partition the two largest streams by calendar day, correct one mislabelled
+field discovered during exploratory work, and register a uniform view layer
+that downstream warehouse layers will consume.
+
+\begin{itemize}
+  \item \textbf{Raw view registration.} About twenty-four columnar parquet
+    views are registered automatically when the analytical engine
+    \cite{duckdb} opens. The views cover the twelve tables of the Automated
+    Fare Collection (AFC) stream (\texttt{tickets}, \texttt{payments},
+    \texttt{ticket\_trips}, \texttt{ticket\_routes},
+    \texttt{ticket\_companies}, \texttt{ticket\_buses},
+    \texttt{ticket\_stations}, \texttt{ticket\_route\_stops},
+    \texttt{ticket\_drivers}, \texttt{ticket\_users},
+    \texttt{ticket\_students}, and \texttt{ticket\_schools}), the ten tables
+    of the Global Positioning System (GPS) stream (raw pings, vehicle trips,
+    stop times, schedules, routes, companies, vehicles, drivers, stations,
+    and the extracted trip table), and the two shared master tables of
+    stops and vehicle-to-route mappings.
+  \item \textbf{Source-to-parquet normalisation.} The raw comma-separated
+    value files released with the dataset are converted to columnar
+    parquet files with explicit per-column type casting. The conversion is
+    idempotent: rerunning the conversion against the same raw inputs
+    produces byte-identical parquet outputs, and rerunning it against a
+    newer raw batch overwrites only the parquet files whose source has
+    changed. The dataframe operations of the conversion step are written
+    against the Polars engine \cite{polars}.
+  \item \textbf{Calendar-day partitioning for the two largest streams.}
+    The boarding-event stream and the payment-event stream are written as
+    one parquet file per calendar day. The ninety-day AFC window thus
+    yields ninety boarding-event files and ninety payment-event files,
+    which the analytical engine can prune on a date predicate at query
+    time without scanning the full set.
+  \item \textbf{Mislabel correction for the cash payment field.} The
+    literal label \texttt{Tiền mặt} in the raw payment stream was found,
+    during preprocessing inspection, to also cover smartcard balance
+    deductions, not only physical cash payments. The preprocessing step
+    distinguishes the two modes by writing the smartcard subset into a
+    separate column, so that downstream payment-channel breakdowns count
+    each mode correctly.
+\end{itemize}
+
+\subsection{Pending Components}
+\label{sec:impl:pipeline:pending}
+
+The remaining components of the warehouse, together with the validation
+harness, are specified in Chapter~\ref{chapter:solution} but their running
+code is scheduled for Phase~Two. Four pending components are recorded
+below in the order they will be built.
+
+\begin{enumerate}
+  \item \textbf{Conformed dimensions (Layer~2).} Ten dimension tables that
+    reconcile route identifiers across the two operational sources,
+    pre-tag the calendar windows of analytical interest (Tết and the April
+    30 parade week), and provide a stable foreign-key surface for the fact
+    and aggregate layers that depend on them.
+  \item \textbf{Fact views (Layer~3).} Three views that re-shape the raw
+    boarding records, the raw GPS trip records, and the per-stop visit
+    records through the conformed dimensions of Layer~2. The fact views
+    are the bridge between the immutable raw view layer and the
+    pre-computed aggregate tables of Layer~4.
+  \item \textbf{Aggregate tables (Layer~4).} Eight pre-computed aggregate
+    tables, each supporting one or more of the analytical themes catalogued
+    in Section~\ref{sec:solution:themes}. The aggregate tables are the
+    direct backing store of the analytical surface; a chart in the running
+    application reads one aggregate table per render.
+  \item \textbf{Validation harness.} An automatic check that asserts row
+    counts, null rates, referential integrity, and primary-key uniqueness
+    on each run of the pipeline. The harness halts the pipeline on any
+    failure, so that the warehouse never refreshes against partially
+    preprocessed input.
+\end{enumerate}
+
+\subsection{Pipeline Reproducibility}
+\label{sec:impl:pipeline:reproducibility}
+
+The pipeline as implemented is reproducible from the raw inputs alone. A
+single command rebuilds Layer~1 from the source files, and the same command
+will rebuild Layers~2 through~4 once they are implemented in Phase~Two. The
+pipeline does not require network access at run time: every dependency, from
+the source release files to the Python packages of the analytical engine,
+is present locally before the build is invoked. Idempotence is guaranteed
+because every output is written through atomic file replacement, with the
+input file inventory captured in a manifest written alongside each output;
+a rerun against the same inputs therefore produces byte-identical outputs,
+and a rerun against a partially updated input set overwrites only the
+outputs whose manifest entries have changed.
