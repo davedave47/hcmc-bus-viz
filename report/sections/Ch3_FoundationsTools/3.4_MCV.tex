@@ -34,3 +34,13 @@ the user and the computational cost on the renderer. The analyst is not
 forced to reason about how a selection in one corner of the interface
 affects every other view, and the renderer does not have to refresh
 charts whose relationship to the current selection would be incidental.
+
+\begin{figure}[!htbp]
+\centering
+\imageplaceholder{Conceptual diagram}{A schematic showing a user clicking on one route in a map visualisation, with arrows propagating the selection to three other coordinated views on the same screen: a calendar heatmap, an hourly demand chart, and a per-route summary table. The arrows are labelled "selection event". The bounding box around all four views is labelled "single analytical theme".}{Draw in draw.io or similar. Use icons or labelled rectangles for the four views. PNG at 300 dpi. Save as images/diagrams/foundations\_mcv.png.}
+\caption{Selection in one view propagating to coordinated views in the same theme}
+\label{fig:foundations:mcv}
+\end{figure}
+
+Section~\ref{sec:solution:interaction} adopts this model for cross-chart
+filtering within each analytical theme of the proposed system.
