@@ -13,7 +13,7 @@ roles the design must serve, the functional capabilities the system must
 provide, the non-functional constraints under which it must operate, and the
 analytical questions that are explicitly out of scope for the present phase.
 
-\subsection{User roles}
+\subsection{User Roles}
 \label{sec:solution:problem:roles}
 
 The design accounts for four stakeholder roles. The roles are recorded here
@@ -43,7 +43,7 @@ The four roles motivate the analytical content of the system but do not drive
 its surface structure. Section~\ref{sec:solution:themes} returns to the roles
 when it groups the analytical content into thematic views.
 
-\subsection{Functional requirements}
+\subsection{Functional Requirements}
 \label{sec:solution:problem:functional}
 
 The proposed system must provide the following functional capabilities. Each
@@ -63,7 +63,7 @@ requirement is stated as a single obligation in the form ``The system shall
   \item[\textbf{R10.}] The system shall persist analytical state, comprising the active thematic view, the active chart, the active filters, and the active selection, in a form that is bookmarkable and shareable across sessions.
 \end{enumerate}
 
-\subsection{Non-functional requirements}
+\subsection{Non-Functional Requirements}
 \label{sec:solution:problem:nonfunctional}
 
 Beyond the functional obligations, the proposed system must satisfy six
@@ -79,7 +79,7 @@ decisions discussed in Section~\ref{sec:solution:architecture}.
   \item[\textbf{N6.}] The system shall contain no personally identifying data about individual passengers; only the aggregate fare records published in the dataset release are used.
 \end{enumerate}
 
-\subsection{Out-of-scope constraints}
+\subsection{Out-of-Scope Constraints}
 \label{sec:solution:problem:scope}
 
 Four analytical capabilities that might reasonably belong to a bus analytics
@@ -94,7 +94,7 @@ parallel team.
   \item Natural-language query over the data. A separate team is developing a text-to-Structured-Query-Language (SQL) capability, which will eventually be integrated alongside the analytical surface defined in this chapter.
 \end{itemize}
 
-\subsection{Mapping requirements to design responses}
+\subsection{Requirement-to-Design Mapping}
 \label{sec:solution:problem:mapping}
 
 The six non-functional constraints stated above shape design choices in the

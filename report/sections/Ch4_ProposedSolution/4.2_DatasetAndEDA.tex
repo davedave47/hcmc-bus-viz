@@ -8,7 +8,7 @@ chapter. The reporting in this section is descriptive; design implications
 are drawn in Sections~\ref{sec:solution:architecture} through
 \ref{sec:solution:interaction}.
 
-\subsection{Data sources}
+\subsection{Data Sources}
 \label{sec:solution:dataset:sources}
 
 Two operational data streams are available from the public dataset release of
@@ -29,7 +29,7 @@ affected fare classes). The master tables are stable across the calendar
 window and are used as conformed dimensions in the warehouse design of
 Section~\ref{sec:solution:architecture}.
 
-\subsection{Volume and coverage}
+\subsection{Volume and Calendar Coverage}
 \label{sec:solution:dataset:volume}
 
 The AFC stream covers the 90-day window from 1 January 2026 to 31 March 2026
@@ -61,7 +61,7 @@ The two streams share 121 of 163 routes by route identifier. The remaining
 only). The 121 shared routes are the basis for any cross-source analysis
 performed by the system.
 
-\subsection{Exploratory statistics}
+\subsection{Exploratory Statistics}
 \label{sec:solution:dataset:eda}
 
 Exploratory analysis of the AFC stream characterises the dominant
@@ -179,7 +179,7 @@ routes (29, 41, 57, 61, 84, 99, 102, 141, and 151). The catalogued full
 50-day window covers a broader set of routes; replacing the local extraction
 with the full window is part of the phase 2 work.
 
-\subsubsection{Patterns visible in the exploratory statistics}
+\subsubsection{Observed Patterns in the Exploratory Statistics}
 
 Four patterns recur across the statistics reported above and are noted here
 as observation, not design decision. The architectural responses appear
@@ -202,7 +202,7 @@ remaining 153 routes form a long tail, with no single tail route exceeding
 1\% individually; analytical comparisons across routes must therefore use
 either a logarithmic axis or a top-N restriction to remain readable.
 
-\subsection{Data quality observations}
+\subsection{Data Quality Observations}
 \label{sec:solution:dataset:quality}
 
 Six data-quality observations affect downstream analysis. They are reported
