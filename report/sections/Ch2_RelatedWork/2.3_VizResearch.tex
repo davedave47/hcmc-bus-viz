@@ -1,4 +1,53 @@
 \section{Research on Transit Visualisation}
 \label{sec:related:viz}
 
-\textit{Stub.}
+The visualisation of operational transit data is a separate body of research from the
+analytical methods reviewed in the preceding section. A correct quality-of-service
+indicator does not on its own convey to a planner where the network is weak; the
+indicator must be presented in a chart that surfaces the relevant comparisons and that
+permits the planner to drill into the underlying data. The proposed system draws on two
+strands of visualisation research: a thesis on visualisation primitives for spatial and
+temporal traffic data, and a treatise on the design principles that govern analytical
+charts in general.
+
+\subsection{Visualisation Primitives for Spatial-Temporal Traffic Data}
+\label{sec:related:viz:primitives}
+
+Liu \cite{liu2022} surveys and contributes original visualisation primitives for
+road-traffic data. Three primitives from the thesis are directly relevant to the present
+project. The first is a hierarchical density-by-category primitive built from treemap
+variants; the primitive renders a quantitative measure that has been partitioned across a
+two-level or three-level categorical hierarchy, with each rectangle's area encoding the
+measure and the nesting encoding the hierarchy. The second is a set-intersection matrix
+primitive for multi-valued categorical data; the primitive renders the size of each
+intersection of a family of overlapping sets as a column in a matrix and is well suited
+to visualising routes that simultaneously belong to several archetypes. The third is a
+hexagonal-bin map primitive built on a globally consistent hexagonal indexing scheme; the
+primitive partitions an urban region into uniform hexagonal cells of a configurable size
+and renders a quantitative measure per cell.
+
+The thesis also articulates, in full, the interaction model of Multiple Coordinated Views
+(MCV) and gives implementation guidance for brushing-and-linking across coordinated
+views. In an MCV interface, several charts are bound to the same underlying data such
+that a selection made in one chart is reflected immediately as a highlight in every
+other chart, without an explicit navigation step. The model is the natural way to
+present a single analytical theme through several complementary chart types. Both the
+primitives and the interaction model inform the present project. The primitives are
+catalogued in Chapter \ref{chapter:foundations} and instantiated in the visualisation
+selection of Chapter \ref{chapter:solution}; the interaction model is the basis of the
+interaction design described in Section \ref{sec:solution:interaction}.
+
+\subsection{Visual Storytelling Principles}
+\label{sec:related:viz:storytelling}
+
+Knaflic \cite{knaflic2015} codifies four design imperatives for analytical charts, namely
+to declutter the chart, to focus the reader's attention on the single quantity that the
+chart is meant to convey, to annotate the chart so that the reader can read the
+conclusion off the chart itself, and to structure the sequence of charts as a narrative
+rather than as an unordered collection. The treatise is written for business
+communication, but its principles transfer directly to interactive analytical interfaces:
+an analytical view is read in the same way a business chart is read, and the same four
+imperatives apply. The present project adopts the four principles as design constraints
+on the analytical interface. Section \ref{sec:foundations:storytelling} of this report
+develops the principles in technical detail; Section \ref{sec:solution:interaction}
+documents how they shape the interaction design of the proposed system.
