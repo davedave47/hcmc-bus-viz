@@ -1,0 +1,19 @@
+table,field,type,meaning
+stops,stopId,BIGINT,Surrogate primary key for the stop (city-wide master list).
+stops,code,VARCHAR,Public-facing stop code displayed at the shelter.
+stops,stop_name,VARCHAR,"Human-readable stop name (Vietnamese, including diacritics)."
+stops,type,VARCHAR,"Stop type tag (e.g. 'BusStop', 'Terminal', 'MetroFeeder')."
+stops,zone,VARCHAR,Administrative zone / district code.
+stops,ward,VARCHAR,Ward (phường) name.
+stops,address,VARCHAR,Free-text address string.
+stops,street,VARCHAR,Street name on which the stop sits.
+stops,support_disability,VARCHAR,Accessibility flag — 1 if the stop is wheelchair-friendly.
+stops,status,VARCHAR,"Operational status flag ('active', 'inactive', etc.)."
+stops,lng,DOUBLE,Longitude of the stop (WGS-84).
+stops,lat,DOUBLE,Latitude of the stop (WGS-84).
+stops,search,VARCHAR,Pre-computed lowercase search string for fuzzy matching.
+stops,routes,VARCHAR,Comma-separated list of route_no values that serve the stop.
+ticket_routes,route_id,BIGINT,Surrogate primary key for the AFC route record.
+ticket_routes,route_no,VARCHAR,Public route number (e.g. '152') — the canonical join key with GPS.
+ticket_routes,route_name,VARCHAR,Origin → destination label shown to passengers.
+ticket_routes,company_id,BIGINT,FK to ticket_companies — the operator running the route.

@@ -1,0 +1,16 @@
+field,type,meaning
+ticket_id,BIGINT,Surrogate primary key for the boarding event.
+ticket_uuid,VARCHAR,Globally unique UUID for the ticket.
+ticket_code,VARCHAR,Human-readable ticket code printed on the receipt.
+ticket_series,VARCHAR,Paper-ticket batch / series identifier (mostly null for e-tickets).
+ticket_type,VARCHAR,Vietnamese fare-product label (e.g. 'Vé TM lượt HS-SV' = student cash single).
+trip_id,DOUBLE,FK to ticket_trips — the bus trip on which the boarding occurred.
+user_id,VARCHAR,Registered passenger ID; populated for ~0.1% of tickets only.
+user_id_1,VARCHAR,Secondary user ID column (legacy duplicate of user_id).
+station_id,DOUBLE,FK to ticket_stations — the boarding stop.
+lat,DOUBLE,"Latitude of the boarding event (decimal degrees, WGS-84)."
+lng,DOUBLE,"Longitude of the boarding event (decimal degrees, WGS-84)."
+time_created_ticket,BIGINT,Unix epoch seconds when the ticket was issued (boarding timestamp).
+aggregation_status,VARCHAR,Backend rollup status flag ('Thành công' = successfully aggregated).
+updated_at,BIGINT,Unix epoch seconds of the last record update.
+month,VARCHAR,Partition tag (e.g. 'jan_2026') derived from source folder name.

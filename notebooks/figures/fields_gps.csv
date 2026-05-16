@@ -1,0 +1,10 @@
+field,type,meaning
+datetime,TIMESTAMP,"Timestamp of the GPS ping (server-side, second precision)."
+date,DATE,Calendar date of the ping (denormalised partition key).
+vehicle,VARCHAR,Vehicle identifier (license plate or anonymised hash).
+lng,DOUBLE,Longitude of the bus at ping time (WGS-84).
+lat,DOUBLE,Latitude of the bus at ping time (WGS-84).
+driver,VARCHAR,Driver license / staff identifier on duty at ping time.
+speed,DOUBLE,Instantaneous speed reported by the on-board unit (km/h).
+door_up,BOOLEAN,Boolean — front door open at ping time (used as boarding proxy).
+door_down,BOOLEAN,Boolean — rear door open at ping time (used as alighting proxy).
