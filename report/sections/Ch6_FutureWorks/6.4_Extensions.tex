@@ -1,4 +1,16 @@
 \section{Predictive and Analytical Extensions}
 \label{sec:future:extensions}
 
-\textit{Stub.}
+Three predictive and analytical extensions follow naturally from the historical foundation of the proposed system. The extensions consume the existing aggregate tables of Layer 4 and require no revisiting of the lower warehouse layers. Each is recorded as out of scope for Phase Two but feasible against the same data the proposed system already uses.
+
+\subsection{Real-Time Arrival-Time Prediction}
+
+Lin and Zeng~\cite{linzeng2014} demonstrate a link-node route representation that projects Global Positioning System (GPS) pings onto a one-dimensional route path, constructs per-trip time-distance trajectories, and predicts arrival time at downstream stops. The dominant predictor in their model is the dwell time at time-check stops. The same construction applies to the present project's GPS data once the full fifty-day window is loaded. The extension lifts the time-distance trajectory diagram of the Route-Level Analysis theme (Section~\ref{sec:solution:viz}) from a backward-looking visualisation to a predictive one, with arrival-time bands rendered on the per-route detail view.
+
+\subsection{Per-Route Anomaly Detection}
+
+The anomaly view in the Network Health and Performance theme operates at the network level using a tunable threshold over fixed quantile bands. The natural extension flags anomalies at the per-route per-hour level using statistical control limits derived from the ninety-day Automated Fare Collection (AFC) history. Control charts at three standard deviations on the aggregate-by-route-hour table are sufficient for the construction. The extension feeds back into the Network Health and Performance theme without requiring a new aggregate table or any change to the warehouse schema.
+
+\subsection{Bus Telemetry as a Traffic-Sensing Substrate}
+
+Derevitskiy and colleagues~\cite{derevitskiy2016} aggregate bus GPS pings into road-segment edge-speed estimates and propagate them to road segments where no buses currently operate, using a macroscopic travel-time model. The reported mean absolute percentage error is around twenty percent at distances under fifteen kilometres. The construction surfaces city-wide road-segment travel times as a derived analytical product. The extension is feasible against the full fifty-day GPS dataset but is treated as out of scope for Phase Two because it introduces an analytical theme that is not part of the catalogue in Chapter~\ref{chapter:solution}; the construction is recorded as a candidate for a follow-on phase if the project continues beyond Phase Two.
