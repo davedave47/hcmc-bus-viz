@@ -1,4 +1,58 @@
 \section{Research Gap}
 \label{sec:related:gap}
 
-\textit{Stub.}
+The preceding three sections taken together set out the analytical landscape that the
+present project enters. The existing tools surveyed in Section
+\ref{sec:related:tools} serve passenger routing; the existing research surveyed in
+Sections \ref{sec:related:ops} and \ref{sec:related:viz} provides methods for parts of
+the analytical problem: quality-of-service indicators from telemetry, traffic sensing
+from bus GPS, short-horizon arrival prediction, visualisation primitives for
+spatial-temporal data, the Multiple Coordinated Views interaction model, and the design
+principles of analytical charts. No integrated analytical platform that combines all of
+these methods into a single tool for the Ho Chi Minh City bus network has been published.
+
+The gap can be decomposed into three specific open problems that the proposed system
+addresses.
+
+\begin{enumerate}
+  \item \noindent\textbf{Cross-source integration.} The bus GPS feed and the AFC feed are
+        separate data sources with different calendar windows and different identifier
+        spaces. The existing literature treats the two sources in isolation: the
+        quality-of-service work of Srisakaokul and colleagues uses GPS alone, the
+        traffic-sensing work of Derevitskiy and colleagues uses GPS alone, and AFC
+        ridership has been studied largely outside the operational-analytics literature.
+        No published method integrates the two feeds at a granularity that supports both
+        reliability questions and demand questions on the same analytical surface.
+  \item \noindent\textbf{Stakeholder-aware analytical access.} The four user roles named
+        in Chapter \ref{chapter:solution} (passenger, driver, operating company, and
+        public-transport authority) have different analytical questions. The existing
+        tools serve only the passenger role; the existing research presents results from
+        a single perspective per study, typically that of a transport-research analyst.
+        An analytical platform that addresses all four roles within a single
+        coordinated interface has not been demonstrated for any city, let alone for
+        Ho Chi Minh City.
+  \item \noindent\textbf{City-specific deployment.} Most of the academic methods cited
+        in the preceding sections were demonstrated on data from cities other than
+        Ho Chi Minh City. The Quality of Service framework was demonstrated on Bangkok
+        \cite{srisakaokul2023}; the traffic-sensing method was demonstrated on a
+        European city \cite{derevitskiy2016}; the visualisation primitives were
+        developed in the European context \cite{liu2022}. Applying any of these methods
+        to a Ho Chi Minh City dataset requires data preprocessing, identifier
+        reconciliation between the GPS and AFC feeds, geocoding of stops and points of
+        interest, and parameter tuning that the published literature does not document
+        for this network.
+\end{enumerate}
+
+The proposed system addresses all three open problems through the design developed in
+Chapter \ref{chapter:solution}. Cross-source integration is achieved through the
+layered data architecture of Section \ref{sec:solution:architecture}, which reconciles
+the GPS and AFC identifier spaces and joins them at an aggregate granularity that
+preserves the analytical questions of interest. Stakeholder-aware analytical access is
+achieved through the analytical themes of Section \ref{sec:solution:themes} and the
+interaction model of Section \ref{sec:solution:interaction}, which together cover the
+analytical questions of all four user roles within a single coordinated interface.
+City-specific deployment is achieved through the preprocessing pipeline of Section
+\ref{sec:solution:preprocessing}, which performs the identifier reconciliation,
+geocoding, and parameter tuning required by the Ho Chi Minh City dataset. The chapter
+that follows develops the technical foundations on which the design rests; Chapter
+\ref{chapter:solution} then develops the design itself.
