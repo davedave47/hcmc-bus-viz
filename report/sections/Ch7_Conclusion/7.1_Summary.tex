@@ -1,4 +1,41 @@
 \section{Summary}
 \label{sec:conclusion:summary}
 
-\textit{Stub.}
+This report develops the design of an analytical and visualisation
+platform for the Ho Chi Minh City public bus network.
+Chapter~\ref{chapter:intro} motivates the work as the engineering
+response to the absence of any analytical surface over the network's
+two operational data streams, namely Automated Fare Collection (AFC)
+and Global Positioning System (GPS) telemetry.
+Chapter~\ref{chapter:related} surveys the four existing tools for the
+network (a public route directory and three passenger routing
+applications) and the peer-reviewed research that informs the design
+(the Bangkok Quality-of-Service framework~\cite{srisakaokul2023}, the
+bus-as-traffic-sensor construction~\cite{derevitskiy2016}, the
+time-distance trajectory predictor~\cite{linzeng2014}, the
+visualisation primitives of Liu~\cite{liu2022}, and the storytelling
+principles of Knaflic~\cite{knaflic2015}); the chapter identifies the
+gap that the present project addresses.
+
+Chapter~\ref{chapter:foundations} introduces the theoretical and
+technical foundations on which the proposed solution depends.
+Chapter~\ref{chapter:solution} develops the proposed solution along
+eight axes: problem analysis, dataset and exploratory analysis,
+preprocessing, solution overview, data architecture, analytical
+themes, visualisation technique selection, and interaction model.
+Chapter~\ref{chapter:implementation} documents the Phase~One artefacts,
+namely Layer~1 of the warehouse, the user-interface design mockup, and
+the initial requirements evaluation.
+Chapter~\ref{chapter:future} sets out the Phase~Two roadmap of nine
+phases and approximately twenty-one working days, the deployment plan,
+the user-evaluation methodology, and three extensions that follow from
+the historical foundation.
+
+The proposed solution composes a four-layer warehouse, six analytical
+themes, a visualisation catalogue grounded in established primitives,
+and an interaction model that combines Multiple Coordinated Views,
+visual storytelling, and an entity-detail interaction pattern. Each
+design choice is defended against at least one rejected alternative.
+The composition responds to the analytical gap identified in
+Chapter~\ref{chapter:related} and forms the basis for the Phase~Two
+implementation.
