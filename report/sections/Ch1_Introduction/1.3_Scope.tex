@@ -1,4 +1,49 @@
 \section{Scope of the Phase-One Study}
 \label{sec:intro:scope}
 
-\textit{Stub.}
+The study covers two operational data streams of the Ho Chi Minh City
+bus network. The AFC stream covers the 90-day window from 1 January
+2026 to 31 March 2026 inclusive and contains approximately 17.9
+million boarding events with paired payment records. The GPS stream
+covers the 50-day window from 20 March 2025 to 10 May 2025; the
+present project loads a single-day sample (18 March 2025) of
+approximately 720,000 pings for Phase One, with the full 50-day window
+loaded in Phase Two. The static reference tables (4,710 stops, the
+operating companies, and the schedule and route master data) are
+loaded in full. The two operational streams do not share any calendar
+day; the implications of this mismatch are discussed in
+Section~\ref{sec:solution:dataset:coverage}.
+
+Six classes of analytical question are in scope, organised into six
+analytical themes covered in Chapter~\ref{chapter:solution}: demand
+and crowding patterns; school-aware demand patterns specific to
+university and school commuting; spatial and connectivity questions
+including bus-to-metro feeders; financial and operational efficiency;
+network-wide health and reliability; and per-route deep analysis with
+cross-route comparison. The themes serve four user roles internally
+but are not exposed to the user through a role selector.
+
+Phase One produces the present report, four executed exploratory
+analysis notebooks documenting the dataset and grounding the design,
+a high-fidelity user-interface mockup that locks the visual
+specification of the proposed system, and a partial implementation of
+the data-preprocessing pipeline at Layer 1 of the proposed
+architecture.
+
+The following capabilities are explicitly out of scope and are not
+addressed by the proposed system.
+
+\begin{itemize}
+\item Real-time monitoring (the proposed system is historical-only).
+\item Per-passenger journey reconstruction (the AFC user identifier
+is populated for approximately 0.1 percent of records, which is
+insufficient for individual analysis).
+\item Exact financial modelling (no operational cost data is
+available; revenue can be reported but cost-side analysis is
+excluded).
+\item Natural-language query (a separate team is developing that
+capability).
+\item Live vehicle occupancy at a given moment (the AFC stream
+records boardings only, not alighting events, so occupancy is not
+computable from the available data).
+\end{itemize}
