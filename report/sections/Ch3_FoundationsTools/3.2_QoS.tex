@@ -49,3 +49,23 @@ lowers absolute QoS-2 scores in dense built environments because pings
 drift away from the true vehicle position. The indicator is therefore
 most informative when compared across routes operated under similar
 conditions rather than against an absolute threshold.
+
+\begin{table}[!htbp]
+\centering
+\caption{Summary of the three quality-of-service indicators}
+\label{tab:foundations:qos}
+\footnotesize
+\renewcommand{\arraystretch}{1.20}
+\begin{tabularx}{\linewidth}{p{1.4cm}p{2.8cm}Xp{3.2cm}}
+\hline
+\textbf{Indicator} & \textbf{Input data} & \textbf{Logic} & \textbf{Known limitation} \\
+\hline
+QoS-1 & Scheduled trip table, GPS pings at trip start and end & Fraction of scheduled trips whose GPS evidence shows both start and end within fixed geographic windows of the scheduled stops & Sensitive to missing telemetry at the trip endpoints \\
+QoS-2 & Route polyline, GPS pings during the trip & Fraction of GPS pings during a trip that lie within a 50 m buffer of the scheduled route polyline & Systematically lower in dense urban areas due to GPS positioning noise (urban-canyon effect) \\
+QoS-3 & Scheduled stop arrival times, GPS pings near each stop & Fraction of stop arrivals whose GPS evidence falls within a fixed time tolerance (typically 5 min) of the scheduled arrival & Tolerance choice affects the indicator significantly; cross-route comparisons are more reliable than absolute thresholds \\
+\hline
+\end{tabularx}
+\end{table}
+
+Section~\ref{sec:solution:viz} selects QoS indicators as the data source
+for the reliability theme of the proposed system.
