@@ -1,4 +1,56 @@
-\section{Interface Mockup}
+\section{Prototype Interface}
 \label{sec:impl:mockup}
 
-\textit{Stub.}
+The visual language of the proposed system is locked in a high-fidelity
+design mockup produced in Phase~One. The mockup is not a runnable
+application; it is a pixel-accurate reference that Phase~Two implementation
+reproduces using the technology stack of
+Section~\ref{sec:foundations:tools}. The two figures below present the
+mockup at the two levels at which the interface is composed: the overview
+index, where the user enters the analytical surface, and the interior of
+one analytical theme, where the user reads one chart in depth.
+
+\noindent\textbf{Overview index.} The overview index is the landing
+surface of the proposed system. It presents the six analytical themes
+catalogued in Section~\ref{sec:solution:themes} arranged in a vertical
+reading order, with each entry carrying a short descriptive label, a
+small visualisation preview thumbnail of the principal chart of the
+theme, and a one-sentence summary of the analytical question the theme
+answers. A persistent date-range control in the top bar scopes every
+theme, and a navigation menu supports cross-theme jumping without
+discarding the active date range.
+
+\begin{figure}[!htbp]
+\centering
+\imageplaceholder{Screenshot}{Overview index of the proposed system. Six themed entries arranged in a vertical reading order, each with a short descriptive label, a small visualisation preview thumbnail, and a one-sentence summary of the analytical question the theme answers. Date-range control in the top bar.}{Open the design mockup in a browser at 1280-pixel width. Take a full-page screenshot of the overview index section. Save as images/screenshots/prototype\_overview.png.}
+\caption{Overview index of the proposed system}
+\label{fig:impl:overview}
+\end{figure}
+
+\noindent\textbf{Theme interior.} Inside a theme, the layout decouples
+chart selection from chart-specific filtering and from per-entity detail.
+A left rail lists the charts available for the theme; a top filter bar
+carries the chart-specific filter controls; the centre canvas holds the
+chart currently selected on the rail; and a side panel slides in from the
+right when the user clicks an entity in the chart, presenting a
+multi-chart detail view of that entity in one place.
+
+\begin{figure}[!htbp]
+\centering
+\imageplaceholder{Screenshot}{Interior of one analytical theme. Left rail lists the charts in the theme. Top filter bar carries the chart-specific filter controls. Centre canvas holds the chart currently selected on the rail. A side panel slides in from the right when the user clicks an entity in the chart, showing the multi-chart entity-detail view.}{Scroll to the theme-interior section of the design mockup; take a screenshot at the same width with one entity-detail panel open. Save as images/screenshots/prototype\_theme.png.}
+\caption{Interior layout of one analytical theme}
+\label{fig:impl:theme}
+\end{figure}
+
+The theme interior implements the three interaction patterns of
+Section~\ref{sec:solution:interaction}. The Multiple Coordinated Views
+(MCV) model propagates a selection in any chart of the rail to the other
+charts of the same theme, so a clicked route or stop is highlighted
+consistently across every chart the user can see at that moment. The
+entity-detail interaction opens a dedicated side panel for any clicked
+entity, providing the multi-chart summary in a single panel without
+forcing the user to navigate away from the current chart. The visual
+storytelling principles of Section~\ref{sec:solution:interaction} govern
+the chart's title-plus-caption pair and the disciplined use of saturated
+colour, so that each chart presents both the descriptive title and the
+one-sentence finding the visualisation is intended to surface.
