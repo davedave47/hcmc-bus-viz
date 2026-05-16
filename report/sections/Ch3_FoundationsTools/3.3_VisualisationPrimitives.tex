@@ -10,119 +10,38 @@ analytical claim it supports; the specific choice of which primitive
 serves which question in the proposed system is deferred to Chapter
 \ref{chapter:solution}.
 
-\subsection{Treemap}
+\begin{table}[!htbp]
+\centering
+\caption{Visualisation primitives surveyed for the proposed system}
+\label{tab:foundations:primitives}
+\footnotesize
+\renewcommand{\arraystretch}{1.20}
+\begin{tabularx}{\linewidth}{p{3.3cm}Xp{3.6cm}c}
+\hline
+\textbf{Primitive} & \textbf{Analytical question it supports} & \textbf{Strength} & \textbf{Used} \\
+\hline
+Treemap & Hierarchical composition and relative magnitude across many categories & Compact space use for many categories & Yes \\
+Calendar heatmap & Temporal patterns across two cyclic dimensions (hour, day) & Exposes daily and weekly cycles at a glance & Yes \\
+Parallel coordinates & Multi-dimensional comparison across records & Brushing reveals multi-feature subsets & Yes \\
+Hexagonal-bin grid & Spatial density at uniform area per bin & Avoids the size-bias of arbitrary administrative regions & Yes \\
+Scatter quadrant & Two metrics with qualitative quadrant interpretation, plus a third encoded by bubble size & Reveals categorical groupings in metric space & Yes \\
+Sankey diagram & Flow between source and destination categories with conservation & Encodes magnitude as ribbon width & Yes \\
+Ranked bar & Top-$k$ of a one-dimensional distribution & Simplest and most readable for ordered comparison & Yes \\
+Two-dimensional projection scatter (UMAP) & Cluster structure in a high-dimensional feature space & Preserves local neighbourhood structure & Yes \\
+Time-distance trip diagram & Per-route trip trajectories over time & Exposes bunching and schedule gaps visually & Yes \\
+Set-intersection matrix & Multi-valued categorical membership across a fixed set of categories & Surfaces intersections that area-based visualisations cannot & Yes \\
+Pie chart & Composition of a small number of categories & --- & No (rejected; see Section~\ref{sec:solution:viz}) \\
+Three-dimensional bar chart & Comparison across three encoded dimensions & --- & No (rejected) \\
+Choropleth map & Spatial density by administrative region & --- & No (rejected in favour of hexagonal-bin grid) \\
+\hline
+\end{tabularx}
+\end{table}
 
-A treemap is a space-filling diagram in which rectangular tiles encode
-a hierarchy and tile area encodes a numeric measure. Tiles are nested:
-the children of a category occupy the area of that category's tile,
-recursively. The reading order is top-down for hierarchy and by area
-for magnitude, so that the relative contribution of each subcategory to
-its parent is immediately visible. Treemaps are cited by \cite{liu2022}
-as one of the canonical density-by-category primitives.
-
-\subsection{Calendar heatmap}
-
-A calendar heatmap is a grid in which one axis is a calendar dimension
-(day of week, hour of day, or date) and the other is a category or
-another calendar dimension; cells are coloured by a numeric measure
-according to a continuous colour scale. The primitive is used to expose
-temporal patterns including weekly cycles, daily cycles, and seasonal
-trends, because rhythmic structure in the underlying measure becomes
-visible as banded patterns of similar colours.
-
-\subsection{Parallel coordinates}
-
-Parallel coordinates is a multi-dimensional visualisation in which each
-vertical axis represents one dimension of the dataset and each
-multi-dimensional record is rendered as a polyline that crosses every
-axis at the height corresponding to its value on that axis. The
-primitive is used to expose relationships among more than two
-dimensions simultaneously and to support brushing across axes, so that
-restricting the range on one axis isolates the polylines that fall
-within that range across all the others. The primitive is cited by
-\cite{liu2022} as one of the central tools of multi-dimensional
-exploration.
-
-\subsection{Hexagonal-bin grid}
-
-A hexagonal-bin grid is a spatial-aggregation primitive that partitions
-a planar area into hexagonal cells and colours each cell by an
-aggregated measure, typically a count of events that fall within the
-cell. Hexagonal cells are preferred over square bins because every
-neighbouring cell is at the same centre-to-centre distance, which
-produces a visually consistent appearance at varying zoom levels and
-avoids the directional artefacts of square tessellation. The H3 system
-of \cite{h3} provides a globally consistent hexagonal hierarchical
-index whose cells can be referenced by stable identifiers across
-resolutions.
-
-\subsection{Scatter quadrant}
-
-A scatter quadrant is a two-dimensional scatter plot with axes
-deliberately chosen so that the four quadrants produced by drawing
-reference lines at meaningful values correspond to qualitatively
-distinct categories. For example, axes encoding cost and yield produce
-four quadrants of low cost low yield, low cost high yield, high cost
-low yield, and high cost high yield. Annotated quadrant boundaries
-support categorical reading, and bubble size can be used to encode a
-fourth measure beyond the two coordinate axes and any colour encoding.
-
-\subsection{Sankey diagram}
-
-A Sankey diagram is a flow diagram in which the width of each ribbon is
-proportional to a flow magnitude. The diagram is read left to right (or
-top to bottom): source categories on one side are connected by ribbons
-to destination categories on the other, and the conserved width of the
-ribbon across the diagram makes it easy to follow what fraction of a
-particular source flows to a particular destination. The primitive is
-used when the total flow between sources and destinations is itself a
-quantity of analytical interest.
-
-\subsection{Ranked bar}
-
-A ranked bar chart is a horizontal bar chart whose bars are sorted by
-the encoded numeric measure. It is the simplest primitive for surfacing
-the top-$k$ of a distribution and for supporting direct numeric
-comparison of category values, because the eye reads horizontal lengths
-more accurately than it reads angles or areas. The primitive scales
-gracefully to long category lists by limiting the rendered set to the
-top-$k$ and providing a means of paging through the remainder.
-
-\subsection{Two-dimensional projection scatter}
-
-A two-dimensional projection scatter is a scatter plot whose axes are
-derived by dimensionality reduction from a higher-dimensional feature
-space. Each point represents a record described by many features; the
-two coordinates are produced by an algorithm that attempts to preserve
-some structural property of the high-dimensional space. The Uniform
-Manifold Approximation and Projection (UMAP) algorithm of \cite{umap}
-is a common choice that preserves local neighbourhood structure better
-than alternatives such as t-distributed Stochastic Neighbour Embedding
-(t-SNE) or principal component analysis for this purpose. The primitive
-is used to expose clusters in a multi-feature dataset where no two
-features alone separate the records cleanly.
-
-\subsection{Time-distance trip diagram}
-
-A time-distance trip diagram, also called a Marey diagram after its
-nineteenth-century originator, places wall-clock time on the horizontal
-axis and the ordinal position of each stop along a route on the
-vertical axis. Each trip operated on the route is rendered as a
-polyline whose slope reflects vehicle speed and whose vertical
-discontinuities reflect dwell time at each stop. Bunching appears as
-converging polylines, and gaps in service appear as wide vertical
-voids in the diagram. The form originates with the train-scheduling
-nomograms of Marey and has been extended to public transit by Lin and
-Zeng \cite{linzeng2014}.
-
-\subsection{Set-intersection matrix}
-
-A set-intersection matrix is a matrix visualisation that exposes
-intersections among set memberships across a fixed collection of sets.
-Each column corresponds to one possible intersection of sets, marked by
-filled dots in the rows of the sets it contains; a bar above each
-column encodes the number of records that belong to that intersection,
-and a bar beside each row encodes the total cardinality of that set.
-The primitive is used when categorical membership is multi-valued, so
-that a single record can belong to several sets at once. The form is
-cited by \cite{liu2022} in its GroupSet variant.
+Table~\ref{tab:foundations:primitives} lists every primitive considered
+for the proposed system together with the analytical question it
+supports and the property that motivates its inclusion. The detailed
+reasoning per primitive (when each is chosen for which theme, and which
+are rejected with justification) appears in
+Section~\ref{sec:solution:viz}. The same section records the rejected
+primitives and the reasons each was set aside in favour of an
+alternative listed in the table above.
