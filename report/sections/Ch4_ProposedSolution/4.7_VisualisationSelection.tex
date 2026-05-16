@@ -269,3 +269,44 @@ covered by an existing aggregate require a new aggregate table to be added
 to the layer-4 catalogue and the new aggregate to be wired into the build
 ordering; the architecture supports such additions without disturbing the
 existing aggregates or the existing charts.
+
+\subsection{Catalogue Summary}
+\label{sec:solution:viz_catalogue}
+
+The visualisation choices across all six analytical themes compose into the catalogue summarised in Table~\ref{tab:solution:viz_catalogue}. Each row records the theme, the analytical question, the chosen primitive, the warehouse data source, and the dominant interaction pattern.
+
+\begin{table}[!htbp]
+\centering
+\caption{Visualisation catalogue across analytical themes}
+\label{tab:solution:viz_catalogue}
+\tiny
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{p{1.9cm}Xp{2.4cm}p{2.4cm}p{1.6cm}}
+\hline
+\textbf{Theme} & \textbf{Analytical question} & \textbf{Primitive} & \textbf{Data source} & \textbf{Interaction} \\
+\hline
+Demand and Crowding         & When does ridership peak across the 24-hour cycle?                           & Stacked area over hour                          & Aggregate of route by hour              & MCV brush \\
+Demand and Crowding         & Which routes peak together?                                                   & Categorical heatmap                              & Aggregate of route by hour              & MCV brush \\
+Demand and Crowding         & How does demand vary across the week?                                         & Two-dimensional calendar heatmap                 & Aggregate of route by hour              & MCV brush \\
+Demand and Crowding         & Which routes carry the most boardings?                                        & Ranked horizontal bar                            & Aggregate of route by day               & MCV brush \\
+Demand and Crowding         & How is short-horizon demand expected to evolve?                               & Multi-line forecast with bands                   & Aggregate of route by day               & Entity drill-down \\
+School-Aware Demand         & Which schools depend most on the bus network?                                  & Ranked horizontal bar                            & Aggregate of school by route            & MCV brush \\
+School-Aware Demand         & How are routes shared across schools?                                          & Treemap                                          & Aggregate of school by route            & MCV brush \\
+School-Aware Demand         & How does student demand differ from non-student demand?                       & Paired calendar heatmaps                         & Aggregate of route by hour              & MCV brush \\
+School-Aware Demand         & Which routes behave as school-only routes?                                     & Parallel coordinates                             & Aggregate of route profile              & MCV brush \\
+School-Aware Demand         & Which schools are far from the nearest stop?                                   & Annotated point map                              & Aggregate of stop by hour               & Entity drill-down \\
+Spatial and Connectivity    & How does the network cover the city?                                           & Point and line map                               & Aggregate of stop by hour               & Entity drill-down \\
+Spatial and Connectivity    & Where does demand concentrate spatially?                                       & Hexagonal-bin map                                & Aggregate of stop by hour               & MCV brush \\
+Spatial and Connectivity    & How does demand at a single stop break down by hour?                          & Annotated map plus per-stop drill-down           & Aggregate of stop by hour               & Entity drill-down \\
+Spatial and Connectivity    & Which stops are effective and which are skipped?                              & Point map coloured by door-open ratio            & Aggregate of stop by hour               & Entity drill-down \\
+Spatial and Connectivity    & How well do bus routes feed the metro?                                         & Sankey diagram                                   & Aggregate of route by day               & Entity drill-down \\
+Financial and Operations    & Which routes combine high waste with low revenue per trip?                    & Scatter quadrant with bubble size                & Aggregate of company by route           & MCV brush \\
+Financial and Operations    & What financial signature does each operating company trace?                   & Parallel coordinates                             & Aggregate of company by route           & MCV brush \\
+Financial and Operations    & How does payment-channel mix evolve over time?                                & Stacked-area chart                               & Aggregate of payment-channel by day     & Static \\
+Network Health and Performance & What is the network-wide reliability per route?                            & Small-multiples ranked bar                       & Aggregate of company by route           & MCV brush \\
+Network Health and Performance & When do anomalies disrupt the network?                                      & Annotated timeline with threshold slider         & Aggregate of network by day             & Entity drill-down \\
+Routes (cross-route)        & How do the routes cluster across multiple features?                           & Two-dimensional projection scatter (UMAP)        & Aggregate of route profile              & Entity drill-down \\
+Routes (single route)       & How does a single route's trip pattern look across a day?                     & Time-distance trip diagram                       & Aggregate of route by hour              & Entity drill-down \\
+\hline
+\end{tabularx}
+\end{table}
