@@ -59,8 +59,16 @@ without necessarily improving the queries the analytical surface
 ultimately serves. A practical architecture introduces exactly as many
 layers as are needed to give each concern a single home, and no more.
 
+\begin{figure}[!htbp]
+\centering
+\imageplaceholder{Conceptual diagram}{Block diagram of a layered analytical data architecture. Four horizontal layers stacked bottom-to-top: raw inputs (GPS pings and AFC records), conformed dimensions (calendar, route, stop, fare class), fact tables (boardings, trip records, stop visits), and pre-computed aggregate tables (per route by hour, per route by day, per stop by hour). Arrows flow upward from each layer to the next. An arrow from the top aggregate layer to a separate block labelled "analytical surface" on the right.}{Draw in draw.io or Mermaid. Label every block clearly with a short noun phrase. PNG at 300 dpi. Save as images/diagrams/foundations\_layered\_architecture.png.}
+\caption{Conceptual diagram of a layered analytical data architecture}
+\label{fig:foundations:layered}
+\end{figure}
+
 Chapter \ref{chapter:solution} describes the specific four-layer
 specialisation chosen for the present project, in which a fourth layer
 of pre-aggregated tables sits above the conformed Silver-equivalent
 layer so that every chart in a fixed analytical catalogue can be served
-by a single query.
+by a single query. Section~\ref{sec:solution:architecture} specialises
+this pattern to a four-layer warehouse for the proposed system.
