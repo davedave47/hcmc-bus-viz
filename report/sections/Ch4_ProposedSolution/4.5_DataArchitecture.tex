@@ -159,6 +159,13 @@ time.
   \end{tabularx}
 \end{table}
 
+\begin{figure}[!htbp]
+\centering
+\imageplaceholder{Entity-relationship diagram}{A star-schema layout. At the centre, two fact tables: fact\_boardings (one row per boarding event) and fact\_gps\_trips (one row per vehicle trip). Surrounding them, eight dimension tables connected by foreign-key lines: dim\_date, dim\_hour, dim\_route, dim\_stop, dim\_school, dim\_company, dim\_fare\_class, dim\_payment\_channel. Primary keys are underlined; foreign keys are dashed.}{Draw in draw.io using ER notation. PNG at 300 dpi. Save as images/diagrams/solution\_star\_schema.png.}
+\caption{Star-schema layout of the conformed and fact layers}
+\label{fig:solution:schema}
+\end{figure}
+
 \subsection{Refresh and consistency guarantees}
 \label{sec:solution:architecture:guarantees}
 
