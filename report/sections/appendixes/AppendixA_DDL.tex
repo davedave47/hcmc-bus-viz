@@ -4,4 +4,108 @@
 \label{appendix:ddl}
 \addcontentsline{toc}{chapter}{Appendix A: Data Warehouse Definitions}
 
-\textit{Stub.}
+This appendix documents the data-definition language (DDL) for four key tables of the proposed warehouse. The excerpts are the design-time specifications; the complete warehouse build is Phase Two work scheduled in Chapter~\ref{chapter:future}.
+
+\section*{A.1 Route Dimension Table}
+
+The route dimension table is the canonical descriptor of every route in the network. It conforms the AFC-side route identifier with the GPS-side route number so that downstream facts and aggregates can join on a single key.
+
+\begin{lstlisting}[language=SQL, basicstyle=\scriptsize\ttfamily, caption={Route dimension table.}]
+CREATE OR REPLACE TABLE dim_route AS
+SELECT
+    a.route_no                       AS route_id,
+    a.route_name                     AS route_name,
+    a.company_id                     AS company_id,
+    a.direction_count                AS direction_count,
+    a.stop_count                     AS stop_count,
+    a.distance_km                    AS distance_km,
+    a.scheduled_trips_per_day        AS scheduled_trips_per_day,
+    g.route_no                       AS gps_route_no,
+    (g.route_no IS NOT NULL)         AS has_gps_data,
+    CAST(NULL AS VARCHAR)            AS archetype
+FROM raw_afc_routes        AS a
+LEFT JOIN raw_gps_routes   AS g
+       ON a.route_no = g.route_no;
+\end{lstlisting}
+
+\noindent This dimension is the canonical join surface for routes across all analytical themes.
+
+\section*{A.2 Calendar Dimension Table}
+
+The calendar dimension table covers the AFC analysis window and pre-tags special periods so that downstream queries can filter on T\^et or weekend day-type without re-computing date logic.
+
+\begin{lstlisting}[language=SQL, basicstyle=\scriptsize\ttfamily, caption={Calendar dimension table.}]
+CREATE OR REPLACE TABLE dim_date AS
+WITH calendar AS (
+    SELECT UNNEST(generate_series(
+        '2026-01-01'::DATE,
+        '2026-03-31'::DATE,
+        INTERVAL 1 DAY
+    )) AS date
+)
+SELECT
+    date                                          AS date_key,
+    EXTRACT(year  FROM date)                      AS year,
+    EXTRACT(month FROM date)                      AS month,
+    EXTRACT(week  FROM date)                      AS week,
+    EXTRACT(dow   FROM date)                      AS dow,
+    (EXTRACT(dow FROM date) IN (0, 6))            AS is_weekend,
+    (date BETWEEN '2026-01-28' AND '2026-02-05')  AS is_tet,
+    CASE
+        WHEN date BETWEEN '2026-01-28' AND '2026-02-05' THEN 'tet'
+        WHEN EXTRACT(dow FROM date) IN (0, 6)           THEN 'weekend'
+        ELSE                                                 'weekday'
+    END                                           AS day_type
+FROM calendar;
+\end{lstlisting}
+
+\noindent This dimension provides the day-type partitioning used by every aggregate table that groups by day.
+
+\section*{A.3 Boarding-Event Fact View}
+
+The boarding-event fact view joins the raw ticket and payment tables and exposes a flat boarding-event row with foreign keys into the dimension layer.
+
+\begin{lstlisting}[language=SQL, basicstyle=\scriptsize\ttfamily, caption={Boarding-event fact view.}]
+CREATE OR REPLACE VIEW fact_boardings AS
+SELECT
+    t.ticket_id                       AS ticket_id,
+    CAST(t.boarding_time AS DATE)     AS date_key,
+    EXTRACT(hour FROM t.boarding_time) AS hour,
+    t.route_no                        AS route_id,
+    t.stop_id                         AS stop_id,
+    t.fare_class                      AS fare_class_id,
+    p.channel                         AS payment_channel_id,
+    t.vehicle_id                      AS vehicle_id,
+    COALESCE(p.amount, 0)             AS amount,
+    (COALESCE(p.amount, 0) = 0)       AS is_free_ticket
+FROM raw_tickets   AS t
+LEFT JOIN raw_payments AS p
+       ON t.ticket_id = p.ticket_id;
+\end{lstlisting}
+
+\noindent This view is the single boarding-event grain from which every demand and financial aggregate is derived.
+
+\section*{A.4 Route-by-Hour Aggregate Table}
+
+The route-by-hour aggregate is the principal chart-ready table for the demand and crowding theme. It pre-computes boarding counts, student-fare counts, unique-ticket counts, and revenue per route per hour per day-type, so that the analytical surface answers per-route hourly queries in a single point lookup.
+
+\begin{lstlisting}[language=SQL, basicstyle=\scriptsize\ttfamily, caption={Route-by-hour aggregate table.}]
+CREATE OR REPLACE TABLE agg_route_hour AS
+SELECT
+    f.route_id                                              AS route_id,
+    f.hour                                                  AS hour,
+    d.day_type                                              AS day_type,
+    COUNT(*)                                                AS boardings,
+    COUNT(*) FILTER (
+        WHERE f.fare_class_id LIKE 'HS%'
+           OR f.fare_class_id LIKE 'SV%'
+    )                                                       AS student_boardings,
+    COUNT(DISTINCT f.ticket_id)                             AS unique_tickets,
+    SUM(f.amount)                                           AS revenue
+FROM fact_boardings AS f
+JOIN dim_date       AS d
+  ON f.date_key = d.date_key
+GROUP BY f.route_id, f.hour, d.day_type;
+\end{lstlisting}
+
+\noindent This aggregate is the data contract behind the hourly demand curve, the route-by-hour heatmap, and the student-share decomposition used in the demand and school-aware themes.
