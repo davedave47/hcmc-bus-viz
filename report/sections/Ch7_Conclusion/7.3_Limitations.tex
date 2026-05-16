@@ -1,4 +1,40 @@
 \section{Limitations}
 \label{sec:conclusion:limitations}
 
-\textit{Stub.}
+The Phase~One work has four limitations that bear on the validity of
+its conclusions and on the planning for Phase~Two.
+
+\begin{enumerate}
+    \item \textbf{Calendar mismatch between the two data sources.}
+    The AFC stream covers 1~January to 31~March 2026; the GPS stream
+    covers 20~March to 10~May 2025. No calendar day is common to the
+    two. Row-level joining between the two sources is therefore
+    impossible, and the proposed system reconciles them only at the
+    aggregate grain of route by hour by day type. Any claim made on
+    the joined data is valid only at that grain.
+
+    \item \textbf{Local GPS sample limitation.} The locally available
+    GPS data covers a single day (18~March 2025) across nine routes;
+    the full fifty-day window is documented in the dataset
+    release~\cite{hcmcgps2025} but is not loaded locally for
+    Phase~One. Seven of the thirty-one charts in the catalogue depend
+    on the full GPS window and are partially scoped for Phase~One
+    until the full dataset is loaded in P9 of the Phase~Two roadmap.
+
+    \item \textbf{Absence of alighting events in the AFC stream.}
+    The AFC stream records boarding events only. Full passenger
+    journeys (origin to destination) cannot be reconstructed because
+    no alighting event is recorded; live vehicle occupancy at a given
+    moment is not directly computable. The proposed system surfaces a
+    cumulative-boardings-per-trip proxy for crowding rather than a
+    direct passenger count, with the proxy explicitly labelled.
+
+    \item \textbf{Quality-of-Service indicator sensitivity to GPS
+    noise.} The QoS-2 indicator (on-path operation, computed against
+    a 50-metre route buffer) is systematically lower in dense urban
+    areas because GPS positioning noise causes pings to fall outside
+    the buffer even when the bus is on-route. The indicator is most
+    informative when compared across routes rather than against an
+    absolute threshold; the proposed system surfaces it as a relative
+    metric and documents the caveat next to the indicator.
+\end{enumerate}
