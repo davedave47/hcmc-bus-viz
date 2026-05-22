@@ -13,8 +13,8 @@
 ## 0 · Current state
 
 **Step:** Phase 1 report **DELIVERED** (49 pages, [report/main.pdf](report/main.pdf)).
-**Last locked:** Phase 1 report final — 6 chapters + 3 appendixes; ~33 commits; built with xelatex + biber; all `\imageplaceholder` macros pending real image capture per Appendix~C.
-**Current:** Awaiting user review of report PDF.
+**Last locked:** Brainstorm v2 complete — 14 stakeholder questions (§2.1) · chart catalogue v3 = 24 + 2 conditional (§7) · programmatic EDA over 24 raw tables ([notebooks/05_findings.md](notebooks/05_findings.md)) · §3 invariants 8–12 · §6 invariants A1–A5 · §8.1 competitive products surveyed · §10 Phase 2 QA gates + `chart_style.py` spec.
+**Current:** Brainstorm v2 walk-through complete (problem → users → questions → viz → existing-products → papers → Knaflic). Chart catalogue v3 = **24 + 2 conditional** (see brainstorm log). 5 new invariants (A2 sharpened, A4 zero baseline, A5 3-8 sec test, plus §3 data invariants 8–12). New §1.1 Big Idea + §1.2 3-min story. New §7.7 Bing-Bang-Bongo for Stories. Phase 2 acceptance criteria + chart_style.py spec in §10. **Next:** step 9 (the "how" — architecture, methods, tools), then P1 warehouse build.
 **After review:** Phase 2 implementation begins — P1 warehouse build (Layers 2–4) is the critical-path entry point per the roadmap in report Ch 5.
 **Tech stack confirmed:** Streamlit (shell + state) + Plotly (charts) + pydeck (maps) + DuckDB (warehouse, in-process). Complex charts (Marey, GroupSet, Stories) via `st.components.v1.html`.
 
@@ -35,19 +35,69 @@ transient.
 > This project builds an **analytical & visualization platform** over historical GPS + AFC
 > data for both supply (planners, operators) and demand (passengers, businesses) sides.
 
+### 1.1 · Big Idea (one sentence — Knaflic Ch 1, added 2026-05-17)
+
+> *HCMC's bus network generates **17.8 M boarding events + 50 days of GPS** that no
+> current tool turns into operational insight — this platform makes the network's
+> **performance, equity, and shocks** visible to planners, operators, and passengers
+> through 22 coordinated charts and a school-aware demand flagship.*
+
+### 1.2 · 3-minute story (Knaflic Ch 1, added 2026-05-17)
+
+> HCMC has the data: 90 days of AFC fare events + 50 days of GPS pings across 184 routes.
+> Existing apps (BusMap, GoBus!, MultiGo, MultiPass) cover real-time routing and
+> e-ticketing; bus.dev.tris.vn is a single research demo. **None turn the historical
+> record into operational insight.** Our platform fills the gap: a Streamlit + DuckDB
+> tool with 22 charts answering 14 questions across 3 personas. The **flagship** is
+> school-aware demand — leveraging the 34 % student-fare share that's unique to HCMC's
+> ticketing data. **The Tết shock** (67 % daily-ridership drop, 9 days, full recovery
+> Feb 12) is the case-study that proves retrospective analytics matter. Phase 2
+> finishes the warehouse build, ingests the full 50-day Kaggle GPS (unlocking the
+> `working` school-bus flag + city-wide speed grid via bus-as-traffic-sensor), and
+> ships the Stories scrollytelling layer. Bus-as-sensor and weather-correlation
+> analytics extend in Phase 2.5+.
+
 ---
 
-## 2 · Users (4 roles, internal design only — not visible in UI)
+## 2 · Users (3 personas, internal design only — not visible in UI)
 
-| Role | Concern |
+> **Trimmed from 4 → 3 personas on 2026-05-17** after decision-orientation test: drivers
+> don't make analytical decisions; they're data sources, not tool users.
+
+| Role | Decision the tool helps them make |
 |---|---|
-| 👤 **passenger** | crowding, reliability, beginner-friendly routes |
-| 🚍 **driver** | own shift, route detail |
-| 🏢 **company** | fleet performance, revenue, scorecard vs network |
-| 🏛 **admin (MCPT)** | network performance, anomalies, equity, capacity |
+| 👤 **passenger** | Which route to commit to (reliability) · when to ride (crowding) · whether their school is served (student variant) |
+| 🏢 **company** | Where to add/cut capacity · which routes are profitable (₫/trip, ghost-run %) · how they rank vs peers · did the promo work |
+| 🏛 **admin (MCPT)** | Where supply ≠ demand · which routes/operators need scrutiny (QoS) · network shock & recovery · coverage/equity gaps · bus↔metro integration |
 
-Roles drive **internal feature prioritisation** only. The shipped UI shows no role badges,
-no role switcher. Date range is global; charts are role-agnostic.
+Driver is **data, not user** — driver license + shift records flow into the warehouse
+and surface inside company/admin views; no driver-facing screen.
+
+Personas drive **internal feature prioritisation** only. The shipped UI shows no role
+badges, no role switcher. Date range is global; charts are role-agnostic.
+
+### 2.1 · 14 stakeholder questions (locked 2026-05-17)
+
+Every chart in §7 traces to one of these 14 questions. Source of truth for the
+requirements records (6-field: input · computation · output shape · MoSCoW · decision
+type · success criterion) lives in [§12 brainstorm log], summarised here:
+
+| # | Question (short form) | Persona · tier |
+|---|---|---|
+| P-Q1 | Is route X reliable enough to commit to? | passenger · Must |
+| P-Q2 | When is route X / stop Y least crowded? | passenger · Must |
+| P-Q3 | Does this route serve my school's commute window? | passenger 🌟 flagship · Must |
+| C-Q1 | Which of my routes are over/under-supplied vs demand? | company · Must |
+| C-Q2 | Route-level revenue picture (₫/trip, ghost-run %)? | company · Must |
+| C-Q3 | How do I rank vs other operators on same corridors? | company · Must |
+| C-Q4 | Did my last promotion lift ridership (DiD)? | company · Should |
+| A-Q1 | Where does supply ≠ demand across the network? | admin · Must |
+| A-Q2 | Which routes/operators have reliability problems (QoS-1/2/3)? | admin · Must |
+| A-Q3 | How does the network absorb / recover from shocks (Tết, Apr 30)? | admin · Must |
+| A-Q4 | Where are coverage / equity gaps (schools, districts)? | admin · Must |
+| A-Q5 | How well does bus integrate with Metro Line 1 (transfer timing)? | admin · Must |
+| A-Q6 | What's the market structure (operator concentration, HHI)? | admin + company · Should |
+| A-Q7 | What will demand look like for the next 14 days (forecast)? | admin + company · Should |
 
 ---
 
@@ -63,6 +113,30 @@ no role switcher. Date range is global; charts are role-agnostic.
 5. **Boardings are cumulative** — there is no "people on bus at time T".
 6. **Plan as if A, demo as if B.** Plan = full 50-day GPS from Kaggle. Demo = 1-day local.
 7. **Schedule data has 91k `service_type='unknown'`** — adherence features need cleaning.
+8. **GPS `speed` is ~50 % null.** 358,156 of 720,088 pings on 2025-03-18 have no speed
+   reading. Any operating-regime feature (stopped vs moving, dwell detection, speed grid)
+   must declare a null strategy (drop / impute / time-interpolate from adjacent pings).
+9. **GPS and AFC drivers are disjoint populations.** `driver_license_number` overlap
+   between `gps.drivers` (1,763 unique) and `afc.drivers` (660 unique) is **42 keys —
+   2.4 % / 6.4 %**. No driver-level cross-source join is feasible.
+10. **`gps.schedules` has ~39 % full-row duplicates** (109,620 of 283,134 rows). Verified
+    2026-05-17: `direction` column (0/1) already exists; duplicates are **literal full-row
+    duplicates across all 13 columns**, not inbound/outbound or path variants. 38,713 rows
+    have `route_id = NULL`. Safe to `df.unique()` at ingest; root cause likely source-side
+    snapshot UNION.
+11. **Cross-source route join is `route_no` ONLY.** Column name `route_id` appears in 7
+    tables but splits into two disjoint keyspaces (GPS family vs AFC family).
+    `vehicle_route_mapping.route_id` ↔ `afc.routes.route_id` overlap is **25.8 % / 6.1 %**.
+    Always join cross-source on `route_no` per §9 decision 5 — never on `route_id`.
+
+12. **Local GPS sample lacks 5 fields the full Kaggle dataset has.** Per
+    [HCMC dataset paper](docs/HCMC_BUS_GPS_DATASET_ver_1.md) Table 3, the full GPS feed
+    has `heading · ignition · aircon · sos · working`. Local `raw_gps/2025-03-18.csv`
+    has none. The **`working` flag is a per-vehicle school-bus marker** —
+    cross-validates fare-level student inference for the flagship card. Pull full Kaggle
+    GPS before any school-bus vehicle-identity analytics.
+
+> Invariants 8–12 added 2026-05-17 from programmatic EDA + HCMC dataset paper read.
 
 ---
 
@@ -90,9 +164,9 @@ no role switcher. Date range is global; charts are role-agnostic.
 |---|---|
 | 🌟 **FLAGSHIP** | School-aware demand (the differentiator) |
 | ✅ **MUST** | Network Health · Demand · Financial · Spatial · Anomalies (Tết case) · Bus↔Metro (teacher's named feature) |
-| 🟦 **SHOULD** | Reliability · Discovery (clustering) · Demand prediction |
-| 🟨 **COULD** | Adoption & Promo (cash-vs-digital, promotion lift) |
-| 🟥 **WON'T (yet)** | Arrival-time bands · Driver fingerprint · Bus-as-traffic-sensor map *(all unlock with full 50-day GPS)* · User-level loyalty *(data killed it)* · Text-to-SQL *(external team)* |
+| 🟦 **SHOULD** | Reliability · Discovery (clustering) · Demand prediction · **Bus-as-traffic-sensor city-wide speed grid** *(Derevitskiy method, promoted from WON'T on 2026-05-17 — gated on full 50-day Kaggle GPS pull; chart #23 in v3 catalogue)* |
+| 🟨 **COULD** | Adoption & Promo (cash-vs-digital, promotion lift) · Speed-vs-posted-limit map *(gated on OSM road-speed ingest; chart #24 in v3 catalogue)* |
+| 🟥 **WON'T (yet)** | Arrival-time bands · Driver fingerprint *(GPS↔AFC drivers disjoint per invariant #9 — dead in both directions)* · User-level loyalty *(data killed it — invariant #3)* · Text-to-SQL *(external team)* · Rain-factor / traffic-jam / electric-bus analytics *(teacher's checklist Section 5/7; need external data — backlog in §10)* |
 
 ---
 
@@ -118,18 +192,53 @@ no role switcher. Date range is global; charts are role-agnostic.
 **Forbidden:** pie charts, donut charts, 3D anything (Knaflic ch. 2).
 
 **Per-chart conventions (invariants):**
-- **A1 · Linked brushing (MCV).** Within a card, clicking a route / cell / company in one
-  chart highlights that selection in **all** other charts of the same card — no navigation
-  needed. Cross-card navigation is reserved for explicit drill-down deep-links.
-- **A2 · Story subtitle.** Every chart shows a *descriptive title* AND a one-sentence
-  *story subtitle* that tells the viewer what to notice (Knaflic ch. 1, 4, 6). Annotations
-  on the chart underline the same finding. Default colours are muted; bright colour is
-  reserved for the element the story is pointing at.
+- **A1 · Click-to-entity-panel (revised 2026-05-22).** Every clickable entity (route, cell,
+  stop, school, company, hex cell, vehicle) opens the A3 Universal Entity Detail Panel for
+  that entity — that is the *single* coordination mechanism between a chart and the rest
+  of the analytical surface. The earlier framing ("clicking highlights the selection in
+  all sibling charts simultaneously") is retired because the UI shell renders one chart
+  per canvas at any time, making MCV-as-simultaneous-brushing structurally invisible.
+  Grounded in Yi 2007's seven interaction categories: Connect collapses to the panel-handoff;
+  the other six categories (Select · Explore · Reconfigure · Encode · Abstract/Elaborate ·
+  Filter) remain first-class within each chart. Cross-chart state within a theme persists
+  via the theme-wide filter bar and the panel's "open in Route Detail" deep-links; nothing
+  is simultaneous, everything is sequential and explicit. See
+  [docs/superpowers/specs/2026-05-21-bus-analytics-chart-catalogue-v5-design.md](docs/superpowers/specs/2026-05-21-bus-analytics-chart-catalogue-v5-design.md)
+  §2.1 + §5.
+- **A2 · Action title + supporting subtitle (sharpened 2026-05-17 post-Knaflic re-read).** Every
+  chart shows an *action title* that **states the finding** ("Route 152 carries 4× the median
+  in morning peak") AND a *supporting subtitle* that **gives the chart-reading context**
+  ("Boardings per hour, top 30 routes, weekdays Jan–Mar 2026"). Title carries the punch;
+  subtitle does the labelling. Annotations on the chart underline the same finding.
+  Default colours are muted; bright colour is reserved for the element the story is pointing
+  at. *(Knaflic Ch 1, 5, 7 — chart title should be the conclusion, not the variable.)*
 - **A3 · Universal Entity Detail Panel.** Every clickable entity (stop, route, company,
   school, day, hour, hex cell, driver, vehicle) opens a **rich side panel** (≈ 40% of
   viewport, slides from right) — multi-chart mini-dashboard about that entity. Hover stays
   light (tooltip); click is always the full panel. Panels have tabs when needed
   (Overview / Demand / Reliability / Network / Context).
+- **A4 · Bar charts have a zero baseline (added 2026-05-17).** Any chart whose visual
+  encoding is bar **length** (categorical bars, ranked bars, stacked bars, ranking
+  scorecards) must start the value axis at zero. Truncated baselines visually exaggerate
+  small differences. Line charts may have a non-zero baseline (the encoding is relative
+  position, not length) — but flag the choice if you use it. *(Knaflic Ch 2.)*
+- **A5 · 3–8 second story test (added 2026-05-17).** Every chart must surface its finding
+  (the action title from A2) within 3–8 seconds of looking at it. QA protocol: glance at
+  chart for 5 seconds, look away, articulate the finding. If the finding doesn't come,
+  the chart fails — re-design (typically: stronger action title, more aggressive
+  de-emphasis of context, one focal accent colour, direct labelling instead of legend).
+  *(Knaflic Ch 4 — audience decides whether to keep looking within 3–8 sec.)*
+- **A6 · One primitive per theme (added 2026-05-18).** Within any single analytical theme,
+  no two chart canvases use the same visual primitive from the Chart Selection Rubric
+  (Ch3.3 §Rubric, rows T1–T18). If the same primitive is needed for two different data
+  subsets, the second instance becomes a *filter* on the first canvas (or a *mode toggle*
+  / *paired-comparison overlay*), not a separate canvas. Rationale: a theme is one
+  analytical question; the reader has already chosen the primitive lens by entering the
+  theme; further canvases must answer with a *different* lens. The constraint is
+  theme-scoped, not catalogue-scoped — same primitive freely reused across themes
+  (Liu MCV consistency); duplicated within a theme is the violation. Drove the v3 → v4
+  catalogue consolidation that merged 2.1+2.5, 2.2+2.3, 3.1–3.4, 5.1+5.5 and removed
+  paired heatmaps.
 
 **App-wide features (locked, in addition to invariants):**
 - **🎯 Global highlight set** — a selection (e.g., "school routes" archetype) persists across
@@ -149,16 +258,24 @@ no role switcher. Date range is global; charts are role-agnostic.
 
 ## 7 · The 6 cards (all LOCKED — consolidation from prior 11-card structure)
 
-**Role-anchored internally; no role labels in UI.** 31 charts total.
+**Role-anchored internally; no role labels in UI.**
+**Chart catalogue v4** (locked 2026-05-18 after A6 + 8-chart backfill) = **36 canvases + 2 conditional**.
+Distribution: 7+5+5+7+3+9 across the six themes. Every canvas inside a theme uses a
+different primitive from the Ch3.3 rubric (rows T1–T18) per invariant A6. The catalogue
+gained 8 net new chart types (cartogram T15, voronoi T16, isochrone T17, marimekko T18,
+headway box plot T5, demand-variance quadrant T6, schools-routes bipartite, student-flow
+sankey T10) and collapsed several duplicate-primitive entries (paired heatmaps,
+historical+forecast timelines, 4-map spatial canvas, KPI+anomaly timelines, market
+treemap that lived in two cards). See §12 brainstorm log for the full catalogue lineage.
 
 | # | Card | Description (shown under name on hub) | Internal anchor | Charts |
 |---|---|---|---|---|
-| 1 | 🎓 **School-Aware Demand** 🌟 | *How HCMC's universities and schools shape network demand* | passenger + admin (flagship, cross-cutting) | 5 |
-| 2 | 📈 **Demand & Crowding** | *When and where people ride — peak times, quiet windows, demand forecast* | **passenger** | 5 |
-| 3 | 🗺 **Spatial & Connectivity** | *The network as a map: density, hubs, ghost stops, metro feeders* | passenger + admin (cross-cutting) | 5 |
-| 4 | 💰 **Financial & Operations** | *Route P&L, operator scorecard, payment adoption, promotion impact* | **company** | 5 |
-| 5 | 🌐 **Network Health & Performance** | *Network-wide vitals, reliability (QoS-1/2/3), anomalies, daily pulse* | **admin (MCPT)** | 5 |
-| 6 | 🔍 **Routes** | *Per-route deep-dive and cross-route discovery (clustering, archetypes, compare)* | **driver** + all (drill-down spine) | 6 |
+| 1 | 🎓 **School-Aware Demand** 🌟 | *How HCMC's universities and schools shape network demand* | passenger + admin (flagship, cross-cutting) | 7 |
+| 2 | 📈 **Demand & Crowding** | *When and where people ride — peak times, quiet windows, demand forecast, route reliability variance* | **passenger** | 5 |
+| 3 | 🗺 **Spatial & Connectivity** | *The network as a map: density, catchment, accessibility, cartogram, metro feeders* | passenger + admin (cross-cutting) | 5 |
+| 4 | 💰 **Financial & Operations** | *Route P&L, operator scorecard, payment adoption, promotion impact, market structure, operator-route marimekko* | **company** | 7 |
+| 5 | 🌐 **Network Health & Performance** | *Network pulse with anomaly overlay, service-day calendar, QoS-1/2/3 scorecard* | **admin (MCPT)** | 3 |
+| 6 | 🔍 **Routes** | *Per-route deep-dive + cross-route discovery (clustering, archetypes, compare, box-plot, pairwise-delay)* | all (drill-down spine — driver-data hub, not driver-user) | 9 |
 | – | 💬 **Ask the Data** | *(upcoming — external team's Text-to-SQL)* | — | — |
 
 ### 7.1 · 🎓 School-Aware Demand 🌟 (LOCKED)
@@ -207,10 +324,12 @@ Card filters: hour-of-day chips, day-type, company multi-select, layer-specific 
 | 4.2 | Financial signatures | Parallel coordinates | *"Two companies stand out — their routes trace a distinct shape across all financial dimensions"* | Click line → highlight in 4.1, 4.3; brush axis → re-filter 4.1 |
 | 4.3 | Operator P&L scorecard | Ranked table (volume + revenue toggle) | *"One company captures 31% of network revenue with 18% of routes operated"* | Click company → filters 4.1, 4.2 |
 | 4.4 | Payment adoption curve | Stacked-area + small-multiples per channel | *"Cash is 96% — digital channels grew 0.4 pp/month over the 3-month window"* | Click channel → company-breakdown popover |
-| 4.5 | Promotion lift | Before/after bars + lift line per promo type | *"Free-fare student days lift route ridership by ~12% weekdays, ~3% weekends"* | Click promo → affected routes overlaid on 4.1 |
+| 4.5 | Promotion lift (DiD) | Before/after bars + lift line + **waterfall sub-view** (#26, baseline → +promo → +rebound → final) | *"Free-fare student days lift route ridership by ~12% weekdays, ~3% weekends"* | Click promo → affected routes overlaid on 4.1 |
+| 4.6 | **Market structure** (A-Q6) | Treemap (Company → Route → Trip volume) + HHI concentration callout | *"Two companies operate 60% of network volume — they don't compete on the same routes"* | Click company → filters 4.1, 4.3 *(Note: same data shape as 5.2; can render in either card depending on context)* |
 
 Card filters: metric anchor, include-free-tickets toggle, ghost-run threshold slider, company multi-select.
 **Note:** "ghost-run %" is a proxy. UI language uses *"high waste, low revenue per trip"*, never *"losing money"*.
+**DiD controls:** k-NN in UMAP archetype (k=5 same-archetype routes as synthetic control set per §9 gap-3 decision).
 
 ### 7.5 · 🌐 Network Health & Performance (LOCKED — Pulse + Anomaly + Reliability merged)
 
@@ -234,30 +353,83 @@ Card filters: metric, day-type, company, QoS metric selector (in 5.4), threshold
 | 6.2 | **Archetype intersection matrix** (U5) | UpSet / GroupSet matrix | *"7 routes are 'school + commuter' — they need both peaks AND summer-break planning"* | Discovery |
 | 6.3 | **Multi-route compare** (U4) | Parallel coordinates + small-multiples per metric | *"Pick 2–4 routes — see how their demand, reliability, and ₫/trip stack up side-by-side"* | Discovery |
 | 6.4 | Route summary page | KPI strip + stops list + schedule + sparklines | *"Route 152: 1.2M boardings, ₫48M revenue, 65% student share, on-time 71%"* | Detail |
-| 6.5 | **Marey time–distance diagram** 🌟 (U1) | Time (x) × distance-along-route (y), trips as polylines | *"Bunching gap visible mid-morning — 3 trips arrive within 4 min after a 22-min wait"* | Detail |
+| 6.5 | **Marey time–distance diagram** 🌟 (U1, Lin & Zeng) | Time (x) × distance-along-route (y), trips as polylines + **time-check-stop bands** behind + **auto-detected bunching** annotations | *"Bunching gap visible mid-morning — 3 trips arrive within 4 min after a 22-min wait"* | Detail |
 | 6.6 | Stop-by-stop boardings + door dwell (U6) | Dual-axis bar (boardings) + line (door-open %) per stop along route | *"Stop 4127 sees 18% of route boardings but door-opens 6% of the time — a bottleneck"* | Detail |
+| 6.7 | **Per-stop arrival-time box plot** (teacher's checklist §1, added v2 — chart #22) | Box plot per stop along route, filterable by date / dow / peak vs off-peak | *"Stop 4127 has the widest arrival-time spread on this route — 9-min IQR vs 3-min network median"* | Detail |
+| 6.8 | **Pairwise stop-delay scatter** (Lin & Zeng, added v2 — chart #20) | Small-multiples per consecutive stop-pair; each shows delay-at-A vs delay-at-B with R² | *"Segments A→B and C→D compound delay (R²=0.78); B→C self-corrects (R²=0.21) — drivers recover here"* | Detail |
+| 6.9 | **Compare slopegraph** (added v3 — chart #25) | Slopegraph: 2 time periods (e.g., Jan vs Mar 2026) across selected routes, one metric at a time | *"Route 152 reliability fell 9pp Jan→Mar; Route 30 improved 4pp — the rest stayed flat"* | Discovery (alternative to 6.3 parcoords) |
 
 Card filters: route picker (always-visible; multi-select in Discovery, single in Detail), date range, direction (inbound/outbound).
 **Entry:** clicking any route anywhere in the app lands here in Detail mode for that route.
+**Card 6 Detail mode hosts the heaviest A3 entity-panel pattern** — Marey + box plot + pairwise delay + door dwell are tabs in one route-detail surface.
 
-### 7.7 · 📖 Stories — scrollytelling layer (LOCKED, separate from cards)
+### 7.7 · 📖 Stories — second reading mode INSIDE each source card (REVISED 2026-05-17)
 
-Stories live in their own hub section. Each Story is a curated scroll-locked sequence of
-chart states (filters / highlights / annotations) on the same chart canvases the cards use.
-Inspired by **VnExpress** data-journalism (*"Dữ liệu LinkedIn tiết lộ gì…"*) and Knaflic
-ch. 7 storytelling. Implemented with a scrolly-trigger framework (Scrollama or equivalent)
-+ authored scene JSON.
+> **Design change 2026-05-17:** Stories are **NOT a separate top-level destination.** They
+> live INSIDE each source card as a second reading mode. Each card with a Story shows a
+> "Read the story" affordance next to "Start exploring"; the same chart canvases scroll
+> through a curated sequence. No `/stories` hub page, no separate top-nav entry, no
+> standalone landing. This keeps the cards as the single unit of navigation and avoids
+> the hub becoming a mini-CMS.
 
-| Story | Source card | Scenes |
-|---|---|---|
-| 🎓 **The School Story** (flagship) | Card 1 | (1) "34% of HCMC bus rides are students" KPI hero · (2) "5 schools generate half" top-schools bar · (3) "Each school anchors a route family" treemap · (4) weekday heatmap · (5) "7 routes are school-only — what happens in June?" parcoords · (6) "3 schools sit > 800m from any stop — the equity gap" proximity map |
-| 🧧 **The Tết Story** | Card 5 | (1) "Daily ridership flatline for 9 days" timeline · (2) "Recovery completes Feb 12" zoom · (3) "Some routes drop 90%, others only 30%" top deviations · (4) "Holiday-resilient routes share airport corridors" subset map highlight |
-| 💰 **The Money Story** | Card 4 | (1) "₫72B in 90 days" KPI hero · (2) "Two companies dominate" treemap · (3) "₫/trip varies 4×" P&L quadrant · (4) "12 routes bleeding" filtered view · (5) "Free fares lift ridership +12%" promo bar · (6) "Cash is 96% — digital just starting" adoption curve |
-| 🗺 **The Network Map** | Card 3 | (1) "184 routes on one map" overview · (2) "5 hex cells = 20% of boardings" density grid · (3) "Bến Thành is 4× peak vs trough" stop demand · (4) "12% of stops are ghost stops" door dwell · (5) "19 metro feeders — only 8 arrive in time" connectivity |
+Each Story is a curated scroll-locked sequence of chart states (filters / highlights /
+annotations) on the same chart canvases that card uses for free exploration. Inspired by
+**VnExpress** data-journalism (*"Dữ liệu LinkedIn tiết lộ gì…"*) and Knaflic ch. 7
+storytelling. Implemented with a scrolly-trigger framework (Scrollama or equivalent)
++ authored scene JSON, mounted as a tab/mode within the card route.
 
-Stories are read-only narratives; users can break out into Cards at any scroll position
-(every chart state is a deep-link). Same chart components, same data — just a curated path
-through them.
+**Card-story mapping (4 of 6 cards have a Story; cards 1 and 6 do not):**
+
+| Lives inside | Story title | Scenes | Reading time |
+|---|---|---|---|
+| **Card 2 School-Aware Demand** | *The school commute, in numbers* | 8 (1 Bing + 6 Bang + 1 Bongo) | ~6 min |
+| **Card 3 Spatial & Connectivity** | *Where the city actually rides* | 7 (1 + 5 + 1) | ~5 min |
+| **Card 4 Financial & Operations** | *Who runs Saigon's buses* | 8 (1 + 6 + 1) | ~5 min |
+| **Card 5 Network Health & Performance** | *Nine days without a network* (Tết) | 6 (1 + 4 + 1) | ~4 min |
+
+**Cards 1 (Demand & Crowding) and 6 (Routes) have no Story** in v1 — they're tool-mode only. Could add later if a clear narrative emerges.
+
+Within each card, users can break out of Story mode at any scroll position into free exploration (same chart components, same data, just a curated vs free path). The "Read the story" affordance and "Start exploring" CTA sit next to each other in the hub-level card teaser.
+
+**Story structure (Bing-Bang-Bongo, Knaflic Ch 7 — added 2026-05-17).** Every Story must
+follow a 3-act spine:
+1. **Bing** (opening scene) — *"Here's what you're about to see"*: a one-screen hero KPI
+   that sets the dramatic question (e.g., "What does HCMC ride during Tết?").
+2. **Bang** (middle scenes) — the chart-by-chart unfolding of the answer. This is where
+   the existing scene tables above live.
+3. **Bongo** (closing scene) — *"Here's what you saw"*: a recap with the call to action /
+   open question (e.g., "9 days of flatline → 9 routes need contingency planning →
+   here's the Anomaly Lab to start").
+Repetition cements memory; the recap + call-to-action turns passive scrolling into
+something the reader can act on or remember.
+
+**Scroll-trigger state transitions (4 types, added 2026-05-18):**
+1. **Highlight overlay** — one element to focal accent, rest fade to grey
+2. **Annotation overlay** — label / reference line / named-event flag appears
+3. **Filter change** — chart re-renders against different subset (fare class, window)
+4. **Primitive change** — canvas swaps to a different chart type at a narrative pivot
+
+**Storytelling techniques (added 2026-05-18 from VnExpress 2025 data-journalism review):**
+- **Statistical-sentence scene opener** — each Bang scene leads with a finding-sentence; chart appears as proof
+- **Connecting prose between scenes** — 1-2 lines carry narrative argument scene N → N+1
+- **In-chart date annotation** — named events (Tết 2026, April 30 2025) flagged inline on temporal axes
+- **Expert pull-quote** (Phase 2 ingestion) — < 125 chars, attributed; placeholders in design
+- **Comparative framing** — close Bongo with comparison to known benchmark (Bangkok QoS, Singapore intermodal, Tokyo holiday plans)
+- **Methodology footnote per story** — one-line link to Method Card (chart #21) for most algorithmic chart in the story
+
+**Chart categories across tool/story boundary (added 2026-05-18):**
+- **Category A · story-strong** — works in both modes; comes alive with narrative. Charts: 5.1 network pulse · 3.3 cartogram · 3.5 isochrone · 1.7 student sankey · 1.2 schools treemap · 4.6 market treemap
+- **Category B · tool-strong** — needs reader interaction; use sparingly in stories. Charts: 6.1 UMAP · 6.3 multi-route parcoords · 6.2 UpSet · 2.5 variance quadrant
+- **Category C · story-exclusive frames** — only as story scenes, NOT in tool-mode catalogue. Frames: Bing hero KPI · Bongo recap card · side-by-side juxtaposition
+
+**Per-story scene inventory (29 scenes across 4 stories; full tables in [Ch4.6 §Stories](report/sections/Ch4_ProposedSolution/4.6_AnalyticalThemes.tex)):**
+
+| Story | # scenes | Reading | Bing → Bang → Bongo |
+|---|---:|---|---|
+| **Story 1 · The school commute, in numbers** (Card 2) | 8 | ~6 min | KPI "34%" → top schools bar → schools-routes treemap → weekly heatmap (student filter) → student-flow sankey → school-routeness parcoords → school-proximity map → recap "3 schools without a stop, 7 routes without a summer" → CTA |
+| **Story 2 · Where the city actually rides** (Card 3) | 7 | ~5 min | KPI "5 hex cells = 20%" → hex density layer → cartogram → voronoi catchment → isochrone from Bến Thành → bus-metro sankey → recap "city you ride ≠ city on the map" → CTA |
+| **Story 3 · Who runs Saigon's buses** (Card 4) | 8 | ~5 min | KPI "₫72B, 2 ops take 60%" → market treemap → operator-route marimekko → P&L quadrant → operator scorecard → promo waterfall → payment adoption → recap "12 bleeding routes, slow digital, ₫72B" → CTA |
+| **Story 4 · Nine days without a network** (Card 5, Tết) | 6 | ~4 min | KPI "−67%" → timeline+Tết highlight → timeline+recovery marker → timeline+per-route deviation → spatial canvas resilience view → recap "9 days flatline, 9 routes need contingency" → CTA |
 
 ---
 
@@ -272,8 +444,31 @@ through them.
 | **Lin & Zeng (real-time arrival prediction)** | Link-node route representation. Project GPS pings onto a 1-D bus path. Construct time-distance trajectories. Dwell at time-check stops is the dominant predictor. Documents the *full* version of our (currently WON'T-tier) arrival-time-bands feature. |
 | **HCMC dataset doc (Nguyen & Thoai)** | Schema, 31 routes, 50-day window, 19 metro feeders, April 30 parade as natural experiment. |
 | **`Bus system analytics_students.md`** | Teacher's checklist of features per scope (1 route → many routes → realtime → AFC → environmental → electric). Source of all themed cards. |
-| **Goals.MD** | 5-persona Q&A from earlier ideation (4 personas now; user-level feature dropped). |
+| **Goals.MD** | 5-persona Q&A from earlier ideation (3 personas now per §2; driver dropped as user, user-level feature dropped). |
 | **Rubric.md** | Grading rubric (10 pts each: objectives, requirements, research, solutions, plan, report, presentation; 30 pts: solution). Solution depth is the highest-weight item. |
+
+### 8.1 · Existing products surveyed (locked 2026-05-17 — competitive analysis)
+
+| Tool | What it actually is | Coverage vs our 14 Qs | Relationship to our tool |
+|---|---|---|---|
+| **BusMap / GoMo by BusMap** (HCMC, [busmap.vn](https://busmap.vn)) | Passenger routing + ETA + student-fare verification + TPBank GoMo e-payment | △ routing/ETA only — none of our 14 Qs | Not a competitor; complementary upstream |
+| **Go!Bus TPHCM** (FPT, [gobus.vn](https://gobus.vn)) | Real-time passenger ETA + journey planning | △ routing/ETA only | Not a competitor |
+| **MultiGo / MultiPass** (Go Labs, [multigo.golabs.vn](https://multigo.golabs.vn/en/)) | Multi-modal (bus + Metro + river + bike) + MultiPass e-ticketing | △ routing + ticketing | **Upstream data source** (MultiPass payments → afc.payments — explains 99% null promo/EMV/QR fields per invariant #11 era) |
+| **bus.dev.tris.vn** (Tris research) | **Single research demo** — Gridify spatial intensity heatmap only (λ/β params, sigmoid/tanh, 200–2000 m cells) | △ **just 1 of our 24** charts (= chart #7 hex layer) | Inspiration for chart #7 spatial canvas; cite + credit |
+| **VinBus** ([maps.vinbus.vn](https://maps.vinbus.vn)) | Vingroup electric-bus operator routing app — VinBus routes only | △ operator-specific routing | Future data source (electric-bus analytics in WON'T tier) |
+| **Swiftly** (foreign SaaS) | Commercial transit-ops platform | ✓ company ops + reliability + scorecard (no HCMC, generic) | Generic-SaaS competitor; we differentiate via HCMC context + multi-stakeholder |
+| **Remix / Via** (foreign SaaS) | Network-planning tool | ✓ network/equity/scenario (no HCMC) | Generic-SaaS competitor in admin lane |
+| **TfL Open Data dashboards** (London) | Public-transit KPI + reliability | ✓ admin lane (London only) | Reference pattern; "public-transit data API" worth borrowing |
+| **Citymapper Pulse** | Foreign multi-city + "city pulse" KPI hero | △ A-Q3 shock view inspiration | Borrowable pattern only |
+
+**Differentiation moats (locked):**
+1. **School-aware demand (P-Q3, A-Q4)** — unique to HCMC's HS-SV student-fare data; no global tool does this.
+2. **AFC + GPS integrated** at `route × hour × day-type` — Swiftly is GPS-only, fare vendors are AFC-only.
+3. **Stories scrollytelling** on a live dashboard — rare; news outlets do one-off, ops tools don't.
+4. **Multi-stakeholder unified surface** — operator tools serve operators, passenger apps serve passengers; one tool across 3 personas is uncommon.
+5. **HCMC-specific anomaly catalogue** (Tết, Apr-30 parade, school terms) pre-tagged in `dim_date`.
+
+**Frame our claim carefully:** "no *accessible, multi-stakeholder, analytical* dashboard for HCMC bus exists." MCPT may have internal SCADA control-room screens we can't see; those aren't exposed to operators / passengers / researchers — which is exactly our space.
 
 ---
 
@@ -313,6 +508,53 @@ through them.
 **Notebooks:** `notebooks/01–04_*.ipynb` executed via `jupyter nbconvert --execute --inplace`.
 **Test pipeline on 1-day GPS first; switch to full 50-day when Kaggle pull is done.**
 
+### 9.1 · Architecture — the "how" (LOCKED 2026-05-17, step 9 of brainstorm v2)
+
+**7-tier architecture.** Each tier has one job + a load-bearing decision:
+
+| # | Tier | Job | Key decision |
+|---|---|---|---|
+| 1 | **Data** | L1 raw → L2 dims → L3 facts → L4 aggregates (already locked §9) | Every chart reads exactly one L4 table — hard contract |
+| 2 | **Query** | DuckDB → pandas/polars | One persistent connection per session via `st.cache_resource`; `@st.cache_data(ttl=3600)` on each L4 read |
+| 3 | **Render** | Plotly + pydeck + `st.components.v1.html` | Library decision tree: Plotly ~85% · pydeck for spatial · HTML components for Marey / GroupSet / Stories / A3 panel |
+| 4 | **App shell** | Streamlit pages + topbar + entity panel | Linked brushing (A1) via `st.session_state` + `st.rerun()` on Plotly click events; URL state via `st.query_params` |
+| 5 | **Stories engine** | Scrollama + scene JSON | Bing-Bang-Bongo (§7.7) — `content/stories/{school,tet,money,network}.json` with `bing`/`bang`/`bongo` scene types |
+| 6 | **Analytical methods** | Prophet · HDBSCAN · STL · QoS-1/2/3 · DiD synthetic-control · Aggregate-Based traffic estimation | Each method has a Method Card (chart #21) exposing model + inputs + MAPE/silhouette/accuracy |
+| 7 | **Deploy** | Local Streamlit + 2-min screen recording | No production server (locked §9 decision 8) |
+
+**File layout (proposed for P1):**
+```
+src/
+  warehouse/  # L2 dims + L3 facts + L4 aggregates (SQL + Python builders)
+  chart_style.py  # Knaflic defaults helper (A2/A4/A5 codified)
+  charts/  # one module per chart type (heatmap, treemap, scatter, ...)
+  maps/  # pydeck_base + hex_grid + transfer_heatmap
+  components/  # entity_panel, topbar, linked_state, url_state
+  methods/  # qos, did_synthetic_control, anomaly_stl, prophet_holiday
+app/
+  Hub.py
+  pages/01_Demand.py..06_Routes.py + 10_Methodology.py + 20_Story.py
+content/stories/*.json  # Bing-Bang-Bongo authored scenes
+db/bus.duckdb  # persistent warehouse
+```
+
+**Refreshed roadmap P0–P9 (28 days, replaces earlier ~21-day estimate):**
+| Phase | Goal | Charts | Days |
+|---|---|---|---|
+| P0 | EDA backlog fixes (gps.schedules dedup · bbox stations · payments policy) | — | 1 |
+| P1 | Warehouse skeleton + `chart_style.py` + first end-to-end chart (2.4) | 1 | 3 |
+| P2 | Card 2 Demand + linked brushing A1 + URL state | 5 | 3 |
+| P3 | Card 3 Spatial canvas (pydeck + hex grid + stop explorer) | 5 | 3 |
+| P4 | 🌟 Card 1 School flagship | 5 | 2 |
+| P5 | Card 4 Financial + Card 5 Network Health | 11 | 4 |
+| P6 | Card 6 Routes (Discovery + Detail w/ Marey + box plot + pairwise delay) | 9 | 4 |
+| P7 | Hub editorial scroll + cross-card deep-linking + Method Cards (#21) | — | 2 |
+| P8 | Stories (Scrollama + Bing-Bang-Bongo, 4 stories) | — | 3 |
+| P9 | Full GPS pull + Phase 2 acceptance gates + screen recording | — | 3 |
+
+**Critical path:** P0 → P1 → P2 → P4 (school flagship in week 2 = highest-impact demo).
+**Conditional charts (#23 speed grid, #24 speed-vs-limit) sit in P9.5+** — outside the 28-day plan, gated on full GPS + OSM ingest.
+
 ---
 
 ## 10 · Backlog / open work (not yet started)
@@ -323,6 +565,37 @@ through them.
 - Schedule data cleaning: classify the 91k `service_type='unknown'` rows.
 - Star-schema design (warehouse, in Solution Design phase).
 - Final design spec → `docs/superpowers/specs/YYYY-MM-DD-bus-analytics-design.md`.
+- **Build `src/chart_style.py` (added 2026-05-17 from Knaflic Ch 2–5).** Single helper enforcing
+  Knaflic defaults across every chart: no top/right spines, no gridlines (or alpha=0.15
+  grey only), single accent colour per chart, dark grey title (larger) + light grey
+  footnote, action-title + supporting-subtitle layout (per A2), zero baseline forced on
+  bar charts (per A4), no trailing zeros on numeric labels, no diagonal axis text, direct
+  data labels when ≤5 categories, forecast = dotted line + light shaded background.
+  Use in P1.
+- **Investigate `gps.schedules` "duplicates" hypothesis** (1 h) — verified `direction`
+  column already exists (invariant #10 amended). True full-row duplicates remain; root
+  cause may be source-side snapshot UNION. Decide dedup vs reach out to MCPT for source
+  fix.
+- **Triage 77 out-of-bbox `afc.stations`** — likely swapped lat/lng or stale rows. Drop
+  vs fix.
+- **Decide policy for 4 ≥ 99 % null `afc.payments` fields** (`promotion_code`,
+  `promotion_description`, `verification_qr`, `emv_card_id`) — keep as sparse signal vs
+  drop from `fact_payments`.
+- **Source HCMC weather/rain API** (teacher's Section 5 ask) — half a day.
+- **Source OSM road-speed extraction** (teacher's Section 9 ask) — 1 day.
+- **Source MAUR Metro Line 1 indicative schedule** (or finalise the hard-coded fallback
+  per gap-2 decision).
+- **Phase 2 acceptance criteria (Knaflic-derived, added 2026-05-17):**
+  - **Horizontal logic** — chart titles, read in order through the dashboard or the
+    report, tell the meta-story.
+  - **Vertical logic** — within any chart card / report page, title + subtitle + chart +
+    annotations all reinforce a single point.
+  - **Reverse storyboarding** — write down main point of each page in the report v2; the
+    list must match the intended storyboard.
+  - **Fresh perspective** — at least one classmate or advisor walks through the tool,
+    talking aloud about what they see first, what's confusing, what they want — apply
+    fixes before deeming "done."
+  - **3–8 second story test** (A5 invariant) — every chart in the catalogue must pass.
 
 ---
 
@@ -368,3 +641,7 @@ through them.
 - **Implementation roadmap LOCKED (P1–P9)** — P1 warehouse skeleton · P2 first end-to-end card (Demand) · P3 Spatial+pydeck · P4 School flagship · P5 Financial+Network Health · P6 Routes+Marey · P7 Hub+nav+entity panel · P8 Stories · P9 polish+full GPS. Total est ~21 days, P1→P2 critical path. *(§10)*
 - **Phase 1 report DELIVERED** — 49-page PDF at [report/main.pdf](report/main.pdf), built with xelatex + biber. Structure: 6 chapters (Intro · Background+Related Work · Proposed Solution · Current Prototype · Future Work · Conclusion) + 3 appendixes (Warehouse DDL · Phase 2 Plan · Image Inventory). All figures are `\imageplaceholder{type}{what}{how}` placeholders cataloged in Appendix C — student fills in real photos/screenshots before submission. Rubric coverage: Câu 1 (objectives) · Câu 2 (problem statement) · Câu 3 (related work, 4 problems + 9 refs) · Câu 4 (proposed solutions with 3 alternatives-considered subsections covering warehouse, modules, dashboard) · Câu 5 (Phase 2 roadmap + Appendix B with content/time/personnel/outcomes) · Câu 6 (TOC, section structure, no undefined refs).
 - **Plan amendments applied:** Related Works folded into Background (Ch 2); Contributions moved from intro to Conclusion (Ch 6); all diagrams replaced with image placeholders + master inventory in Appendix C.
+- **Programmatic EDA (24 tables, no solution context)** — script [notebooks/05_programmatic_eda.py](notebooks/05_programmatic_eda.py) drives /programmatic-eda + /schema-mapper end-to-end. Outputs: per-table profile, 9 figures in `notebooks/figures/eda_*.png`, schema map (32 shared columns, 83 joins computed). 4 new invariants added to §3 (#8 GPS speed half-null · #9 GPS↔AFC drivers disjoint · #10 gps.schedules 39 % dup · #11 cross-source route join is `route_no` only). Other surfaced issues parked: 77 out-of-bbox `afc.stations`, 4 ≥99 % null payment fields, gps.drivers.driver_name 59 % null.
+- **Stakeholder requirements LOCKED (14 questions, 6-field records)** — applied /stakeholder-requirements-gathering. Personas trimmed to 3 (passenger / company / admin — driver dropped as a *user*, kept as data). 5 requirement gaps resolved: (1c) boardings/km² for equity v1, (2b) hard-coded metro schedule, (3b) k-NN in UMAP archetype for DiD controls, (4) per-shock baseline split (Tết now / April-30 gated on full GPS), (5b) manual top-8 university geocode then Nominatim. Chart catalogue consolidated 31 → **19 charts** (10 primary canvases + 6 drill-downs + 3 discovery tools), with 2 new questions added: A-Q6 market structure treemap, A-Q7 14-day demand forecast.
+- **Chart catalogue v2 LOCKED at 22 + 2 conditional** — applied papers (Chawuthai 2023 Bangkok QoS, Lin & Zeng arrival prediction, Derevitskiy 2016 bus-as-sensor, Liu 2022 MCV thesis, Nguyen & Thoai HCMC dataset, teacher checklist `Bus system analytics_students.md`) + viz-builder skill. Added: **#20 pairwise stop-delay scatter** (Lin & Zeng correlation diagnostic) · **#21 Method Cards meta-view** (algorithm transparency) · **#22 per-stop arrival-time box plot** (teacher's explicit ask). Conditional on full Kaggle GPS pull: **#23 city-wide speed grid** (Derevitskiy bus-as-sensor — promote WON'T→SHOULD) · **#24 speed-vs-posted-limit map** (gated on OSM ingest). Existing-chart refinements: chart #2 gets polar layout option (Liu §2.4.1) · #7 hex grid via Chawuthai rounding-box + bus.dev.tris.vn-style λ/β/cell-size params · #11 path-variants sub-view · #12 Marey gets time-check-stop bands + bunching auto-detect · A-Q5 gets transfer-time trend line · `dim_date` extends holiday tagging beyond Tết+April-30 to school year start, mid-autumn, Hung Kings, Workers Day, Reunification.
+- **Chart catalogue v3 LOCKED at 24 + 2 conditional (Knaflic Ch 1-7 re-read 2026-05-17)** — added **#25 slopegraph** (year-over-year or period-A-vs-period-B route comparison, used as sub-view of A-Q7 forecast / A-Q2 reliability) · **#26 waterfall chart** (Tết shock decomposition: pre-baseline → -drop → +recovery → post; and C-Q4 promo lift breakdown — replaces simple before/after bars). NEW invariants: **A2 sharpened to action-title + supporting-subtitle** (title is the finding, subtitle is the labelling — was "descriptive title + story subtitle") · **A4 bar charts have zero baseline** · **A5 3-8 second story test as QA gate**. NEW §1.1 Big Idea + §1.2 3-minute story added. NEW §7.7 Stories follow Bing-Bang-Bongo (opening hero → middle scenes → recap+CTA). NEW Phase 2 acceptance criteria (§10): horizontal logic + vertical logic + reverse storyboarding + fresh perspective walkthrough. NEW backlog: `src/chart_style.py` helper enforcing Knaflic defaults across every chart.

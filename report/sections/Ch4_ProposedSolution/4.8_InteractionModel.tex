@@ -1,155 +1,327 @@
 \section{Interaction Model}
 \label{sec:solution:interaction}
 
-An analytical surface composed of independent visualisations is less useful
-than the same surface with coordinated interactions across visualisations.
-A user who selects a route in one chart expects that the same route is
-highlighted in the other charts that share the screen; a user who notices
-an unusual point in a chart expects a hint about why the point is unusual;
-a user who clicks on a single analytical entity expects a panel that
-summarises that entity in one place. The proposed system meets these
-expectations by adopting three established interaction patterns from the
-literature on coordinated views and on visual storytelling, and by
-composing them into a single interaction layer.
+An analytical surface composed of independent visualisations is less
+useful than the same surface with coordinated interactions across
+visualisations. The user expects three behaviours: a click on an
+analytical entity opens a multi-chart summary in one place; an unusual
+point carries an explanatory hint; the user's filter and selection
+choices persist as they navigate through the theme. The proposed
+system meets these expectations by composing three interaction
+patterns into a single layer. The first is the click-to-entity-detail
+panel, which realises the Connect category of the Yi (2007)
+seven-category taxonomy~\cite{yi2007interaction} without simultaneous
+cross-chart propagation. The second is a set of visual-storytelling
+invariants applied per chart. The third is a theme-scoped state model
+that carries the user's filter and selection choices across the
+chart-by-chart navigation within a theme.
 
-\subsection{Multiple Coordinated Views}
+\subsection{Coordination Model}
 \label{sec:solution:interaction:mcv}
 
-The first pattern is Multiple Coordinated Views (MCV), described in the
-thesis of Liu \cite{liu2022} and surveyed in
-Chapter~\ref{chapter:foundations}. Under this pattern, selecting an
-analytical entity in one chart updates every other chart in the same view
-to highlight or filter the corresponding subset. A click on a route in the
-ranked-bar chart of the Demand and Crowding theme highlights the same
-route in the route-by-hour heatmap, the weekly rhythm calendar, and the
-short-horizon forecast simultaneously. The user does not need to navigate
-between charts or to remember which route was selected; the selection is a
-piece of shared state that the surface manages on behalf of the user.
+The Multiple Coordinated Views (MCV) pattern surveyed in
+Chapter~\ref{chapter:foundations}~\cite{liu2022} composes the Yi (2007)
+Connect category as simultaneous propagation across sibling charts: a
+selection in one view updates every other view rendered on the same
+screen at the same time. The proposed system retains MCV as
+intellectual lineage but does not implement the simultaneous form. The
+user interface renders one chart per canvas at any time
+(Section~\ref{sec:solution:overview}), so propagation across
+simultaneously rendered siblings is not visible to the reader. A
+coordination model that requires invisible state changes to several
+charts the user cannot currently see would expend implementation
+complexity for no perceptible analytical gain. The literature
+recognises that the Connect intent admits several realisations of
+different visibility and
+cost~\cite{heer2012interactive,yi2007interaction}; the proposed system
+selects the simplest realisation that the one-chart-per-canvas shell
+can support.
 
-The design choice in the proposed system is to constrain coordinated
-updates to within a single thematic view. Cross-theme coordination is
-reserved for explicit drill-down navigation: clicking on a route in any
-chart of the Demand and Crowding theme opens the Routes theme on that
-specific route. The constraint keeps the per-theme mental model local and
-bounded, so that a user studying one theme is not surprised by silent
-changes to a chart of a theme they are not currently viewing. The
-constraint also keeps the implementation cost of the coordination logic
-proportional to the number of charts in a single theme, rather than to the
-total number of charts in the catalogue.
+The selected realisation is the click-to-entity-detail panel. Every
+clickable analytical entity in any chart, that is, a route, a stop, a
+school, an operating company, a calendar day, a time-of-day cell, a
+hexagonal-bin cell, or a vehicle, has the same primary click
+affordance: a single click opens a side panel containing a
+multi-chart summary of that entity
+(Section~\ref{sec:solution:interaction:detail}). The panel is the
+single coordination object across the system. Drill, zoom, and expand
+actions live as secondary affordances (buttons in the panel header, or
+double-click) so that the primary click contract is unambiguous: one
+click, one panel, every chart, every time.
 
-As a concrete worked example, consider a user looking at the Demand and
-Crowding theme who clicks the row for route 152 in the route-by-hour
-heatmap. The selection is written to the in-theme state. The hourly
-demand curve immediately re-filters to show only route 152's hourly
-profile against a faint network-average reference line. The top-routes
-ranked bar pulls route 152 to the top of its bar and brightens its bar
-colour. The weekly-rhythm calendar heatmap re-renders for route 152
-alone. The short-horizon forecast trace switches to route 152's forecast
-with its 80 and 95\% bands. The user has issued a single click and has
-seen four other charts respond simultaneously without any navigation.
+Cross-chart state within a theme is carried by two complementary
+mechanisms that do not require simultaneous rendering. The first is
+the theme-wide filter bar at the top of every chart, which applies
+the active date range, fare class, and entity-multi-select to whichever
+chart the user is currently viewing; the filter state persists as the
+user navigates from one chart in the theme to another. The second is
+a theme-scoped selection state: a click that opens the panel also
+writes a selection token to the theme's state dictionary, which the
+next chart the user navigates to renders as a highlight or as a
+prefiltered subset on first render. The user experiences continuity
+through navigation, not through simultaneity.
+
+As a concrete worked example, consider a user looking at the Demand
+and Crowding theme who clicks the row for route 152 in the
+route-by-hour heatmap (chart 1.2). The side panel slides in from the
+right and shows route 152's profile: a daily ridership timeline across
+the 90-day window, the route's position in the demand-variance
+constellation, a top-stops ranked bar with the stop names, and a small
+QoS scorecard for the route. The selection \texttt{\{route: 152\}} is
+written to the theme's selection dictionary. The user closes the
+panel and navigates within the theme to chart 1.3 (route constellation);
+the constellation loads with route 152's bubble already highlighted
+and the surrounding bubbles (the nearest archetype neighbours) brought
+to the foreground. No chart re-rendered while invisible; every chart
+renders the active selection on first paint.
+
+Cross-theme coordination is reserved for explicit drill-down deep-links
+in the panel footer. The panel for a route always carries an "open in
+Route Detail" link that switches the user to the Route Detail theme
+with the route preselected, so the deeper per-route analysis (chart
+6.4 box plot, 6.3 dual-axis, 6.2 Marey) is reachable in one further
+click. The constraint keeps the per-theme mental model local and
+bounded; a user studying one theme is never surprised by silent
+changes elsewhere in the system.
+
+Figure~\ref{fig:interaction:mcv} shows the interaction as a sequence
+diagram. A click on a chart writes a selection token to the
+theme-scoped state dictionary AND opens the side panel for the clicked
+entity. Closing the panel preserves the selection token; the next
+chart the user navigates to within the theme renders the selection as
+a highlight on first paint. The deep-link in the panel footer routes
+the user to another theme with the selection token migrated; the
+destination theme renders the selection on first paint with no
+intermediate empty state.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{images/diagrams/interaction_sequence.png}
+\caption{Sequence of the three interaction patterns: click-to-panel as the primary Connect realisation, theme-scoped state persistence across chart navigation, and explicit cross-theme drill-down via the panel deep-link.}
+\label{fig:interaction:mcv}
+\end{figure}
 
 \subsection{Visual storytelling principles}
 \label{sec:solution:interaction:storytelling}
 
-The second pattern is visual storytelling, following the principles set
-out by Knaflic \cite{knaflic2015} and summarised in
-Chapter~\ref{chapter:foundations}. Under this pattern, every chart in the
-catalogue carries both a descriptive title that names the object of the
-chart and a one-sentence interpretive caption that points the reader to
-the finding the chart supports. The default visual palette is muted, and
-saturated colour is reserved for the single element the interpretive
-caption highlights. Chart annotations (a small text label, a circle, a
-reference line) underline the same finding inline. The user reading a
-chart for the first time does not have to find the finding unaided; the
-chart guides the eye to the point the analyst intends.
+Visual storytelling is the second composed pattern. The proposed
+system adopts the three storytelling devices catalogued in
+Section~\ref{sec:foundations:storytelling} (three-act spine, action
+title with supporting subtitle, three-to-eight-second readability
+gate) as enforceable invariants on every chart in the catalogue, and
+adds a fourth: a zero-baseline rule for any chart whose visual
+encoding is bar length. The zero-baseline rule follows from the same de-clutter
+principle and rules out a known misreading mechanism in published bar
+charts \cite{knaflic2015}; line charts are exempt because their
+encoding is relative position, not length.
 
-The principle is applied uniformly across the catalogue of
-Section~\ref{sec:solution:viz}, so that the user develops a consistent
-reading habit across the six themes. The same conventions govern the
-on-chart text, the colour palette, and the placement of annotations on
-every chart in the system.
+A worked example illustrates the action title in operation. A chart
+titled \emph{``Route 152 carries four times the median morning-peak
+ridership''} with the subtitle \emph{``Boardings per hour, top thirty
+routes, weekdays January to March 2026''} reads to its finding within
+seconds; the title carries the conclusion, the subtitle carries the
+variables. The default palette is muted; saturated colour marks the
+single element the title points at; on-chart annotations (a label, a
+circle, a reference line) underline the same finding inline.
 
-As a concrete worked example, the route-by-hour heatmap of the Demand and
-Crowding theme carries a descriptive title above the chart, "Boardings by
-route and hour of day", and a one-sentence interpretive caption below it,
-"Thirty routes carry roughly 80\% of crowding events and all peak in the
-same morning hour". The body of the heatmap uses a muted blue-to-grey
-palette for the bulk of cells; the cells in the morning-peak column of
-the thirty highest-volume routes are rendered in a saturated orange that
-matches the caption. A short text annotation arrow points from the
-caption to the orange block. The reader sees both the finding and its
-location in the chart simultaneously, without having to scan the matrix
-unaided.
+The four invariants are a uniform contract across the catalogue. A
+single shared chart-style helper applies the muted-grey-with-single-
+accent palette, suppresses unnecessary grid lines and chart borders,
+enforces the title-and-subtitle hierarchy, and enforces the zero
+baseline on bar-encoded charts at chart-construction time rather than
+at rendering time.
 
-\subsection{Entity-detail interaction}
+\subsubsection*{Invariant A6: One Primitive per Theme}
+
+A sixth invariant constrains the catalogue at the theme level rather
+than at the per-chart level: within any single analytical theme, no two
+chart canvases use the same visual primitive from the Chart Selection
+Rubric (Section~\ref{sec:foundations:primitives:rubric}). If the same primitive is required
+for two different data subsets within a theme, the second instance
+becomes a \emph{filter} on the first canvas (or a \emph{mode toggle},
+or a \emph{paired-comparison overlay}), rather than a separate canvas
+slot. The word \textit{invariant} is used here in the engineering
+sense of a property the design will not violate, not in the sense of a
+perceptual law; A6 is a \textit{design constraint} we adopt for the
+present project on the rationale that follows, and it is not implied
+that an empirical study has shown one-primitive-per-theme to be
+intrinsically more readable than its alternatives. The rationale is
+informational: different chart primitives encode the analytical
+quantity through different visual channels (position for scatter,
+length for bar, area for treemap, hue for heatmap). A theme that
+re-uses the same primitive on different data subsets adds rows that
+all surface the same visual channel of difference, which is wasted
+analytical surface. Forcing the second canvas to a different primitive
+recruits a second visual channel and therefore a second analytical
+reading of the same theme.
+
+Three practical implications follow. First, when an exploratory pass
+surfaces two candidate canvases that share a primitive, the designer
+either merges them under a filter or replaces one of them with a
+different primitive from the rubric. Second, the constraint forces the
+designer to use the full breadth of the rubric: a theme that comprises
+only ranked bars and stacked timelines is not analytically rich enough
+to occupy its theme slot. Third, the constraint is theme-scoped, not
+catalogue-scoped: the same primitive is freely reused across themes
+(four ranked bars across four themes form consistent visual
+vocabulary~\cite{liu2022}; two ranked bars within one theme is
+duplication).
+
+As a concrete worked example, the route-by-hour heatmap of the Demand
+and Crowding theme carries an action title above the chart, "Thirty
+routes carry eighty percent of morning crowding and all peak at the
+same hour", and a supporting subtitle below it, "Boardings per hour,
+top thirty routes by volume, weekdays January to March 2026". The body
+of the heatmap uses a muted blue-to-grey palette for the bulk of cells;
+the cells in the morning-peak column of the thirty highest-volume
+routes are rendered in a saturated orange that matches the action
+title. A short text annotation arrow points from the title to the
+orange block. The reader sees both the finding and its location in the
+chart simultaneously, without having to scan the matrix unaided.
+
+\subsection{Entity-Detail Panel}
 \label{sec:solution:interaction:detail}
 
-The third pattern is the entity-detail interaction. Every clickable
-analytical entity in any chart, that is, a route, a stop, a school, an
-operating company, a calendar day, a time-of-day cell, a hexagonal-bin
-cell, or a vehicle, opens a side panel containing a small multi-chart
-dashboard about the entity. The panel summarises the entity along several
-dimensions at once (volume, reliability, network context, demand
-composition), so that the user does not have to navigate to a separate
-page to learn the basic facts about the entity. The panel is read-only
-and self-contained; closing the panel returns the user to the underlying
-thematic view without state loss. This pattern ensures that no analytical
-entity is dead-ended in the surface, and that the analytical depth of the
-catalogue is uniform across all six themes.
+The entity-detail panel is the load-bearing object of the coordination
+model of Section~\ref{sec:solution:interaction:mcv}. Its design
+parameters fix the system's interaction grammar more than any
+individual chart does, because every chart in the catalogue defers to
+the panel on the question \textit{``what happens when the user clicks''}.
+The panel surfaces in two complementary forms. The default form is a
+side panel that slides in from the right and occupies approximately
+40\% of the viewport; this form is used when the entity's detail
+warrants several small charts (a route, a school, an operating
+company). A lighter floating-popover form, anchored to the clicked
+mark, is used when the detail fits in a single KPI block plus one
+sparkline (a calendar day, a time-of-day cell). The two forms share
+the same content contract, the same close affordances, and the same
+deep-link footer, so the analyst's mental model of \textit{``click
+opens detail''} is invariant across them.
+
+The panel body contains at most four mini-views: a one-line entity
+header, a key-performance-indicator strip, a primary diagnostic mini-chart
+(typically a 90-day timeline or a top-$k$ ranked bar), and optionally
+one drill view (a small heatmap or a small map inset). The four-view
+ceiling is a deliberate constraint: a panel that grows beyond four
+views stops being a panel and starts being a second dashboard, which
+defeats the panel's purpose as a quick-read surface. Entities whose
+detail genuinely requires more depth route the user to a dedicated
+theme via the panel's footer deep-link rather than expanding the panel
+in place; the Route Detail theme of Section~\ref{sec:solution:viz:routes}
+is the worked example of this routing.
+
+Every panel carries a uniform header and a uniform footer. The header
+shows the entity name, the entity type, the entity's verified-or-stubbed
+provenance flag where applicable (the school dimension uses this flag
+because only the eight largest universities are hand-verified per
+Section~\ref{sec:solution:themes:six}), and a single close button. The
+footer carries two affordances: an export-as-PDF button that captures
+the panel content and a copy-shareable-link button that serialises the
+active state into the browser URL so the panel content can be
+reproduced from a hyperlink (this satisfies functional requirement
+R10).
+
+Two universal close affordances are honoured: clicking the close button
+in the header dismisses the panel, and clicking on empty space outside
+the panel also dismisses it. Re-clicking on a different entity while
+the panel is open replaces the panel content with the new entity
+rather than stacking a second panel; the system supports at most one
+panel at a time, on the rationale that side-by-side entity comparison
+is a different analytical task (handled by an explicit compare-drawer
+affordance, not by stacking panels).
 
 As a concrete worked example, consider a user looking at the
 Spatial-and-Connectivity theme who clicks on the Bến Thành stop on the
-network-overview map. A side panel slides in from the right of the
-screen and occupies approximately 40\% of the viewport. The panel header
-displays the stop name, the stop identifier, the geographic coordinates,
-and the list of routes that pass through the stop. The body of the panel
-contains three small charts arranged vertically: the hourly boarding
-profile at the stop across the 90-day window, a small ranked bar listing
-the top five routes by boardings at the stop, and a small heatmap of
-day-of-week against hour-of-day for the stop. The user has obtained a
-complete entity profile in a single click and can close the panel to
-return to the map without losing the rest of the in-theme state.
+network-overview multi-layer hex map (chart 3.1). The side panel
+slides in from the right of the screen and occupies approximately
+40\% of the viewport. The panel header displays the stop name, the
+stop identifier, the geographic coordinates, and the list of routes
+that pass through the stop. The body contains three small charts
+arranged vertically: the hourly boarding profile at the stop across
+the 90-day window, a small ranked bar listing the top five routes by
+boardings at the stop, and a small heatmap of day-of-week against
+hour-of-day for the stop. The panel footer carries the export and
+shareable-link affordances. The user has obtained a complete entity
+profile in a single click and can close the panel to return to the
+map without losing the rest of the theme state.
 
 \subsection{Composition}
 \label{sec:solution:interaction:composition}
 
-The three patterns compose into a single interaction layer. MCV governs
-in-theme cross-chart filtering: a selection in one chart of a theme
-propagates to every other chart of the same theme. Visual storytelling
-governs presentation within each chart: descriptive title plus
-interpretive caption, muted defaults with one saturated colour, and
-underlining annotations. Entity-detail interaction governs the click
-response: a click that does not naturally express a filter opens an
-entity-detail panel for the clicked entity. Together the three patterns
-form a coherent surface in which the user can move from a network-wide
-question to a single-entity answer without leaving the theme and without
-losing the selection that brought them there. The interaction layer is
-what makes the catalogue of Section~\ref{sec:solution:viz} an analytical
-platform rather than a collection of independent charts.
+The three patterns compose into a single interaction layer with a
+small number of contracts. The coordination model
+(Section~\ref{sec:solution:interaction:mcv}) fixes the click contract:
+every click on a clickable entity in any chart opens the
+entity-detail panel for the clicked entity. The visual-storytelling
+invariants (Section~\ref{sec:solution:interaction:storytelling}) fix
+the chart-construction contract: every chart in the catalogue carries
+an action title, a supporting subtitle, a muted default palette with a
+single saturated accent on the focal element, and a zero baseline on
+any bar-encoded chart. The entity-detail panel
+(Section~\ref{sec:solution:interaction:detail}) fixes the response
+contract: a panel of at most four mini-views with a uniform header
+and footer, surfaced as a side panel or as a floating popover
+depending on the entity's required depth.
 
-\subsection{Bounded interaction}
-\label{sec:solution:interaction:bounded}
+Theme-scoped state ties the three contracts together. The user's date
+range, fare-class filter, entity-multi-select, and most recent
+selection are all written to a single per-theme state dictionary; the
+dictionary survives navigation between charts within the theme, so the
+next chart the user opens always renders against the user's active
+context on its first paint. Cross-theme navigation occurs only through
+the panel's footer deep-link, which migrates the relevant state slice
+to the destination theme. This compositional structure realises the
+Yi (2007) Connect category through the panel and through state
+persistence, rather than through simultaneous cross-chart propagation;
+the result is a coherent surface in which the user can move from a
+network-wide question to a single-entity answer without leaving the
+theme and without losing the context that brought them there. The
+interaction layer is what makes the catalogue of
+Section~\ref{sec:solution:viz} an analytical platform rather than a
+collection of independent charts.
 
-The composition of the three patterns is intentionally bounded.
-Coordinated updates under the Multiple Coordinated Views pattern operate
-only within a single thematic view; a selection made on the Demand and
-Crowding theme is not propagated to charts on the Spatial and
-Connectivity theme even when the same entity (a route, a stop) is
-present in both. Cross-theme transitions are reserved for explicit
-drill-down navigation, in which the user clicks a navigation link that
-opens another theme on the same entity with a fresh selection state.
+\subsection{Rejected Interaction Patterns}
+\label{sec:solution:interaction:rejected}
 
-The bound is a design choice rather than a technical limitation. The
-analytical context that a user builds up while reading a theme (which
-filters are active, which entities are selected, which annotations are
-visible) is local to that theme; propagating the context across themes
-would force the user to track changes on charts they are not currently
-looking at, which adds cognitive overhead disproportionate to the
-analytical value. The bound also keeps the implementation cost of the
-coordination logic proportional to the number of charts in a single
-theme, rather than to the total number of charts in the catalogue;
-adding a new chart to a theme requires wiring it only to the other
-charts of the same theme, not to the entire catalogue.
+Four interaction patterns were considered and rejected in favour of
+the composition above.
+
+A \emph{Multiple Coordinated Views (MCV) with simultaneous cross-chart
+brushing} model, in which a selection in one chart re-renders every
+other chart of the same theme on the same screen simultaneously, was
+the original direction inherited from the literature
+survey~\cite{liu2022,heer2012interactive} and was rejected after the
+user interface shell was finalised. The shell renders one chart per
+canvas at any time (Section~\ref{sec:solution:overview}), so the
+simultaneous re-render that MCV's analytical leverage relies on would
+be invisible to the reader. Implementing simultaneous propagation
+against an invisible state would expend implementation complexity with
+no perceptible analytical gain. The proposed click-to-entity-detail
+panel realises the same Yi (2007) Connect category that MCV
+realises~\cite{yi2007interaction}, but in a form the
+one-chart-per-canvas shell can surface.
+
+A \emph{full-page navigation} model, in which each chart occupies its
+own URL and the browser back-button is the primary navigation surface,
+was rejected because cross-chart coordination cannot be expressed
+through page transitions; the reader would lose the theme-scoped
+selection on every navigation, and the entity-detail panel would have
+no consistent rendering target.
+
+A \emph{modal-dialog entity-detail} model, in which clicking an entity
+opens a modal overlay rather than a side panel, was rejected because
+the modal blocks the analytical surface beneath it and forces the
+reader to dismiss the modal before consulting any other chart; the
+side panel preserves both surfaces simultaneously (the chart canvas
+remains visible behind the panel at reduced opacity), which keeps the
+reader's spatial context intact.
+
+A \emph{whole-application linked-brushing} model, in which a selection
+in any chart propagates to every chart in every theme, was rejected
+for the same reason MCV-simultaneous was rejected (no visible target
+charts) and additionally because it forces the reader to track changes
+on charts they are not currently viewing and grows the implementation
+surface superlinearly in the catalogue size.
 
 \subsection{Solution Justification Summary}
 \label{sec:solution:summary}
@@ -160,7 +332,7 @@ The proposed system responds to the requirements of Section~\ref{sec:solution:pr
 \item The four-layer warehouse architecture (Section~\ref{sec:solution:architecture}) keeps the analytical query path within the latency budget (N1) and ensures consistent identifier reconciliation across all themes (N3, N4).
 \item The six analytical themes (Section~\ref{sec:solution:themes}) cover the functional capabilities R1 through R10 by partitioning the analytical surface along user-question boundaries rather than user-role boundaries.
 \item The visualisation catalogue (Section~\ref{sec:solution:viz}) selects established primitives whose suitability is grounded in the literature surveyed in Chapter~\ref{chapter:foundations}.
-\item The interaction model (Multiple Coordinated Views, visual storytelling, entity-detail interaction) bounds the user's cognitive load by scoping cross-chart coordination to a single theme and reserving cross-theme navigation for explicit drill-down.
+\item The interaction model (click-to-entity-detail panel as the Yi (2007) Connect realisation, visual storytelling as per-chart invariants, theme-scoped state for navigation continuity) bounds the user's cognitive load by routing every entity click to a single panel and reserving cross-theme navigation for the panel's explicit deep-link footer.
 \item The validity boundaries of Section~\ref{sec:solution:validity} are encoded in the catalogue, so no chart makes a claim the underlying data cannot support.
 \end{enumerate}
 
