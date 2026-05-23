@@ -879,3 +879,123 @@ These three items are already on the CLAUDE.md §10 backlog and are listed as Ph
 ### 12.5 · No chart cut for data reasons
 
 The data audit triggers two **chart reframes** (3.2 → "indicative", 4.4 → "free-fare student-day lift") but **zero chart cuts**. Every chart in the catalogue is feasible given the planned Phase 2 data scope; the audit's purpose is to make the implementation phase per chart explicit, not to prune the catalogue further.
+
+---
+
+## 13 · Stories (scrollytelling layer)
+
+The Stories layer is a second reading mode that sits inside four of the six themes. Where the tool mode is reader-driven (the analyst clicks, filters, and drills), the Story mode is author-driven: a curated scroll-locked sequence walks the reader from a dramatic question to a recap and call to action. The design is grounded in two studied references: the VnExpress 2025 labour-market data-journalism piece~\cite{vnexpress2025labour} (studied via browser inspection on 2026-05-22) and the project's own `docs/design/app-layouts.html` LAYOUT 4 dark scrollytelling shell.
+
+### 13.1 · Mechanic — sticky-graphic scrollytelling
+
+The VnExpress piece implements the canonical sticky-graphic scrollytelling pattern, confirmed by DOM inspection: each scroll section pins one chart with `position: sticky` (the inspected sections pinned a 433 px and a 556 px chart) while narrative step-cards scroll past; as each step crosses the trigger line, the pinned chart transitions (highlights a row, annotates a value, redraws a series). The charts are simple and gradient-coloured (the inspected chart was a year-by-industry heatmap with direct start→end value labels per row and an orange-to-dark-red ramp), built with d3 + ECharts + Flourish, and are bespoke per narrative beat rather than reused from an analytical dashboard.
+
+The proposed system adopts this mechanic. Each Story is structured as:
+
+1. **Bing (hero).** A full-screen opener: one large KPI number plus the dramatic question, in the dark theme of app-layouts LAYOUT 4 (200 px KPI value, Funnel Display headline, orange accent).
+2. **Bang (scrolly sections).** One or two scroll sections. Each section pins **one chart** (`position: sticky`); three to five narrative step-cards scroll past; each step fires one of the four scroll-trigger transitions (highlight overlay, annotation overlay, filter change, redraw) on the pinned chart. Two sections, each with its own pinned chart, are used when a Story needs a primitive change — the change happens at the section boundary, never mid-scroll within a section, so the reader is never disoriented by a chart morphing under them.
+3. **Bongo (recap + CTA).** A closing card with the recap finding and a call to action that opens the parent theme in tool mode for free exploration.
+
+A section progress indicator (dots, per app-layouts LAYOUT 4) tracks scroll position within the Story.
+
+### 13.2 · Two-tier chart sourcing
+
+Story charts are drawn from two tiers:
+
+- **Tier 1 — catalogue chart in story state.** A v5.5 catalogue chart frozen to a narrative beat (for example, the network pulse 5.1 with the Tết window shaded, or the operator constellation 4.2 with the two dominant bubbles highlighted). Reuses the tool-mode chart component; the Story only supplies a state specification (which filter, which highlight, which annotation).
+- **Tier 2 — bespoke simple story chart.** A purpose-built simple chart that exists only in a Story and never in the tool catalogue. Examples: a "100 students" unit-dot array, a single annotated line, a before-and-after slope, a small resilience sparkline grid. These charts are deliberately simpler than any tool-catalogue chart (which must serve three personas and support the Select+Filter+Abstract minimum); a Story beat needs none of that interaction, so a dead-simple narrative chart is the correct tool. This tier is what the VnExpress piece does with its bespoke-per-beat charts.
+
+The two-tier split resolves a tension: the tool catalogue stays rigorous (20 multi-persona analytical charts each passing the Yi-category and multi-encoding tests), while Stories gain the freedom to use narrative-simple charts that would fail the tool-catalogue inclusion criteria but are exactly right for a guided reading beat.
+
+### 13.3 · Section navigation
+
+Following the VnExpress top-tab section nav, each Story carries a chapter nav that lets the reader jump between the Story's scroll sections. The nav is Story-scoped (it lists the sections of the current Story), not global; this keeps the navigation surface compact and preserves the §7.7 decision that Stories live inside their parent theme rather than in a separate top-level destination. The parent-theme hub card carries both a "Read the story" affordance (enters Story mode) and a "Start exploring" affordance (enters tool mode).
+
+### 13.4 · The four Stories
+
+Four of the six themes carry a Story; Demand and Crowding and Route Detail are tool-mode only. Each Story is specified below as Bing → scrolly sections (with the pinned chart and per-step transitions) → Bongo. Chart references use the v5.5 numbering; the chart tier (Tier 1 catalogue / Tier 2 bespoke) is tagged per pinned chart.
+
+#### Story 1 · The school commute, in numbers (School-Aware Demand theme)
+
+```
+BING        "34%"  — of all HCMC bus rides are paid with a student-fare card (matches report EDA §4.2; see note on 34 vs 36% below)
+
+SCROLLY A   pinned: weekly fare-class heatmap (Tier 1, catalogue 2.3)
+  step 1    "Thirty-six of every hundred rides are student fares."   highlight student rows
+  step 2    "Students compress their week into four hours."          highlight 6-8am + 4-6pm columns
+  step 3    "Saturday looks nothing like Tuesday."                   filter to weekend, fade weekday
+
+SCROLLY B   pinned: school constellation (Tier 1, catalogue 2.1)
+  step 4    "A handful of universities anchor most student demand."  highlight university quadrant
+  step 5    "But three schools sit beyond walking distance."         highlight 3 red equity bubbles + annotate
+
+BONGO       "Three schools without a stop. Seven routes without a summer."
+            CTA → Explore School-Aware Demand
+```
+
+#### Story 2 · Where the city actually rides (Spatial and Connectivity theme)
+
+```
+BING        "5 stops = 7%"  — five central stops carry seven percent of all boardings
+
+SCROLLY A   pinned: multi-layer hex map (Tier 1, catalogue 3.1)
+  step 1    "The boarding map, at 500-metre resolution."             hex density layer
+  step 2    "Sized by ridership, not by area, the centre swells."    toggle to cartogram layer (filter change)
+  step 3    "Five hex cells in the centre dominate."                 highlight top-5 cells + annotate
+
+SCROLLY B   pinned: bus-to-metro Sankey, indicative (Tier 1, catalogue 3.2)
+  step 4    "Nineteen routes feed Metro Line 1."                     full Sankey
+  step 5    "Only eight arrive within five minutes of a train."      highlight 8 green ribbons, fade rest
+
+BONGO       "The city you ride is not the city on the map."
+            CTA → Explore Spatial and Connectivity
+```
+
+#### Story 3 · Who runs Saigon's buses (Financial and Operations theme)
+
+```
+BING        "₫72B, 2 operators"  — two companies move 60% of network volume in 90 days
+
+SCROLLY A   pinned: operator constellation (Tier 1, catalogue 4.2)
+  step 1    "Two companies move sixty percent of the network."       highlight 2 dominant bubbles
+  step 2    "Size is not quality."                                   toggle bubble colour to on-time (encode change)
+  step 3    "The biggest runs 18% of routes for 31% of revenue."     annotate the dominant bubble
+
+SCROLLY B   pinned: P&L quadrant (Tier 1, catalogue 4.1)
+  step 4    "Twelve routes sit in the bleeding quadrant."            highlight bottom-left quadrant
+
+SCROLLY C   pinned: free-fare lift slope (Tier 2, bespoke story chart)
+  step 5    "Free-fare student days lift ridership 12% on weekdays." before/after slope, weekday vs weekend
+
+BONGO       "Twelve bleeding routes. One slow digital transition. ₫72B at stake."
+            CTA → Explore Financial and Operations
+```
+
+#### Story 4 · Nine days without a network (Network Health and Performance theme, Tết)
+
+```
+BING        "−84%"  — daily ridership on the trough day of Tết (16 Feb 2026)
+
+SCROLLY A   pinned: network pulse line (Tier 1, catalogue 5.1)
+  step 1    "Ridership held steady through January."                 plain line, January window
+  step 2    "Then Tết arrived, 14 February 2026."                    shade Tết window red + annotate
+  step 3    "Minus eighty-four percent on the trough day."           trough point pulses + value callout
+  step 4    "Recovery completes by 23 February."                     recovery marker + arrow
+
+SCROLLY B   pinned: resilience sparkline grid (Tier 2, bespoke story chart)
+  step 5    "Some routes flatlined; others barely moved."            small-multiple sparklines, airport routes green
+
+BONGO       "Nine days of flatline. Nine routes need a contingency plan."
+            CTA → Explore Network Health and Performance
+```
+
+### 13.5 · Scene and chart-sourcing summary
+
+| Story | Theme | Sections | Steps | Tier-1 charts | Tier-2 charts |
+|---|---|--:|--:|---|---|
+| 1. The school commute | School-Aware Demand | 2 | 5 | 2.3, 2.1 | — |
+| 2. Where the city rides | Spatial and Connectivity | 2 | 5 | 3.1, 3.2 | — |
+| 3. Who runs Saigon's buses | Financial and Operations | 3 | 5 | 4.2, 4.1 | free-fare lift slope |
+| 4. Nine days without a network | Network Health | 2 | 5 | 5.1 | resilience sparkline grid |
+
+Two bespoke Tier-2 story charts are introduced (the free-fare lift slope and the resilience sparkline grid); neither enters the tool-mode catalogue. The four Stories consume six distinct Tier-1 catalogue charts in story state (2.1, 2.3, 3.1, 3.2, 4.1, 4.2, 5.1 — seven, across the four). Every Tier-1 chart used in a Story is also reachable in tool mode through its parent theme, satisfying the architectural rule that Story mode and tool mode share components.
