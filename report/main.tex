@@ -4,7 +4,7 @@
 \usepackage[a4paper,top=2cm,bottom=2cm,left=3cm,right=2cm]{geometry}
 \usepackage{tgtermes}
 \usepackage{graphicx}
-\graphicspath{{../notebooks/figures/}{images/screenshots/}{images/diagrams/}{images/logos/}}
+\graphicspath{{images/figures/}{images/screenshots/}{images/diagrams/}{images/logos/}}
 \usepackage{fontspec}
 \usepackage{biblatex}
 \addbibresource{sections/ref.bib}
@@ -16,7 +16,8 @@
 \usepackage{tabularx}
 \usepackage{amsmath}
 \usepackage{amssymb}
-\usetikzlibrary{positioning}
+\usetikzlibrary{positioning, arrows.meta, shapes.geometric, calc, fit, backgrounds}
+\usepackage{pgfgantt}
 \usepackage{anyfontsize}
 \usepackage{float}
 \usepackage{titlesec}
@@ -48,8 +49,8 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.17}
 
-% Image placeholder macro. Every figure in this report uses this macro until the
-% real assets are captured. The master inventory of placeholders is in Appendix C.
+% Image placeholder macro, used by the figures whose real assets are not yet captured
+% (the Chapter 5 prototype screenshots and the Chapter 1 street photo).
 \newcommand{\imageplaceholder}[3]{%
   \begin{center}
   \fbox{\begin{minipage}{0.86\linewidth}
@@ -121,7 +122,7 @@
 % ============================================================
 % Chapter 3 - Theoretical Foundations and Tools
 % ============================================================
-\chapter{Theoretical and Technical Foundations}
+\chapter{Theoretical Background}
 \label{chapter:foundations}
 
 \input{sections/Ch3_FoundationsTools/3.1_LayeredArchitecture}
@@ -130,6 +131,7 @@
 \input{sections/Ch3_FoundationsTools/3.4_MCV}
 \input{sections/Ch3_FoundationsTools/3.5_Storytelling}
 \input{sections/Ch3_FoundationsTools/3.6_Tools}
+\input{sections/Ch3_FoundationsTools/3.7_AnalyticalMethods}
 
 % ============================================================
 % Chapter 4 - Proposed Solution (the largest chapter)
@@ -149,7 +151,7 @@
 % ============================================================
 % Chapter 5 - Phase One Implementation
 % ============================================================
-\chapter{Prototype Implementation and Initial Evaluation}
+\chapter{Prototype Implementation}
 \label{chapter:implementation}
 
 \input{sections/Ch5_PhaseOneImpl/5.1_PipelineStatus}
@@ -184,6 +186,8 @@
 
 \input{sections/appendixes/AppendixA_DDL}
 \input{sections/appendixes/AppendixB_Schedule}
-\input{sections/appendixes/AppendixC_ImageInventory}
+\input{sections/appendixes/AppendixC_BenchmarkStories}
+\input{sections/appendixes/AppendixD_StoryScenes}
+\input{sections/appendixes/AppendixE_DesignAlternatives}
 
 \end{document}

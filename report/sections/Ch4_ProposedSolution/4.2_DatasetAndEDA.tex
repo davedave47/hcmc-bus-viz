@@ -1,15 +1,15 @@
-\section{Dataset Overview and Exploratory Analysis}
+\section{Dataset Overview}
 \label{sec:solution:dataset}
 
-This section describes the data sources available to the project, inspects
-the columns of each source, reports the volume and calendar coverage, and
-presents the exploratory statistics that ground the analytical design of
-the rest of the chapter. The reporting in this section is descriptive;
-design implications are drawn in Sections~\ref{sec:solution:architecture}
-through~\ref{sec:solution:interaction}.
+The two operational streams, the static master tables, and the
+exploratory statistics that constrain the design are characterised
+below. The reporting is descriptive; design implications are deferred
+to Sections~\ref{sec:solution:architecture} through
+\ref{sec:solution:interaction}.
 
-\subsection{Data Sources and Analytical Grain}
+\subsection{Data Sources}
 \label{sec:solution:dataset:sources}
+\label{sec:solution:fields}
 
 Two operational data streams are available from the public dataset release of
 the Centre for Public Transport Management of Ho Chi Minh City
@@ -49,15 +49,8 @@ event is recorded. GPS can report vehicle position and speed at high
 temporal resolution. GPS cannot report passenger counts because no fare
 event is attached to a ping. The stop and route tables are static and do
 not vary by time; they serve as the dimensional reference for both event
-streams. Section~\ref{sec:solution:fields} inspects the columns of each
-source in detail.
-
-\subsection{Field-Level Description}
-\label{sec:solution:fields}
-
-Each operational stream and each master table is described below by its
-column list, with the type of each column and a short statement of its
-meaning. The schema of the AFC stream is event-shaped: every row is a
+streams. Each operational stream and each master table is described
+below by its column list and a short statement of its meaning. The schema of the AFC stream is event-shaped: every row is a
 single boarding, with foreign keys into the route, trip, station, and
 (rarely populated) user dimensions, and a Unix epoch timestamp. The GPS
 schema is observation-shaped: every row is a single ping with position,
@@ -65,86 +58,29 @@ speed, and door-state telemetry. The master schema is reference-shaped:
 each row is a static entity with a stable identifier and descriptive
 attributes, joined to the event streams through the route and stop keys.
 
-\begin{table}[!htbp]
-\centering
-\caption{AFC ticket fields}
-\label{tab:fields:afc}
-\footnotesize
-\begin{tabularx}{\linewidth}{p{3.0cm} p{2.0cm} X}
-\hline
-\textbf{Field} & \textbf{Type} & \textbf{Meaning} \\
-\hline
-ticket\_id & BIGINT & Surrogate primary key for the boarding event. \\
-ticket\_uuid & VARCHAR & Globally unique UUID for the ticket. \\
-ticket\_code & VARCHAR & Human-readable ticket code printed on the receipt. \\
-ticket\_series & VARCHAR & Paper-ticket batch or series identifier (mostly null for e-tickets). \\
-ticket\_type & VARCHAR & Vietnamese fare-product label (e.g.\ \textit{Vé TM lượt HS-SV}, student cash single). \\
-trip\_id & DOUBLE & Foreign key to \texttt{ticket\_trips}, identifying the bus trip on which the boarding occurred. \\
-user\_id & VARCHAR & Registered passenger identifier; populated for approximately 0.1\% of tickets only. \\
-user\_id\_1 & VARCHAR & Secondary user identifier (legacy duplicate of \texttt{user\_id}). \\
-station\_id & DOUBLE & Foreign key to \texttt{ticket\_stations}, identifying the boarding stop. \\
-lat & DOUBLE & Latitude of the boarding event (decimal degrees, WGS-84). \\
-lng & DOUBLE & Longitude of the boarding event (decimal degrees, WGS-84). \\
-time\_created\_ticket & BIGINT & Unix epoch seconds when the ticket was issued (boarding timestamp). \\
-aggregation\_status & VARCHAR & Backend rollup status flag (\texttt{Th\`anh c\^ong} indicates successfully aggregated). \\
-updated\_at & BIGINT & Unix epoch seconds of the last record update. \\
-month & VARCHAR & Partition tag (e.g.\ \texttt{jan\_2026}) derived from the source folder name. \\
-\hline
-\end{tabularx}
-\end{table}
+Figure~\ref{fig:dataset:erd} summarises the inter-table relationships
+across the two families and the shared masters. The column-level
+inventory in the tables that follow is paired with the relational
+picture in the diagram: the field tables answer what each table
+contains, and the diagram answers how each table reaches the others.
 
-\begin{table}[!htbp]
+\begin{figure}[!htbp]
 \centering
-\caption{GPS ping fields}
-\label{tab:fields:gps}
-\footnotesize
-\begin{tabularx}{\linewidth}{p{2.6cm} p{2.0cm} X}
-\hline
-\textbf{Field} & \textbf{Type} & \textbf{Meaning} \\
-\hline
-datetime & TIMESTAMP & Timestamp of the GPS ping (server-side, second precision). \\
-date & DATE & Calendar date of the ping (denormalised partition key). \\
-vehicle & VARCHAR & Vehicle identifier (licence plate or anonymised hash). \\
-lng & DOUBLE & Longitude of the bus at ping time (WGS-84). \\
-lat & DOUBLE & Latitude of the bus at ping time (WGS-84). \\
-driver & VARCHAR & Driver licence or staff identifier on duty at ping time. \\
-speed & DOUBLE & Instantaneous speed reported by the on-board unit (km/h). \\
-door\_up & BOOLEAN & Boolean indicating front door open at ping time (used as boarding proxy). \\
-door\_down & BOOLEAN & Boolean indicating rear door open at ping time (used as alighting proxy). \\
-\hline
-\end{tabularx}
-\end{table}
+\includegraphics[width=0.98\linewidth]{images/diagrams/dataset_erd.png}
+\caption{Source-schema relationships across the AFC family, the GPS family, and the shared master tables.}
+\label{fig:dataset:erd}
+\end{figure}
 
-\begin{table}[!htbp]
-\centering
-\caption{Master-table fields (stops and routes)}
-\label{tab:fields:masters}
-\footnotesize
-\begin{tabularx}{\linewidth}{p{2.4cm} p{2.6cm} p{1.7cm} X}
-\hline
-\textbf{Table} & \textbf{Field} & \textbf{Type} & \textbf{Meaning} \\
-\hline
-stops & stopId & BIGINT & Surrogate primary key for the stop (city-wide master list). \\
-stops & code & VARCHAR & Public-facing stop code displayed at the shelter. \\
-stops & stop\_name & VARCHAR & Human-readable stop name (Vietnamese, including diacritics). \\
-stops & type & VARCHAR & Stop type tag (e.g.\ \texttt{BusStop}, \texttt{Terminal}, \texttt{MetroFeeder}). \\
-stops & zone & VARCHAR & Administrative zone or district code. \\
-stops & ward & VARCHAR & Ward (\textit{phường}) name. \\
-stops & address & VARCHAR & Free-text address string. \\
-stops & street & VARCHAR & Street name on which the stop sits. \\
-stops & support\_disability & VARCHAR & Accessibility flag (1 if the stop is wheelchair-friendly). \\
-stops & status & VARCHAR & Operational status flag (\texttt{active}, \texttt{inactive}). \\
-stops & lng & DOUBLE & Longitude of the stop (WGS-84). \\
-stops & lat & DOUBLE & Latitude of the stop (WGS-84). \\
-stops & search & VARCHAR & Pre-computed lowercase search string for fuzzy matching. \\
-stops & routes & VARCHAR & Comma-separated list of \texttt{route\_no} values that serve the stop. \\
-ticket\_routes & route\_id & BIGINT & Surrogate primary key for the AFC route record. \\
-ticket\_routes & route\_no & VARCHAR & Public route number (e.g.\ \texttt{152}), the canonical join key with GPS. \\
-ticket\_routes & route\_name & VARCHAR & Origin to destination label shown to passengers. \\
-ticket\_routes & company\_id & BIGINT & Foreign key to \texttt{ticket\_companies}, identifying the operator running the route. \\
-\hline
-\end{tabularx}
-\end{table}
+The column inventories for the AFC ticket stream
+(Table~\ref{tab:fields:afc}), the GPS ping stream
+(Table~\ref{tab:fields:gps}), and the shared master tables
+(Table~\ref{tab:fields:masters}) are listed in
+Appendix~\ref{appendix:ddl} alongside the warehouse data-definition
+language. The AFC schema contributes fifteen fields per boarding event,
+the GPS schema contributes nine fields per ping, and the master schema
+contributes the stop and route descriptor columns that both streams join
+against; the appendix listing is the canonical reference used throughout
+the chapter.
 
 Several analytical features are not present in the raw streams above but
 are derived during preprocessing and are referenced repeatedly in later
@@ -172,7 +108,7 @@ Boardings per trip & Proxy for crowding computed by attributing AFC boardings to
 \end{tabularx}
 \end{table}
 
-\subsection{Coverage, Joinability, and Validity Boundaries}
+\subsection{Coverage}
 \label{sec:solution:dataset:coverage}
 
 \noindent\textbf{Volume and calendar coverage.} The AFC stream covers the
@@ -187,15 +123,17 @@ Table~\ref{tab:dataset:volume} summarises the volumes and the windows.
 
 \begin{table}[!htbp]
   \centering
-  \caption{Volume and calendar coverage of the two operational streams}
+  \caption{Volume and calendar coverage.}
   \label{tab:dataset:volume}
-  \begin{tabularx}{\linewidth}{l l l X}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.20}
+  \begin{tabularx}{\linewidth}{p{3.6cm} r p{4.4cm} X}
     \hline
-    \textbf{Stream} & \textbf{Records} & \textbf{Window} & \textbf{Notes} \\
+    \textbf{Stream}    & \textbf{Records} & \textbf{Window} & \textbf{Notes} \\
     \hline
-    AFC fare records & 17{,}883{,}623 & 1 Jan 2026 to 31 Mar 2026 & complete; 90 days \\
-    GPS pings (local) & 720{,}088 & 18 Mar 2025 & one-day extraction \\
-    GPS pings (full)  & approx. 32 million & 20 Mar 2025 to 10 May 2025 & 50-day window, catalogue only \\
+    AFC fare records   & 17{,}883{,}623     & 1 Jan 2026 to 31 Mar 2026  & Complete; 90 days \\
+    GPS pings (local)  & 720{,}088          & 18 Mar 2025                & One-day extraction \\
+    GPS pings (full)   & approx.\ 32 million & 20 Mar 2025 to 10 May 2025 & 50-day window, catalogue only \\
     \hline
   \end{tabularx}
 \end{table}
@@ -208,9 +146,10 @@ these keys. In practice, two constraints limit how the join can be
 performed. First, the AFC and GPS calendar windows do not overlap, so
 event-level joining (one AFC boarding to one GPS ping) is impossible.
 Second, the route identifier spaces are not identical between the two
-sources: of the 163 routes present in the AFC stream, 121 also appear in
-the GPS stream, while the remaining 42 routes are AFC-only and have no
-corresponding telemetry. The consequence is that cross-source analysis is
+sources: the AFC stream carries 128 distinct route numbers and the GPS
+stream carries 163, with 121 route numbers shared between them; 7 routes
+are AFC-only (fare data but no telemetry) and 42 are GPS-only. The
+consequence is that cross-source analysis is
 performed at an aggregate grain that absorbs the temporal mismatch. The
 safest such grain is the triple of route identifier, hour of day, and day
 type (weekday or weekend). At this grain, an AFC measure (typical
@@ -242,10 +181,19 @@ as a proxy or estimate.
 \label{sec:solution:dataset:eda}
 
 Exploratory analysis of the AFC stream characterises the dominant
-distributions of the demand side. Five views of the 90-day window are
-presented below: the daily ridership trajectory, the hourly demand by day
-type, the fare-class composition over the day, the heavy-tailed
-distribution of boardings across routes, and the payment-channel trend.
+distributions of the demand side. Six headline findings frame what
+follows; Figure~\ref{fig:eda:headlines} surfaces them at a glance.
+Five views of the 90-day window are then presented in detail: the
+daily ridership trajectory, the hourly demand by day type, the
+fare-class composition over the day, the heavy-tailed distribution of
+boardings across routes, and the payment-channel trend.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{images/diagrams/eda_headlines.png}
+\caption{Six headline findings from the 90-day AFC exploratory analysis.}
+\label{fig:eda:headlines}
+\end{figure}
 
 \noindent\textbf{Daily ridership over the 90-day window.} The daily
 boarding total traces the overall demand trajectory across the AFC
@@ -261,11 +209,13 @@ load drops correspondingly.
 \label{fig:eda:daily}
 \end{figure}
 
-Daily counts oscillate around a weekly cycle for the first three weeks of
-January, then begin to decline ahead of the Tết public holiday, reach
-a single-day minimum near 14 February (below 50{,}000 events on that day),
-and recover progressively through the second half of February before
-returning to the January baseline in March.
+Daily counts oscillate around a weekly cycle for the first three weeks
+of January at a median of approximately 228{,}000 boardings per day, then
+decline ahead of the Tết public holiday and reach a single-day
+minimum on 16 February at 33{,}176 boardings (an 84 percent drop from
+the January baseline). Ridership recovers progressively through the
+second half of February and returns to the January baseline by the
+first week of March.
 
 \noindent\textbf{Hourly demand by day type.} Disaggregating the daily
 totals by hour and day type reveals the commuter signature of the
@@ -295,12 +245,13 @@ day.
 \label{fig:eda:fareclass}
 \end{figure}
 
-Across the day, adult cash single tickets dominate by volume
-(approximately 44 percent of total boardings) but the student fare group
-(approximately 36 percent) drives a disproportionate share of the morning
-peak. Free or subsidised passes contribute roughly 16 percent and are
-roughly flat across the day; other categories (monthly passes, special
-concessions) account for the remaining 6 percent.
+Across the day, regular cash tickets dominate by volume
+(approximately 43 percent of all boardings) but the student fare group
+(approximately 36 percent, the HS-SV discounted class) drives a
+disproportionate share of the morning peak. Free or subsidised tickets
+contribute approximately 16 percent and are roughly flat across the
+day; the small remainder is split between paper and other ticket types
+(approximately 6 percent combined).
 
 \noindent\textbf{Route volume distribution.} The boarding count per route
 is heavy-tailed, with a small number of routes carrying a disproportionate
@@ -316,7 +267,7 @@ and overlays the cumulative share.
 
 The boarding distribution is heavy-tailed. Cumulative share reaches 80
 percent at the 55th-ranked route of 128 active routes; the top 10 routes
-account for roughly 35 percent of all boardings. The pattern motivates the
+account for roughly 32 percent of all boardings. The pattern motivates the
 top-$k$ ranked-bar visualisations chosen in
 Section~\ref{sec:solution:viz} and the operator-scorecard view in the
 Financial and Operations theme.
@@ -332,7 +283,7 @@ statistics is uniform across the window or whether it shifts over time.
 \label{fig:eda:payment}
 \end{figure}
 
-Cash payment dominates throughout the window (approximately 96.7 percent
+Cash payment dominates throughout the window (approximately 96.2 percent
 of daily volume), with a small and roughly constant non-cash band
 underneath. The Tết-period dip is visible on both channels in
 proportion, confirming that the dip is a network-wide phenomenon rather
@@ -355,46 +306,25 @@ analysis routes (29, 41, 57, 61, 84, 99, 102, 141, and 151). The
 catalogued full 50-day window covers a broader set of routes; replacing
 the local extraction with the full window is part of the phase 2 work.
 
-\subsection{Data Quality Observations}
+\subsection{Data Quality}
 \label{sec:solution:dataset:quality}
 
-Six data-quality observations affect downstream analysis. They are
-reported here without design implications; the architectural responses
-are described in Section~\ref{sec:solution:preprocessing} and
-Section~\ref{sec:solution:architecture}.
+Eleven data-quality observations affect downstream analysis; the full
+inventory is given in Table~\ref{tab:dataset:quality} of
+Appendix~\ref{appendix:ddl}. Two observations are consequential enough
+to shape the architecture of the rest of the chapter. The
+calendar-window mismatch rules out any event-level join between the
+operational and demand sources and forces every cross-source analysis
+to operate at the aggregate level of route by hour of day by day type.
+The absence of alighting events rules out any live-occupancy view and
+forces the demand-side analytical model to treat the boarding event as
+the unit of measurement throughout. The architecture of
+Section~\ref{sec:solution:architecture} addresses both observations
+directly: aggregate-grain reconciliation in the conformed layer answers
+the first, and a boarding-centric measurement model in the fact and
+aggregate layers answers the second.
 
-\begin{table}[!htbp]
-  \centering
-  \caption{Data quality observations and their downstream impact}
-  \label{tab:dataset:quality}
-  \footnotesize
-  \begin{tabularx}{\linewidth}{p{5.0cm} X}
-    \hline
-    \textbf{Observation} & \textbf{Impact on downstream analysis} \\
-    \hline
-    Calendar-window mismatch between the GPS and AFC streams. & No event-level join is possible; all cross-source aggregation must operate at the level of route by hour of day by day type. \\
-    Absence of alighting events. AFC records boardings only. & Live occupancy at a given time is not computable; only cumulative boardings and a boardings-per-trip proxy are available. \\
-    The user identifier field in AFC is populated for only 0.1\% of fare records. & Individual-passenger features (loyalty, churn, journey patterns) are unsupported; demand analysis operates strictly at the aggregate level. \\
-    Approximately 91{,}000 schedule rows carry the value \texttt{unknown} for the service-type field. & Schedule-adherence indicators must classify or exclude these rows before any QoS-3 metric can be computed. \\
-    GPS positioning noise is systematically higher in dense urban areas, reducing the on-path scoring rate. & QoS-2 scoring requires geographic coordinate rounding before trajectory matching against the route geometry. \\
-    The cash field in the AFC raw schema includes a small fraction of smartcard deductions. & Preprocessing renames the field to a more precise label and isolates the smartcard deductions into the smartcard channel before any payment-channel breakdown. \\
-    \hline
-  \end{tabularx}
-\end{table}
-
-The first two observations are consequential enough to shape the
-architecture of the rest of the chapter. The calendar-window mismatch
-rules out any event-level join between the operational and demand sources
-and forces every cross-source analysis to operate at the aggregate level
-of route by hour of day by day type. The absence of alighting events rules
-out any live-occupancy view and forces the demand-side analytical model
-to treat the boarding event as the unit of measurement throughout. The
-architecture of Section~\ref{sec:solution:architecture} addresses both
-observations directly: aggregate-grain reconciliation in the conformed
-layer answers the first, and a boarding-centric measurement model in the
-fact and aggregate layers answers the second.
-
-\subsection{Design Implications}
+\subsection{Implications}
 \label{sec:solution:eda_to_design}
 
 Five exploratory findings have direct, traceable effects on the design
@@ -404,7 +334,7 @@ Section~\ref{sec:solution:dataset:eda}.
 
 \begin{enumerate}
 \item The concentration of student-fare tickets into the morning weekday peak (visible in Figure~\ref{fig:eda:fareclass}, with the \texttt{ticket\_type} field of Table~\ref{tab:fields:afc} carrying the fare-class label) is the empirical basis for the School-Aware Demand analytical theme of Section~\ref{sec:solution:themes}. Without the finding, the school-aware theme would have been one of many; with it, the theme becomes the most distinctive contribution of the proposed system relative to the existing tools surveyed in Chapter~\ref{chapter:related}.
-\item The cash share of payments evident in Figure~\ref{fig:eda:payment} (approximately 96.7\% across the full window) justifies a payment-adoption view to track how the share evolves over time, but limits the analytical depth available for digital-payment study; Section~\ref{sec:solution:viz} reflects this by allocating one chart to payment adoption rather than a separate theme.
+\item The cash share of payments evident in Figure~\ref{fig:eda:payment} (approximately 96.2\% across the full window) justifies a payment-adoption view to track how the share evolves over time, but limits the analytical depth available for digital-payment study; Section~\ref{sec:solution:viz} reflects this by allocating one chart to payment adoption rather than a separate theme.
 \item The heavy-tailed distribution of boardings across routes (Figure~\ref{fig:eda:pareto}, with the \texttt{route\_no} field of Table~\ref{tab:fields:masters} carrying the canonical key) justifies the use of Pareto-style ranked-bar primitives for route comparison in the Demand and Crowding and Financial and Operations themes.
 \item The non-overlapping calendar windows of the GPS and AFC streams (the \texttt{datetime} field of Table~\ref{tab:fields:gps} and the \texttt{time\_created\_ticket} field of Table~\ref{tab:fields:afc}) force cross-source analysis to the aggregate grain of route by hour by day type. The warehouse architecture of Section~\ref{sec:solution:architecture} embeds this rule by materialising the aggregate-by-route-hour table as the only cross-source data product.
 \item The visible mid-February trough in daily AFC ridership around Tết (Figure~\ref{fig:eda:daily}) is a natural-experiment window for the anomaly view in the Network Health and Performance theme. The day-type dimension is tagged at warehouse build time so that anomaly visualisations can filter on the window without ad-hoc computation.

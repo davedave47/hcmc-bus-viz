@@ -1,0 +1,28 @@
+<mxfile host="65bd71144e">
+    <diagram id="eda-headlines-mono" name="EDA headlines">
+        <mxGraphModel dx="1200" dy="500" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="380" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="c1" value="&lt;font style=&quot;font-size:28px&quot;&gt;&lt;b&gt;17.9 M&lt;/b&gt;&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:12px&quot;&gt;boarding events&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:10px;color:#666666&quot;&gt;&lt;i&gt;Jan–Mar 2026 (90 days)&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="60" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="c2" value="&lt;font style=&quot;font-size:28px&quot;&gt;&lt;b&gt;₫72.4 B&lt;/b&gt;&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:12px&quot;&gt;fare revenue&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:10px;color:#666666&quot;&gt;&lt;i&gt;across the same window&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="60" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="c3" value="&lt;font style=&quot;font-size:28px&quot;&gt;&lt;b&gt;34 %&lt;/b&gt;&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:12px&quot;&gt;student-fare share&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:10px;color:#666666&quot;&gt;&lt;i&gt;HS-SV cards&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="60" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="c4" value="&lt;font style=&quot;font-size:28px&quot;&gt;&lt;b&gt;96.7 %&lt;/b&gt;&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:12px&quot;&gt;cash payments&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:10px;color:#666666&quot;&gt;&lt;i&gt;digital still under 4 %&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="210" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="c5" value="&lt;font style=&quot;font-size:28px&quot;&gt;&lt;b&gt;≈ 35 %&lt;/b&gt;&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:12px&quot;&gt;carried by the top 10 routes&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:10px;color:#666666&quot;&gt;&lt;i&gt;of 128 active routes; heavy-tailed&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="210" width="270" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="c6" value="&lt;font style=&quot;font-size:28px&quot;&gt;&lt;b&gt;−88 %&lt;/b&gt;&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:12px&quot;&gt;Tết single-day trough&lt;/font&gt;&lt;br/&gt;&lt;font style=&quot;font-size:10px;color:#666666&quot;&gt;&lt;i&gt;16 Feb 2026; recovers by early Mar&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontColor=#000000;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="620" y="210" width="270" height="130" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

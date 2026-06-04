@@ -1,25 +1,21 @@
-This chapter introduces only the theoretical and technical concepts needed
-to justify the proposed solution. Each section ends with a short statement
-of where the concept is applied in Chapter \ref{chapter:solution} or
-Chapter \ref{chapter:implementation}.
-
-\section{Layered Analytical Data Architecture}
+\section{Layered Architecture}
 \label{sec:foundations:layered}
 
-Analytical workloads on operational data benefit from separating concerns
-into discrete layers between the raw inputs and the analytical surface.
-Operational data arrives in formats that reflect how the source systems
-record events rather than how an analyst reads them: timestamps may be
-encoded inconsistently across feeds, entity identifiers may differ between
-sources, and aggregate quantities that an analyst expects to query
-directly may have to be recomputed from millions of base rows on every
-request. A layered architecture introduces a small number of intermediate
-representations that each address one of these concerns. The medallion
-pattern from \cite{databricksMedallion} popularised the three-layer
-variant of this idea, and later work has extended it to four or more
-layers depending on the workload.
+Analytical workloads on operational data benefit from separating
+concerns into discrete layers between the raw inputs and the
+analytical surface. The Medallion pattern from
+\cite{databricksMedallion} popularised this idea as three layers ,
+Bronze, Silver, and Gold; and the proposed system adopts that
+three-tier vocabulary at the architectural level. The internal
+organisation of the Silver tier and the materialisation policy of
+the Gold tier are design choices the project makes inside the
+canonical layout, and Section~\ref{sec:solution:architecture}
+records the specific instantiation. The canonical three-layer form
+gives each of three recurring concerns (schema heterogeneity,
+identifier reconciliation, and query-time efficiency) a single home
+in the warehouse, as the medallion subsection below describes.
 
-\subsection{The medallion pattern}
+\subsection{Medallion Pattern}
 
 The canonical medallion pattern defines three layers, sometimes called
 Bronze, Silver, and Gold. The Bronze layer holds the raw input data as it
@@ -37,7 +33,7 @@ query-time efficiency, that is, ensuring that any chart the user requests
 can be served by a single inexpensive query rather than by a long chain
 of joins and aggregations evaluated on demand.
 
-\subsection{Variations and trade-offs}
+\subsection{Design Trade-offs}
 
 The layered idea adapts to different workloads, and the choice of how
 many layers to introduce and where to draw the boundaries between them is
@@ -66,14 +62,17 @@ layers as are needed to give each concern a single home, and no more.
 
 \begin{figure}[!htbp]
 \centering
-\imageplaceholder{Conceptual diagram}{Block diagram of a layered analytical data architecture. Four horizontal layers stacked bottom-to-top: raw inputs (GPS pings and AFC records), conformed dimensions (calendar, route, stop, fare class), fact tables (boardings, trip records, stop visits), and pre-computed aggregate tables (per route by hour, per route by day, per stop by hour). Arrows flow upward from each layer to the next. An arrow from the top aggregate layer to a separate block labelled "analytical surface" on the right.}{Draw in draw.io or Mermaid. Label every block clearly with a short noun phrase. PNG at 300 dpi. Save as images/diagrams/foundations\_layered\_architecture.png.}
-\caption{Conceptual diagram of a layered analytical data architecture}
+\includegraphics[width=0.92\linewidth]{images/diagrams/foundations_layered.png}
+\caption{The Medallion three-layer pattern: Bronze, Silver, and Gold.}
 \label{fig:foundations:layered}
 \end{figure}
 
-Chapter \ref{chapter:solution} describes the specific four-layer
-specialisation chosen for the present project, in which a fourth layer
-of pre-aggregated tables sits above the conformed Silver-equivalent
-layer so that every chart in a fixed analytical catalogue can be served
-by a single query. Section~\ref{sec:solution:architecture} specialises
-this pattern to a four-layer warehouse for the proposed system.
+Chapter \ref{chapter:solution} describes the specific Medallion
+instantiation chosen for the present project, in which the Silver
+tier is internally organised as a dimensional model (one dimension
+table per conformed entity plus narrow fact views shaped through
+them) and the Gold tier is materialised as pre-computed aggregate
+tables --- one per chart in the analytical catalogue, so that every
+chart can be served by a single inexpensive query.
+Section~\ref{sec:solution:architecture} records the seven Gold tables
+and the twelve Silver dimensions that compose this instantiation.

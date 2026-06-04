@@ -1,8 +1,11 @@
 \section{Limitations}
 \label{sec:conclusion:limitations}
 
-The Phase~One work has four limitations that bear on the validity of
-its conclusions and on the planning for Phase~Two.
+The Phase~One work has six limitations that bear on the validity of
+its conclusions and on the planning for Phase~Two. The first four
+concern the dataset and the analytical claims it can support; the last
+two concern the scope of the present work as a piece of design
+research.
 
 \begin{enumerate}
     \item \textbf{Calendar mismatch between the two data sources.}
@@ -17,8 +20,8 @@ its conclusions and on the planning for Phase~Two.
     GPS data covers a single day (18~March 2025) across nine routes;
     the full fifty-day window is documented in the dataset
     release~\cite{hcmcgps2025} but is not loaded locally for
-    Phase~One. Seven of the thirty-one charts in the catalogue depend
-    on the full GPS window and are partially scoped for Phase~One
+    Phase~One. Several charts in the twenty-canvas catalogue depend
+    on the full GPS window and carry a Phase-Two prerequisite status
     until the full dataset is loaded in P9 of the Phase~Two roadmap.
 
     \item \textbf{Absence of alighting events in the AFC stream.}
@@ -37,4 +40,27 @@ its conclusions and on the planning for Phase~Two.
     informative when compared across routes rather than against an
     absolute threshold; the proposed system surfaces it as a relative
     metric and documents the caveat next to the indicator.
+
+    \item \textbf{Generalisability beyond Ho Chi Minh City.} The design
+    is bound to the specific shape of the HCMC bus dataset: the
+    Vietnamese student-fare class HS-SV anchors the School-Aware
+    Demand flagship, the Tết and 30~April calendar tagging is wired
+    into the date dimension, and the operator and stop master tables
+    follow the schema released by the city's transport authority.
+    Portability to another Vietnamese city (Hanoi, {\DJ}\`a N\~\u{a}ng)
+    would inherit the warehouse and visualisation rubric without
+    change, but the Silver-tier dimension tables, the school
+    geocoding ground truth, and the per-shock calendar windows would
+    need to be rebuilt against the new city's data; the present work
+    does not analyse the cost of that port.
+
+    \item \textbf{Self-audit rather than external validation.} The
+    Phase-One requirements evaluation of
+    Section~\ref{sec:impl:eval} is a self-audit against the
+    specification this report itself authors. External validation in
+    the form of advisor sign-off, stakeholder review of the fourteen
+    stakeholder questions, and the two-wave user evaluation across
+    the three user roles is scheduled for Phase~Two
+    (Section~\ref{sec:future:eval}). No claim of external validation
+    is made in Phase~One.
 \end{enumerate}

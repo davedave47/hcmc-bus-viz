@@ -1,0 +1,31 @@
+<mxfile host="65bd71144e">
+    <diagram id="arch-tradeoff" name="Architecture trade-off">
+        <mxGraphModel dx="1100" dy="600" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1040" pageHeight="500" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="aMain" value="&lt;b&gt;Star schema over raw views&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Build: none&amp;nbsp;&amp;nbsp;·&amp;nbsp;&amp;nbsp;Latency: 1,525 ms per chart&lt;br/&gt;Integrity: &lt;b&gt;+17.90 % boarding-count inflation&lt;/b&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=12;align=left;verticalAlign=middle;fontFamily=Helvetica;spacingLeft=16;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="60" width="820" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="aVerdict" value="✗&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;fails integrity&lt;br/&gt;(entry gate)&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#000000;strokeWidth=1;fontSize=22;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="880" y="60" width="120" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="bMain" value="&lt;b&gt;Plain Medallion · Silver only (no Gold)&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Build: ~4 s&amp;nbsp;&amp;nbsp;·&amp;nbsp;&amp;nbsp;Latency: 1,371 ms per chart → 5.5 s per page&lt;br/&gt;Integrity: exact (17,883,623)&amp;nbsp;&amp;nbsp;·&amp;nbsp;&amp;nbsp;N1 50 ms: fail" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=12;align=left;verticalAlign=middle;fontFamily=Helvetica;spacingLeft=16;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="190" width="820" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="bVerdict" value="✗&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;fails N1&lt;br/&gt;latency&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#F2F2F2;strokeColor=#000000;strokeWidth=1;fontSize=22;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="880" y="190" width="120" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="cMain" value="&lt;b&gt;Medallion · Silver + materialised Gold&amp;nbsp;&amp;nbsp;[ SELECTED ]&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Build: 5.4 s full pipeline&amp;nbsp;&amp;nbsp;·&amp;nbsp;&amp;nbsp;Latency: 36 ms median → 0.9 s per page&lt;br/&gt;Integrity: exact (17,883,623)&amp;nbsp;&amp;nbsp;·&amp;nbsp;&amp;nbsp;N1: 5/6 aggregates pass; 9/11 endpoints pass" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=2;fontSize=12;align=left;verticalAlign=middle;fontFamily=Helvetica;spacingLeft=16;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="320" width="820" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="cVerdict" value="✓&lt;br/&gt;&lt;font style=&quot;font-size:10px&quot;&gt;selected&lt;/font&gt;" style="rounded=1;arcSize=6;whiteSpace=wrap;html=1;fillColor=#E8E8E8;strokeColor=#000000;strokeWidth=2;fontSize=22;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="880" y="320" width="120" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="note" value="&lt;i&gt;Measured against the running warehouse on the local workstation (17.88 M raw boardings). Integrity is an entry gate: Star-over-raw fails before the latency comparison is reached.&lt;/i&gt;" style="text;html=1;align=left;fontSize=10;fontStyle=2;fontColor=#666666;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="455" width="960" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

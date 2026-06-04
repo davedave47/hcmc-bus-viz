@@ -1,54 +1,120 @@
-\section{Visual Storytelling Principles}
+\section{Storytelling}
 \label{sec:foundations:storytelling}
 
-Knaflic \cite{knaflic2015} codifies four principles for the construction
-of analytical charts intended to convey a specific finding to a human
-reader. The principles are stated as design imperatives rather than as
-descriptive observations: each is a rule the designer is expected to
-apply, not a property that any well-formed chart automatically
-possesses.
+Four principles govern the construction of analytical charts intended
+to convey a specific finding to a human reader~\cite{knaflic2015}. The
+principles are stated as design imperatives rather than as descriptive
+observations: each is a rule the designer is expected to apply, not a
+property that any well-formed chart automatically possesses.
+Table~\ref{tab:foundations:knaflic} summarises the four principles;
+the paragraphs that follow elaborate each.
 
-The first principle is to declutter. Every visual element that does not
-contribute to the analytical claim of the chart is a candidate for
-removal. Gridlines, background fills, axis labels, tick marks, and
-legend entries should be inspected one at a time and removed when their
-absence does not impair reading. The rationale is that visual noise
-competes with signal for the reader's attention, so reducing the
-quantity of ink that does not carry information improves the
-intelligibility of the ink that does.
+\begin{table}[!htbp]
+\centering
+\caption{Four principles for analytical chart construction~\cite{knaflic2015}.}
+\label{tab:foundations:knaflic}
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{p{2.4cm} X}
+\hline
+\textbf{Principle} & \textbf{Imperative} \\
+\hline
+Declutter         & Remove every visual element that does not carry information \\
+Focus attention   & Reserve saturated colour and heavy line weight for the element that supports the chart's claim \\
+Annotate          & Place a textual interpretation on the chart itself, beside the marks it refers to \\
+Structure as narrative & Sequence charts deliberately so they tell a story; the order is part of the design \\
+\hline
+\end{tabularx}
+\end{table}
 
-The second principle is to focus attention. Saturated colour and heavy
-line weight should be used sparingly and reserved for the element of
-the chart that supports its analytical claim. Default elements are
-rendered in a single muted tone, so that the reader's eye is drawn to
-the part of the chart the designer wishes to emphasise without being
-distracted by ambient differences in hue and weight across the rest of
-the plot. The principle inverts the common default in which every
-category is assigned a distinct bright colour.
+\textbf{Declutter.} Visual noise competes with signal for the
+reader's attention. Gridlines, background fills, axis labels, tick
+marks, and legend entries are each candidates for removal and should
+be inspected one at a time; absence of an element that does not
+impair reading is preferable to its presence.
 
-The third principle is to annotate. Every chart should carry an
-explicit textual interpretation of what the reader is to look for; the
-annotation belongs on the chart itself, integrated with the marks it
-refers to, rather than relegated to a separate caption beneath the
-figure. The rationale is that a chart unread is a chart that has failed,
-and an annotation in the chart is read together with the marks it
-describes rather than as an afterthought.
+\textbf{Focus attention.} Default chart elements are rendered in a
+single muted tone, with saturated colour and heavy line weight
+reserved for the element the analytical claim points at. The principle
+inverts the common default in which every category receives a distinct
+bright colour and the reader's eye is therefore pulled in many
+directions at once. Figure~\ref{fig:foundations:declutter} contrasts a
+cluttered chart with its decluttered counterpart on the same data.
 
-The fourth principle is to structure as narrative. A sequence of charts
-that together tell a story is more effective than a single dense chart
-that contains the same information. The narrative structure of a series
-of charts, that is, the order in which they appear and the transitions
-between them, is part of its design and is composed deliberately rather
-than left to emerge from the order in which the underlying queries
-happened to be written.
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{foundations_declutter.png}
+\caption{Cluttered and decluttered versions of the same monthly-ridership data.}
+\label{fig:foundations:declutter}
+\end{figure}
+
+\textbf{Annotate.} An annotation integrated with the marks it
+refers to is read together with those marks; a caption beneath the
+figure is read as an afterthought. The annotation should state the
+finding inline rather than ask the reader to derive it.
+
+\textbf{Structure as narrative.} A sequence of charts that together
+tell a story is more effective than a single dense chart that contains
+the same information. The order in which charts appear and the
+transitions between them is itself part of the design, composed
+deliberately rather than left to the order in which the underlying
+queries happened to be written. The design space of narrative
+visualisation in particular --- author-driven versus reader-driven
+ordering, the choice between martini-glass, interactive-slideshow, and
+drill-down genres, and the catalogue of visual transitions used to
+move from scene to scene --- is mapped out in detail by Segel and
+Heer~\cite{segelheer2010}; the four scroll-trigger transition types
+adopted in the proposed system's Stories
+(Section~\ref{sec:solution:themes:stories}) are a direct application
+of their taxonomy.
 
 The four principles are interpretive guides rather than strict rules,
-and they occasionally pull against one another: an aggressive declutter
-may remove an annotation, and a strong focus-attention treatment may
-require the addition of marks that the declutter principle would
-otherwise want to remove. The proposed system applies the four
-principles as design constraints in Chapter \ref{chapter:solution},
-where the specific resolution of each tension is described.
-Section~\ref{sec:solution:interaction} applies these four principles as
-a uniform design constraint on every chart in the catalogue of the
-proposed system.
+and they occasionally pull against one another: an aggressive
+declutter may remove an annotation, and a strong focus-attention
+treatment may require the addition of marks that the declutter
+principle would otherwise want to remove. The specific resolution of
+each tension in the proposed system is recorded in
+Section~\ref{sec:solution:interaction}.
+
+Three further structural devices follow from the fourth principle and
+are adopted in the present project as concrete implementations of the
+narrative recommendation~\cite{knaflic2015}.
+
+The first device is the three-act spine, sometimes called the
+\textit{bing-bang-bongo} pattern in the advertising and data-storytelling
+literature and adopted by Knaflic~\cite{knaflic2015} for analytical
+presentations. Every authored narrative opens with an opening scene that
+names the dramatic question (the bing); the middle scenes carry the
+chart-by-chart unfolding of the answer (the bang); and the closing scene
+recapitulates the finding and names a call to action (the bongo). The three-act spine is required because a
+narrative without an opening leaves the reader unsure what question
+they are answering, and a narrative without a closing leaves the
+reader without a place to act on what they have just read. The
+proposed system applies the three-act spine to every story in its
+analytical surface (Section~\ref{sec:solution:themes:stories}).
+
+The second device is the action title with supporting subtitle: the
+title of a chart states the finding the chart supports, and the
+subtitle states the variables and the data window. The action title
+carries the analytical point; the subtitle carries the variable labels
+and data-window context. The inversion of the conventional title-and-caption order
+follows from the storytelling recommendation that the title carry
+the conclusion rather than the variable~\cite{knaflic2015}. The device is enforced
+uniformly across the catalogue through a shared chart-style helper
+described in Section~\ref{sec:solution:interaction:storytelling}.
+
+The third device is the readability gate: a chart is required to
+surface its finding to a first-time reader within three to eight
+seconds, where eight seconds is the upper bound on the time a reader
+typically grants a chart before deciding whether to keep looking. A
+chart that fails the gate is re-designed before being added to the
+catalogue. The gate is operationalised through a glance protocol: a
+reader unfamiliar with the chart looks at it for five seconds, looks
+away, and articulates the finding; a failure to articulate signals a
+re-design.
+
+The three devices share a common goal: the chart and the narrative
+should each lead the reader to the same finding without verbal
+mediation. The proposed system implements them as enforceable
+constraints on chart construction and on narrative authoring, not as
+recommendations to be left to the discretion of the designer.

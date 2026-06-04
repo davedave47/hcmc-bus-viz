@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Spatial & Connectivity · HCMC Bus Analytics{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/card.css') }}?v={{ range(1, 99999) | random }}">
+{% endblock %}
+
+{% block content %}
+<div class="card-shell c3">
+
+  <aside class="crail">
+    <div class="crail-hdr">
+      <div class="crail-num">N° 03</div>
+      <div class="crail-theme">Spatial &<br>Connect</div>
+    </div>
+    <div class="crail-section">3 Charts</div>
+    <nav class="crail-nav">
+      {% for slug, c in charts.items() %}
+      <a class="crn {% if slug == active_slug %}on{% endif %}"
+         href="/cards/spatial?c={{ slug }}"
+         data-slug="{{ slug }}"
+         hx-get="/cards/spatial/chart/{{ slug }}"
+         hx-target="#spatial-main-canvas"
+         hx-swap="outerHTML"
+         hx-push-url="/cards/spatial?c={{ slug }}">
+        <div class="crn-ic"><svg viewBox="0 0 26 26" fill="currentColor">{{ icon_svg(c.icon) | safe }}</svg></div>
+        <div class="crn-lbl">{% for line in c.label %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}</div>
+      </a>
+      {% endfor %}
+    </nav>
+    <div class="crail-foot"><button class="crail-btn">Export ↓</button></div>
+  </aside>
+
+  {% include "partials/spatial_canvas.html" %}
+</div>
+{% endblock %}

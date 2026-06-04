@@ -1,0 +1,62 @@
+<mxfile host="65bd71144e">
+    <diagram id="method-panel-waterfall" name="Methodology side panel">
+        <mxGraphModel dx="1200" dy="520" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="560" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="canvasFrame" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="40" width="720" height="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="canvasTitle" value="&lt;b&gt;Free-fare student-day ridership lift (chart 4.4)&lt;/b&gt;" style="text;html=1;align=center;fontSize=13;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="58" width="720" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="canvasSub" value="&lt;i&gt;difference-in-differences with synthetic control&lt;/i&gt;" style="text;html=1;align=center;fontSize=10;fontStyle=2;fontColor=#666666;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="720" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="axis" value="" style="endArrow=none;html=1;strokeColor=#000000;strokeWidth=1;" parent="1" edge="1"><mxGeometry as="geometry"><mxPoint x="110" y="430" as="sourcePoint"/><mxPoint x="700" y="430" as="targetPoint"/></mxGeometry></mxCell>
+                <mxCell id="ylbl" value="&lt;i&gt;ridership&lt;/i&gt;" style="text;html=1;align=center;fontSize=10;fontStyle=2;fontColor=#666666;fontFamily=Helvetica;rotation=-90;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="270" width="80" height="18" as="geometry"/>
+                </mxCell>
+                <mxCell id="wBase" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="320" width="100" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="wBaseL" value="baseline" style="text;html=1;align=center;fontSize=10;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="160" y="435" width="100" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="wLift" value="+ lift" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#BDBDBD;strokeColor=#000000;strokeWidth=1;fontSize=10;fontFamily=Helvetica;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="260" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="wLiftL" value="weekday +12 %" style="text;html=1;align=center;fontSize=10;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="435" width="120" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="wReb" value="+ rebound" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E0E0E0;strokeColor=#000000;strokeWidth=1;fontSize=10;fontFamily=Helvetica;verticalAlign=middle;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="230" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="wRebL" value="rebound" style="text;html=1;align=center;fontSize=10;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="440" y="435" width="100" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="wFinal" value="" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1.5;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="230" width="100" height="200" as="geometry"/>
+                </mxCell>
+                <mxCell id="wFinalL" value="final" style="text;html=1;align=center;fontSize=10;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="435" width="100" height="16" as="geometry"/>
+                </mxCell>
+                <mxCell id="cn1" value="" style="endArrow=none;html=1;strokeColor=#999999;strokeWidth=1;dashed=1;" parent="1" edge="1"><mxGeometry as="geometry"><mxPoint x="260" y="320" as="sourcePoint"/><mxPoint x="300" y="320" as="targetPoint"/></mxGeometry></mxCell>
+                <mxCell id="cn2" value="" style="endArrow=none;html=1;strokeColor=#999999;strokeWidth=1;dashed=1;" parent="1" edge="1"><mxGeometry as="geometry"><mxPoint x="400" y="260" as="sourcePoint"/><mxPoint x="440" y="260" as="targetPoint"/></mxGeometry></mxCell>
+                <mxCell id="cn3" value="" style="endArrow=none;html=1;strokeColor=#999999;strokeWidth=1;dashed=1;" parent="1" edge="1"><mxGeometry as="geometry"><mxPoint x="540" y="230" as="sourcePoint"/><mxPoint x="580" y="230" as="targetPoint"/></mxGeometry></mxCell>
+                <mxCell id="panel" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="40" width="400" height="480" as="geometry"/>
+                </mxCell>
+                <mxCell id="panelTitle" value="&lt;b&gt;Methodology&lt;/b&gt;" style="text;html=1;align=left;fontSize=13;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="56" width="360" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="fields" value="&lt;b&gt;Algorithm&lt;/b&gt;&lt;br/&gt;Difference-in-differences + synthetic control&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Inputs&lt;/b&gt;&lt;br/&gt;agg_route_day; free-pass fare class&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Intervention&lt;/b&gt;&lt;br/&gt;free-pass fare-class day (proxy)&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Synthetic control&lt;/b&gt;&lt;br/&gt;k-NN same-archetype routes (k = 5)&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Accuracy&lt;/b&gt;&lt;br/&gt;&lt;i&gt;measured in P5&lt;/i&gt;" style="text;html=1;align=left;verticalAlign=top;fontSize=11;fontFamily=Helvetica;spacingLeft=20;spacingTop=10;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="84" width="360" height="290" as="geometry"/>
+                </mxCell>
+                <mxCell id="caveat" value="&lt;b&gt;Data caveat&lt;/b&gt;&lt;br/&gt;&lt;font color=&quot;#444444&quot;&gt;promotion_code is 99 % null in afc.payments. The free-pass fare class (9 % of boardings, in afc.tickets.fare_class) is the proxy intervention event.&lt;/font&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=#EEEEEE;strokeColor=#000000;strokeWidth=1;fontSize=10;align=left;verticalAlign=top;fontFamily=Helvetica;spacingLeft=14;spacingTop=8;spacingRight=10;" parent="1" vertex="1">
+                    <mxGeometry x="820" y="388" width="360" height="112" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

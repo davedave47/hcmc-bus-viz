@@ -1,85 +1,83 @@
-\section{Existing Tools for the City Bus Network}
+\section{Existing Tools}
 \label{sec:related:tools}
 
-The Ho Chi Minh City bus network has a public-facing presence in four artefacts. The
-Centre for Public Transport Management publishes a route directory, and three mobile
-applications provide passenger routing services. None of the four supports analytical
-inspection of the network's operational or demand data. The present section reviews each
-artefact in turn and then states the analytical capabilities that the four artefacts,
-taken together, do not provide.
+The Ho Chi Minh City bus network has a public-facing presence in six
+artefacts: an official route directory, four mobile applications, and
+one publicly accessible research demonstrator.
+Table~\ref{tab:related:tools} summarises each artefact's category and
+analytical reach.
+None supports the multi-stakeholder analytical inspection the present
+project proposes, although the research demonstrator does cover one
+spatial-density view that the proposed catalogue also includes.
 
-\subsection{Public Route Directory}
-\label{sec:related:tools:directory}
+\begin{table}[!htbp]
+  \centering
+  \caption{Existing public-facing artefacts for the Ho Chi Minh City bus network.}
+  \label{tab:related:tools}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabularx}{\linewidth}{p{2.5cm} p{2.8cm} X}
+    \hline
+    \textbf{Artefact} & \textbf{Category} & \textbf{Analytical reach} \\
+    \hline
+    MCPT route directory~\cite{mcptDirectory}     & Web directory             & Lists routes, stops, and operating companies; no aggregation, ranking, or temporal view \\
+    BusMap (GoMo)~\cite{busmap}                   & Mobile routing            & Live multi-leg routing with arrival estimates; adds stop reminders and a TPBank GoMo fare-card link; HS-SV student-fare verification (eligibility, not analytics) \\
+    GoBus! \cite{gobus}                           & Mobile routing            & Live multi-leg routing; alternative routing model to BusMap; no aggregated network views \\
+    MultiGo / MultiPass~\cite{multigo}            & Multi-modal routing       & Combines bus, metro, river bus, and bicycle in a single itinerary; bundles the MultiPass electronic-ticketing card; an upstream data source for several digital-payment fields the present project consumes through the AFC stream \\
+    VinBus~\cite{vinbus}                          & Operator-specific routing & Restricted to the Vingroup electric-bus fleet; routing only, no cross-operator analytical view \\
+    \texttt{bus.dev.tris.vn} demonstrator         & Research demonstrator     & Spatial-intensity heatmap on a hexagonal grid; parameter controls for cell size (200~m to 2~km), route weighting, density coefficient, and activation function; no reliability, financial, school-aware, anomaly, or per-route surface \\
+    \hline
+  \end{tabularx}
+\end{table}
 
-The Centre for Public Transport Management publishes a web directory of bus routes for
-Ho Chi Minh City \cite{mcptDirectory}. The directory lists each route, the ordered
-sequence of stops along the route, and the operating company. It supports route lookup by
-name or by number and allows a casual reader to verify whether a given route exists and
-which stops it serves. The directory does not aggregate, summarise, or visualise any
-operational measure across routes, time windows, or stops. There is no view of how many
-passengers board a given route, no view of how reliable a route is, no view of how a
-route's performance changes over the day, and no view that compares one route against
-another. The directory functions as a reference document rather than as an analytical
-surface.
+Five of the six artefacts are passenger routing tools and answer one
+analytical question between them, \textit{how do I get from here to
+there by bus}. The two artefacts that step beyond routing each cover a
+single additional dimension: MultiGo extends routing to multi-modal
+itineraries and supplies the MultiPass payment data the present project
+consumes downstream; the \texttt{bus.dev.tris.vn} demonstrator covers
+one specific view (the hexagonal-bin density map) that also appears in
+the proposed catalogue. The demonstrator is the single closest analogue
+to the proposed system's Spatial and Connectivity theme; the present
+project adopts the same Gridify-style construction surveyed by
+Liu~\cite{liu2022} and credits the underlying construction in
+Section~\ref{sec:solution:viz:spatial}. The demonstrator covers no
+other analytical view of the network.
 
-\subsection{Passenger Routing Applications}
-\label{sec:related:tools:apps}
-
-The three mobile applications that serve the Ho Chi Minh City bus network are
-\textit{BusMap}, \textit{GoBus!}, and \textit{MultiGo}. Each is a passenger-facing routing
-application; that is, each accepts an origin and a destination and returns one or more
-multi-leg itineraries that the passenger can follow in real time. The three are reviewed
-in turn.
-
-\noindent\textbf{BusMap.} BusMap \cite{busmap} is a mobile application for passenger
-routing on the Ho Chi Minh City bus network. The user enters an origin and a destination;
-the application returns one or more multi-leg bus itineraries with live arrival estimates
-for each leg. BusMap supports the passenger in the role of navigator by answering the
-question \textit{how do I get from here to there by bus}. It does not provide any
-post-hoc analytical view of network performance, of demand distribution across routes, or
-of revenue per operating company. Information about routes other than the one the user is
-currently following is not surfaced.
-
-\noindent\textbf{GoBus!} GoBus! \cite{gobus} is a second mobile application with the same
-purpose. Its functionality from the passenger's point of view is comparable to that of
-BusMap; the two applications differ in their underlying routing model and in the
-operational data source on which their live estimates depend. GoBus! shares the
-analytical limitation of BusMap: the application supports the passenger as a navigator
-but does not present aggregated views of the network's data.
-
-\noindent\textbf{MultiGo.} MultiGo \cite{multigo} is a third mobile application that
-provides multi-modal routing across bus, metro, and other transport modes available in
-the city. MultiGo is wider in scope than BusMap or GoBus! because it can plan
-journeys that combine bus and metro legs in a single itinerary. The wider scope changes
-the planning surface that MultiGo presents to the passenger, but it does not change the
-analytical limitation: MultiGo, like the preceding two applications, supports passenger
-routing rather than network analysis.
-
-\subsection{Analytical Capabilities Absent from the Existing Tools}
+\subsection{Gap}
 \label{sec:related:tools:gap}
 
-The four artefacts reviewed in this section collectively serve the passenger in the role
-of navigator. Considered as an ensemble, they do not provide any of the analytical
-capabilities that the four user roles named in the present project (passenger, driver,
-operating company, public-transport authority) would require to make data-informed
-decisions about the network. The following list enumerates the missing capabilities.
+Taken together, the six artefacts serve the passenger as a navigator
+and provide one isolated spatial-density view. The two user roles
+other than the passenger (the operating company and the
+public-transport authority) consequently have no analytical surface to
+consult about the network. Driver-level data flows into the warehouse
+of the proposed system as a data source, but no driver-facing screen
+is produced, because drivers receive route assignments through
+dispatch channels rather than through analytical dashboards. The
+analytical capabilities the six artefacts do not provide are
+enumerated below.
 
 \begin{itemize}
-  \item No aggregation of ridership across time windows such as days, weeks, or months;
-        each artefact presents only the live or near-live state of the network.
-  \item No comparison of one route against another along any quantitative axis;
-        the directory lists routes side by side but does not rank or score them.
-  \item No surfacing of operational reliability indicators derived from vehicle
-        telemetry, such as on-time performance, schedule adherence, or trip completion.
-  \item No reporting of financial efficiency per route or per operating company;
-        revenue and trip-cost information is not visible in any of the four artefacts.
-  \item No visualisation of spatial demand density at the level of the stop or of an
-        urban subregion; no map-based view of where ridership concentrates.
-  \item No integration of demand data, such as that produced by the AFC system, with
-        operational data, such as that produced by the vehicle GPS system.
+  \item No aggregation of ridership across time windows such as days,
+        weeks, or months; each artefact presents only the live or
+        near-live state of the network.
+  \item No comparison of one route against another along any
+        quantitative axis; the directory lists routes side by side
+        but does not rank or score them.
+  \item No surfacing of operational reliability indicators derived
+        from vehicle telemetry, such as on-time performance,
+        schedule adherence, or trip completion.
+  \item No reporting of financial efficiency per route or per
+        operating company; revenue and trip-cost information is not
+        visible in any of the artefacts.
+  \item No visualisation of spatial demand density at the level of
+        the stop or of an urban subregion; no map-based view of
+        where ridership concentrates.
+  \item No integration of demand data (AFC) with operational data
+        (GPS) under a single analytical surface.
 \end{itemize}
 
-The four user roles other than the passenger consequently have no analytical surface to
-consult when they need to answer their respective questions about the network. The
-present project is motivated by the absence of such a surface and addresses this absence
-through the analytical platform developed in Chapter \ref{chapter:solution}.
+The present project is motivated by the absence of such a surface and
+addresses the absence through the analytical platform developed in
+Chapter~\ref{chapter:solution}.

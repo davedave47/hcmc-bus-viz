@@ -1,0 +1,61 @@
+%% Foundations Ch3.1: Medallion architecture (conceptual)
+%% Bronze raw → Silver conformed (dim + fact) → Gold aggregates → Analytical surface
+flowchart TB
+
+  %% ── Tier subgraphs ─────────────────────────────────────────
+  subgraph BRONZE["BRONZE · raw input boundary"]
+    direction LR
+    raw1["Source A<br/>raw parquet views"]
+    raw2["Source B<br/>raw parquet views"]
+    raw3["Source C<br/>raw parquet views"]
+  end
+
+  subgraph SILVER["SILVER · conformed analytical surface"]
+    direction LR
+    subgraph dims["Dimensions (persistent tables)"]
+      d1["dim_date<br/>(Tết · holidays · seasons)"]
+      d2["dim_route<br/>(1:1 on route_id)"]
+      d3["dim_stop<br/>(catchment-bbox)"]
+      d4["dim_fare_class<br/>(student / cash / free)"]
+      d5["…and 8 more"]
+    end
+    subgraph facts["Fact views (logical, not materialised)"]
+      f1["fact_boardings"]
+      f2["fact_gps_trips"]
+      f3["fact_stop_visits"]
+    end
+    dims -.-> facts
+  end
+
+  subgraph GOLD["GOLD · pre-computed aggregate tables"]
+    direction LR
+    g1["agg_network_day"]
+    g2["agg_route_hour"]
+    g3["agg_stop_hour"]
+    g4["agg_school_route"]
+    g5["…(7 total)"]
+  end
+
+  surface["Analytical surface<br/>(reads exclusively from Gold)"]
+
+  %% ── Flow ───────────────────────────────────────────────────
+  BRONZE  ==>|"register · no copy"| SILVER
+  SILVER  ==>|"build pass · O(N) scan"| GOLD
+  GOLD    ==>|"single inexpensive query"| surface
+
+  %% ── Concerns column (right side) ─────────────────────────
+  c1{{"Schema heterogeneity"}} -.-> BRONZE
+  c2{{"Identifier reconciliation<br/>+ join-key uniqueness"}} -.-> SILVER
+  c3{{"Query-time efficiency<br/>+ catalogue contract"}} -.-> GOLD
+
+  %% ── Style ──────────────────────────────────────────────────
+  classDef bronze fill:#C97B45,stroke:#7A4B26,stroke-width:1.5px,color:#FFFFFF
+  classDef silver fill:#A5B0BD,stroke:#5C6470,stroke-width:1.5px,color:#1B2333
+  classDef gold   fill:#D9A12C,stroke:#7A5A14,stroke-width:1.5px,color:#FFFFFF
+  classDef concern fill:#F4F6F2,stroke:#6E7689,stroke-width:1px,color:#3A4256,font-style:italic
+  classDef surface fill:#1B2333,stroke:#1B2333,color:#FFFFFF
+  class BRONZE,raw1,raw2,raw3 bronze
+  class SILVER,dims,facts,d1,d2,d3,d4,d5,f1,f2,f3 silver
+  class GOLD,g1,g2,g3,g4,g5 gold
+  class c1,c2,c3 concern
+  class surface surface

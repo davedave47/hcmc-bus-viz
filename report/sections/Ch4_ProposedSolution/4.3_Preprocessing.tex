@@ -1,4 +1,4 @@
-\section{Data Preprocessing}
+\section{Preprocessing}
 \label{sec:solution:preprocessing}
 
 The raw inputs released with the Ho Chi Minh City bus dataset arrive as
@@ -18,14 +18,14 @@ The pipeline executes the following six steps in order:
   \item Type-cast each column to the appropriate scalar or temporal type: integer for identifiers and counts, decimal for fare amounts, timestamp with timezone for event times, and date for calendar dates. Out-of-range values are written to a quarantine table for later inspection rather than dropped silently.
   \item Partition the two largest streams (the AFC fare records and the payments stream) by calendar day, producing one columnar file per day under the preprocessed data directory. The 90-day window thus yields 90 fare-record files and 90 payment files, which the analytical engine can prune on date predicates at query time.
   \item Rename misleading column labels. In particular, the raw \texttt{cash} field on the AFC stream is renamed to \texttt{stored\_value\_deduction} for the subset of records where the underlying value is a stored-value balance deduction made through a smartcard rather than an actual cash payment, so that downstream payment-channel breakdowns count each channel correctly.
-  \item Tag the calendar windows that correspond to known natural-experiment periods: the Tết Lunar New Year window of 28 January 2026 to 5 February 2026 and the April 30 parade week (carried as a separate flag for the full-GPS phase). The tags are written as additional boolean columns on the calendar dimension produced by the preprocessing step.
+  \item Tag the calendar windows that correspond to known natural-experiment periods: the Tết Lunar New Year window of 14 February 2026 to 22 February 2026 and the April 30 parade week (carried as a separate flag for the full-GPS phase). The tags are written as additional boolean columns on the calendar dimension produced by the preprocessing step.
   \item Register every resulting columnar file as a queryable view in the analytical engine, using a view-creation script that is regenerated each time the preprocessed directory changes. The view layer is the input to layer 1 of the warehouse, the layer of raw views described in Section~\ref{sec:solution:architecture}.
 \end{enumerate}
 
 \begin{figure}[!htbp]
 \centering
-\imageplaceholder{Pipeline flow diagram}{Linear flowchart of the preprocessing pipeline with seven labelled blocks: raw CSV inputs, schema validation, type casting, calendar-day partitioning, label normalisation, natural-experiment window tagging, view registration. Arrows between blocks. A side branch from view registration to a "validation checks" box (four bullet items: row counts, null rates, referential integrity, primary-key uniqueness). The pipeline's output is labelled "analytical warehouse Layer 1".}{Draw in draw.io. PNG at 300 dpi. Save as images/diagrams/solution\_pipeline.png.}
-\caption{Data preprocessing pipeline}
+\includegraphics[width=0.96\linewidth]{images/diagrams/solution_pipeline.png}
+\caption{Data preprocessing pipeline.}
 \label{fig:solution:pipeline}
 \end{figure}
 
@@ -39,7 +39,7 @@ Section~\ref{sec:solution:problem:nonfunctional}. The registered view layer
 that results from this section is the source of truth for every downstream
 layer of the warehouse described in the next section.
 
-\subsection{Validation checks}
+\subsection{Validation}
 \label{sec:solution:preprocessing:validation}
 
 At the end of each pipeline run, four integrity checks are issued against
@@ -48,17 +48,28 @@ halts before the downstream warehouse build is triggered, so that the
 warehouse never refreshes against partially preprocessed input.
 
 \begin{itemize}
-  \item Row-count regression per source. The row count of each source table is compared against the row count of the previous successful run; a deviation greater than 10\% in either direction halts the pipeline and raises an inspection request.
-  \item Null-rate ceiling per column. The null rate of every column is computed and compared against a published per-column threshold; columns whose null rate exceeds the threshold halt the pipeline so that silent schema drift cannot reach the warehouse.
+  \item Row-count regression per source. The row count of each source table is compared against the row count of the previous successful run; a deviation greater than 10\% in either direction halts the pipeline and raises an inspection request. The 10\% threshold is empirically chosen: the largest legitimate daily-row variation observed in the AFC stream across the 90-day window is approximately 7\% (Sunday-to-Monday transitions), and the 10\% bound therefore admits normal variation while flagging genuine drops.
+  \item Null-rate ceiling per column. The null rate of every column is computed and compared against the per-column threshold catalogued in Section~\ref{sec:solution:dataset:quality}. Columns whose null rate exceeds the catalogued threshold halt the pipeline so that silent schema drift cannot reach the warehouse.
   \item Referential integrity for foreign keys. Every stop identifier and every route identifier on the fact streams is required to resolve to a row in the corresponding dimension; orphan identifiers are written to a quarantine table and counted, with a non-zero count halting the pipeline.
   \item Uniqueness of dimension primary keys. The primary key column of every dimension table is required to be unique and non-null; duplicates are written to the quarantine table and halt the pipeline.
 \end{itemize}
 
-The pipeline currently recomputes every preprocessed file from scratch on
-every run. The trade-off considered is that scratch recomputation is
-simple, fully reproducible, and free of state-management bugs, but is slow
-on the full 50-day GPS volume; an incremental implementation would be
-faster but would require a change-detection layer over the raw input
-directory and a per-source watermark column. The simpler scratch policy is
-used in the present phase; incremental processing is recorded as a
-future-work item in Chapter~\ref{chapter:future}.
+Three pipeline patterns were considered before the scratch-recomputation
+policy was selected. A pandas-only single-process pipeline matches the
+data volume but cannot exploit columnar parallelism and is approximately
+an order of magnitude slower than the polars/columnar-engine combination
+adopted here. A modular tool such as dbt would add lineage tracking and
+incremental builds at the cost of an additional dependency and a steeper
+contributor learning curve; the present project is single-author and
+does not yet need lineage tooling. A distributed engine (Spark) would
+support orders-of-magnitude larger volumes than the project's 17.9~M
+rows but introduces cluster-orchestration overhead disproportionate to
+the data size.
+
+The selected scratch-recomputation policy is simple, fully reproducible,
+and free of state-management bugs, but is slow on the full 50-day GPS
+volume; an incremental implementation would be faster but would require
+a change-detection layer over the raw input directory and a per-source
+watermark column. The simpler scratch policy is used in the present
+phase; incremental processing is recorded as a future-work item in
+Chapter~\ref{chapter:future}.

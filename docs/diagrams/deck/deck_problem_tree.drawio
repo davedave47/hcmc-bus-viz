@@ -1,0 +1,18 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="root" value="&lt;font color=&quot;#CADCFC&quot;&gt;THE ASSIGNED PROBLEM&lt;/font&gt;&lt;br&gt;&lt;b&gt;Develop tools to analyze and visualize Ho Chi Minh City bus data&lt;/b&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=#1F3A5F;fontColor=#FFFFFF;fontSize=16;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="1"><mxGeometry x="320" y="24" width="520" height="82" as="geometry"/></mxCell>
+
+    <mxCell id="c1" value="&lt;b&gt;&lt;font color=&quot;#E07B2B&quot;&gt;1&lt;/font&gt;&amp;nbsp;&amp;nbsp;Bus &amp;amp; Ticket Data&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;understand what the data is&#10;and what it can tell&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7EFF8;strokeColor=#1F3A5F;strokeWidth=1.5;fontColor=#1F3A5F;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="1"><mxGeometry x="40" y="220" width="330" height="120" as="geometry"/></mxCell>
+
+    <mxCell id="c2" value="&lt;b&gt;&lt;font color=&quot;#E07B2B&quot;&gt;2&lt;/font&gt;&amp;nbsp;&amp;nbsp;Interactive Visualization&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;what each stakeholder&#10;needs to see, and how&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7EFF8;strokeColor=#1F3A5F;strokeWidth=1.5;fontColor=#1F3A5F;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="1"><mxGeometry x="415" y="220" width="330" height="120" as="geometry"/></mxCell>
+
+    <mxCell id="c3" value="&lt;b&gt;&lt;font color=&quot;#E07B2B&quot;&gt;3&lt;/font&gt;&amp;nbsp;&amp;nbsp;Data Architecture &amp;amp; Pipeline&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;serve those views fast&#10;and keep them current&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7EFF8;strokeColor=#1F3A5F;strokeWidth=1.5;fontColor=#1F3A5F;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="1"><mxGeometry x="790" y="220" width="330" height="120" as="geometry"/></mxCell>
+
+    <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2E75B6;strokeWidth=2;endArrow=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="root" target="c1"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2E75B6;strokeWidth=2;endArrow=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="root" target="c2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2E75B6;strokeWidth=2;endArrow=none;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="root" target="c3"><mxGeometry relative="1" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

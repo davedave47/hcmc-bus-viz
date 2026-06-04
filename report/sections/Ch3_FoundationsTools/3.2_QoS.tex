@@ -1,4 +1,4 @@
-\section{Quality of Service Scoring for Public Transit}
+\section{Service Quality Scoring}
 \label{sec:foundations:qos}
 
 Public-transit operations are evaluated on multiple independent quality
@@ -6,11 +6,10 @@ dimensions rather than on a single composite score. A bus that completes
 every scheduled trip but does so consistently ten minutes late is failing
 in a different way from one that runs precisely on time but skips one
 trip in five; a route whose vehicles stay on the published polyline is
-not, for that reason alone, also on schedule. The framework introduced by
-Srisakaokul \cite{srisakaokul2023} for the Bangkok bus network captures
-this separation explicitly by decomposing service quality into three
-independent indicators, each computed from vehicle telemetry recorded by
-on-board Global Positioning System (GPS) units.
+not, for that reason alone, also on schedule. A three-axis decomposition
+captures this separation explicitly, with each axis computed
+independently from vehicle telemetry recorded by on-board Global
+Positioning System (GPS) units \cite{srisakaokul2023}.
 
 The first indicator is Quality of Service indicator one (QoS-1), trip
 completion. It is the fraction of scheduled trips that started and

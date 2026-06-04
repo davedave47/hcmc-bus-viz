@@ -1,0 +1,21 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="b1" value="&lt;b&gt;Bus &amp;amp; Ticket Data&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;explore a dynamic,&lt;br&gt;multi-source record&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#1F3A5F;strokeWidth=2;fontSize=17;fontFamily=Helvetica;fontColor=#1F3A5F;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="80" width="290" height="150" as="geometry"/></mxCell>
+    <mxCell id="n1" value="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=20;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="52" y="58" width="38" height="38" as="geometry"/></mxCell>
+
+    <mxCell id="b2" value="&lt;b&gt;Interactive Visualization&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;turn it into views&lt;br&gt;each stakeholder can act on&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E7EFF8;strokeColor=#1F3A5F;strokeWidth=2;fontSize=17;fontFamily=Helvetica;fontColor=#1F3A5F;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="450" y="80" width="290" height="150" as="geometry"/></mxCell>
+    <mxCell id="n2" value="2" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=none;fontColor=#FFFFFF;fontStyle=1;fontSize=20;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="462" y="58" width="38" height="38" as="geometry"/></mxCell>
+
+    <mxCell id="b3" value="&lt;b&gt;Data Architecture&lt;br&gt;&amp;amp; Pipeline&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#FFFFFF&quot;&gt;serve those views&lt;br&gt;fast and fresh&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E07B2B;strokeColor=#E07B2B;fontSize=17;fontFamily=Helvetica;fontColor=#FFFFFF;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="860" y="80" width="290" height="150" as="geometry"/></mxCell>
+    <mxCell id="n3" value="3" style="ellipse;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=none;fontColor=#E07B2B;fontStyle=1;fontSize=20;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="872" y="58" width="38" height="38" as="geometry"/></mxCell>
+
+    <mxCell id="a1" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=4;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="a2" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=4;" edge="1" parent="1" source="b2" target="b3"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#E07B2B;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="40" y="270" width="6" height="46" as="geometry"/></mxCell>
+    <mxCell id="cap" value="The capstone is one problem in three linked stages: the data feeds the visualization, and the architecture is what makes the visualization fast and live." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="46" y="270" width="1104" height="46" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

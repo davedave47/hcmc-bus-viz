@@ -2,14 +2,29 @@
 \label{sec:future:roadmap}
 
 Phase Two completes the proposed system specified in
-Chapter~\ref{chapter:solution}. The work is organised into nine phases,
-labelled P1 through P9. Each phase has a single named output and a single
+Chapter~\ref{chapter:solution}. The work is organised into ten phases,
+labelled P0 through P9. Each phase has a single named output and a single
 acceptance criterion that determines when the phase is complete. The total
-effort budget is approximately twenty-one working days at one developer.
+effort budget is approximately fourteen weeks at one developer.
 The roadmap introduces three abbreviations that recur in later sections:
 the Automated Fare Collection (AFC) data source, the Global Positioning
 System (GPS) data source, and the Quality of Service (QoS) reliability
 framework adopted from Chapter~\ref{chapter:foundations}.
+
+The Phase~One demo described in Chapter~\ref{chapter:implementation}
+has already completed several phases ahead of the original plan. The
+full Medallion warehouse of phase~P1 is built (Bronze, Silver, Gold)
+and gated by the forty-one-check validation harness; the
+School-Aware-Demand theme of phase~P4, the Spatial-and-Connectivity
+theme of phase~P3, the Network-Health half of phase~P5, and the
+T\^et-story scrollytelling of phase~P8 are wired end-to-end against the
+Gold tier. What remains, as written in the roadmap below, is the
+Demand-and-Crowding theme of phase~P2, the Financial-and-Operations
+theme inside phase~P5, the Route-Detail theme of phase~P6, the
+cross-theme polish of phase~P7, and the full 50-day GPS ingest of
+phase~P9. The within-card linked-brushing behaviour and the
+universal-entity-detail panel ship their chrome slots in the demo
+but carry their behaviour through phase~P2 in the acceptance criteria.
 
 \begin{table}[!htbp]
   \centering
@@ -21,82 +36,115 @@ framework adopted from Chapter~\ref{chapter:foundations}.
     \hline
     \textbf{Phase} & \textbf{Output} & \textbf{Effort} & \textbf{Acceptance criterion} \\
     \hline
-    P1 & Warehouse Layers 2 to 4 (conformed dimensions, fact views, aggregate tables)
-       & 2 days
-       & The build command runs in under 30 seconds on the local sample and emits the
-         ten dimension tables, three fact views, and eight aggregate tables; an
-         integration check asserts row counts against the fact layer. \\
+    P0 & Data-quality remediation (11 observations in Table~\ref{tab:dataset:quality})
+       & 1~week
+       & Schedule table deduplicated; out-of-box stations triaged; null policy declared for sparse payment fields. \\
+    P1 & Full Medallion warehouse (Silver + Gold) and chart-style helper
+       & 2~weeks
+       & Build completes in under 30 s; 10 dim tables, 3 fact views, 8 aggregates present; first chart passes readability test. \\
     P2 & First end-to-end theme (Demand and Crowding)
-       & 3 days
-       & All five charts in the theme render against the warehouse; the Multiple
-         Coordinated Views model propagates selection across all five; the
-         entity-detail panel opens on any route click. \\
+       & 2~weeks
+       & All four charts render; entity-detail panel opens on route click; URL state captures active theme and filters. \\
     P3 & Spatial and Connectivity theme
-       & 2 days
-       & The hexagonal-bin map renders at three cell sizes; the per-stop demand view
-         renders the 4{,}710 stops without user-interface lag. \\
+       & 1~week
+       & Hex map renders at three cell sizes; 4{,}710 stops render without lag; bus-to-metro layer is interactive. \\
     P4 & School-Aware Demand theme
-       & 2 days
-       & The schools-to-routes treemap renders; the school-routeness classifier
-         renders for all routes; the school proximity map renders at district
-         resolution. \\
+       & 1~week
+       & School constellation, treemap, and proximity map render; eight universities geocoded and verified. \\
     P5 & Financial and Operations plus Network Health themes
-       & 3 days
-       & The financial quadrant is interactive; the QoS-1, QoS-2, QoS-3 indicators
-         are computed on the local GPS sample; the anomaly view supports the
-         threshold control. \\
-    P6 & Routes theme with time-distance diagram
-       & 3 days
-       & Cross-route and per-route views both render; the time-distance diagram
-         supports zoom and trip hover. \\
-    P7 & Cross-theme polish (overview index, entity-detail panel for all entity
-         types, URL state)
-       & 2 days
-       & The overview index renders; the entity-detail panel works for all six
-         entity types; the URL encodes the active theme and filters. \\
-    P8 & Narrative scrollytelling layer
-       & 2 days
-       & The four planned narratives are scroll-driven; each scene deep-links to the
-         corresponding theme view. \\
-    P9 & Final polish and initial evaluation
-       & 2 days
-       & School geocoding is verified for at least 50 of the 64 schools; the full
-         fifty-day GPS dataset is loaded if available; an end-to-end demonstration
-         screencast is produced. \\
+       & 2~weeks
+       & P\&L quadrant and market treemap interactive; QoS-1/2/3 computed on GPS sample; DiD estimator runs. \\
+    P6 & Route Detail theme (time-distance diagram, per-stop box plot, pairwise delay)
+       & 2~weeks
+       & Time-distance diagram supports zoom and trip hover; box plot filters by date and peak window. \\
+    P7 & Cross-theme polish (hub index, entity panel, navigation, Methodology Side-Panel, URL state)
+       & 1~week
+       & Entity panel works for all six entity types; Methodology Side-Panel renders for every algorithmic chart. \\
+    P8 & Stories scrollytelling within source themes
+       & 1~week
+       & Four stories scroll within source themes; each scene deep-links to the corresponding chart state. \\
+    P9 & Full-dataset ingest and Phase Two acceptance gates
+       & 1~week
+       & Fifty schools geocoded; full 50-day GPS loaded; acceptance gates passed; two-minute screencast produced. \\
     \hline
   \end{tabularx}
 \end{table}
 
-\noindent\textbf{Content.} The plan content is the nine phases recorded in
-Table~\ref{tab:future:roadmap}. Each phase produces one or two artefacts that
-the next phase depends on. The acceptance criteria are verifiable by a single
-command or a single demonstrable user interaction, which avoids open-ended
-evaluation at phase boundaries and keeps the cost of declaring a phase
-complete fixed.
+Figure~\ref{fig:future:gantt} visualises the same ten-phase plan as a
+Gantt chart, showing the planned start and end of each phase along the
+fourteen-week axis.
 
-\noindent\textbf{Time.} The total estimated effort is twenty-one working days
-at one developer. The critical path is P1 followed by P2, which together
-account for about five working days; the warehouse layers built in P1 are a
-hard prerequisite for the first end-to-end theme exercised in P2. Phases
-P3 and P4 may run in parallel after P2 completes because their underlying
-aggregate tables are independent of one another. Phases P5 through P9 each
-consume one or more aggregate tables produced in P1 and follow the order in
-which the corresponding analytical themes depend on each other.
+\begin{figure}[!htbp]
+\centering
+\begin{ganttchart}[
+  hgrid,
+  vgrid,
+  x unit=8mm,
+  y unit title=5.5mm,
+  y unit chart=5mm,
+  title height=1,
+  bar height=0.55,
+  bar top shift=0.225,
+  bar label font=\scriptsize,
+  title label font=\scriptsize,
+  bar label node/.append style={align=right, text width=3.4cm},
+]{1}{14}
+  \gantttitle{Month 1}{4}%
+  \gantttitle{Month 2}{4}%
+  \gantttitle{Month 3}{4}%
+  \gantttitle{Weeks 13--14}{2} \\
+  \gantttitlelist{1,...,14}{1} \\
+  \ganttbar{P0: Data quality}{1}{1} \\
+  \ganttbar{P1: Warehouse}{2}{3} \\
+  \ganttbar{P2: Demand theme}{4}{5} \\
+  \ganttbar{P3: Spatial theme}{6}{6} \\
+  \ganttbar{P4: School theme}{7}{7} \\
+  \ganttbar{P5: Financial + Health}{8}{9} \\
+  \ganttbar{P6: Route Detail}{10}{11} \\
+  \ganttbar{P7: Polish}{12}{12} \\
+  \ganttbar{P8: Stories}{13}{13} \\
+  \ganttbar{P9: Full ingest}{14}{14} \\
+\end{ganttchart}
+\caption{Phase Two roadmap Gantt chart.}
+\label{fig:future:gantt}
+\end{figure}
+
+\noindent\textbf{Content.} The plan content is the ten phases recorded in
+Table~\ref{tab:future:roadmap}. Each phase produces one or two artefacts
+that the next phase depends on. The acceptance criteria are verifiable by
+a single command or a single demonstrable user interaction, which avoids
+open-ended evaluation at phase boundaries and keeps the cost of declaring
+a phase complete fixed. Phase~P0 explicitly addresses the eleven
+data-quality observations of Table~\ref{tab:dataset:quality} so that the
+warehouse build of Phase~P1 begins from a clean input layer.
+
+\noindent\textbf{Time.} The total estimated effort is approximately fourteen
+weeks at one developer. The critical path is P0 followed by P1, P2, and P4;
+P4 is the school-aware flagship and is sequenced early so that the most
+distinctive contribution of the proposed system is demonstrable inside the
+first month of phase two. Phases P3, P5, and P6 may run in parallel
+with one another after P2 completes because their underlying aggregate
+tables are independent of one another. Phases P7 through P9 each consume
+multiple aggregate tables produced earlier and follow the order in which
+the corresponding analytical themes depend on each other.
 
 \noindent\textbf{Personnel.} Phase Two is single-author. Time is tracked per
 phase rather than per task, which matches the granularity of the acceptance
 criteria and keeps the tracking overhead small. Two advisor reviews are
 scheduled: at the end of P2, after the first end-to-end theme has been
-demonstrated, and at the end of P6, after all themes are rendering. The two
-review points coincide with the two natural integration milestones in the
-plan.
+demonstrated, and at the end of P6, after all six themes are rendering.
+The two review points coincide with the two natural integration milestones
+in the plan.
 
 \noindent\textbf{Expected outcomes.} At the end of Phase Two, the proposed
-system renders thirty out of thirty-one charts at sub-fifty-millisecond
-warm latency, supports the Multiple Coordinated Views interaction within
-every theme and the entity-detail interaction on every clickable element,
-persists state to a shareable URL, and exports every chart in three formats
-from a single one-click control. The remaining chart, the network-wide
-arrival-time prediction, is treated as an extension in
-Section~\ref{sec:future:extensions} because its underlying construction
-depends on the full fifty-day GPS window rather than on the local sample.
+system renders all twenty catalogue chart canvases at sub-fifty-millisecond
+warm latency, supports the entity-detail interaction on every clickable
+element and the within-theme state-persistence model of
+Section~\ref{sec:solution:interaction:mcv}, persists state to a shareable
+URL, and exports every chart in three formats from a single one-click
+control. Two extensions (the city-wide bus-as-traffic-sensor speed grid and
+the bus-speed-against-posted-limit map) are outside the canonical twenty
+and are treated separately in Section~\ref{sec:future:extensions} because
+their underlying constructions depend on the full fifty-day GPS window and
+on the ingestion of an OpenStreetMap road-speed reference dimension,
+respectively.

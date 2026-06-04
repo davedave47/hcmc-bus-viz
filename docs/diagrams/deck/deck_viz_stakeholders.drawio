@@ -1,0 +1,23 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="p1" value="Passenger" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;strokeWidth=2;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="40" width="240" height="60" as="geometry"/></mxCell>
+    <mxCell id="p2" value="Operating company" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;strokeWidth=2;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="150" width="240" height="60" as="geometry"/></mxCell>
+    <mxCell id="p3" value="Public-transport authority" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;strokeWidth=2;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="260" width="240" height="60" as="geometry"/></mxCell>
+
+    <mxCell id="surface" value="One analytical surface&#10;no role labels in the interface" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#1F3A5F;strokeWidth=2;fontColor=#1F3A5F;fontStyle=1;fontSize=16;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="560" y="120" width="280" height="120" as="geometry"/></mxCell>
+
+    <mxCell id="a1" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;" edge="1" parent="1" source="p1" target="surface"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="a2" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;" edge="1" parent="1" source="p2" target="surface"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="a3" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;" edge="1" parent="1" source="p3" target="surface"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="driver" value="Driver" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=#5B6470;dashed=1;fontColor=#5B6470;fontStyle=1;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="600" y="300" width="200" height="50" as="geometry"/></mxCell>
+    <mxCell id="dlab" value="data source, not a tool user" style="text;html=1;fontColor=#5B6470;fontSize=11;fontStyle=2;fontFamily=Helvetica;align=center;" vertex="1" parent="1"><mxGeometry x="600" y="350" width="200" height="18" as="geometry"/></mxCell>
+    <mxCell id="ad" style="endArrow=classic;html=1;strokeColor=#5B6470;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="driver" target="surface"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#E07B2B;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="40" y="392" width="6" height="50" as="geometry"/></mxCell>
+    <mxCell id="cap" value="Three stakeholders, and only three, bring different decisions to the same historical record; the interface shows no role badges, and the driver feeds the record without using it." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="46" y="392" width="794" height="50" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

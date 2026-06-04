@@ -7,44 +7,272 @@ support a particular kind of analytical reading. The catalogue below
 introduces the primitives drawn on later in the report. Each primitive
 is described in terms of what it is, when it is used, and what kind of
 analytical claim it supports; the specific choice of which primitive
-serves which question in the proposed system is deferred to Chapter
+serves which question in the platform is deferred to Chapter
 \ref{chapter:solution}.
 
 \begin{table}[!htbp]
 \centering
-\caption{Visualisation primitives surveyed for the proposed system}
+\caption{Visualisation primitives selected for the platform}
 \label{tab:foundations:primitives}
 \footnotesize
-\renewcommand{\arraystretch}{1.20}
-\begin{tabularx}{\linewidth}{p{3.3cm}Xp{3.6cm}c}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{p{3.6cm} X}
 \hline
-\textbf{Primitive} & \textbf{Analytical question it supports} & \textbf{Strength} & \textbf{Used} \\
+\textbf{Primitive} & \textbf{Analytical question it supports} \\
 \hline
-Treemap & Hierarchical composition and relative magnitude across many categories & Compact space use for many categories & Yes \\
-Calendar heatmap & Temporal patterns across two cyclic dimensions (hour, day) & Exposes daily and weekly cycles at a glance & Yes \\
-Parallel coordinates & Multi-dimensional comparison across records & Brushing reveals multi-feature subsets & Yes \\
-Hexagonal-bin grid & Spatial density at uniform area per bin & Avoids the size-bias of arbitrary administrative regions & Yes \\
-Scatter quadrant & Two metrics with qualitative quadrant interpretation, plus a third encoded by bubble size & Reveals categorical groupings in metric space & Yes \\
-Sankey diagram & Flow between source and destination categories with conservation & Encodes magnitude as ribbon width & Yes \\
-Ranked bar & Top-$k$ of a one-dimensional distribution & Simplest and most readable for ordered comparison & Yes \\
-Two-dimensional projection scatter (UMAP) & Cluster structure in a high-dimensional feature space & Preserves local neighbourhood structure & Yes \\
-Time-distance trip diagram & Per-route trip trajectories over time & Exposes bunching and schedule gaps visually & Yes \\
-Set-intersection matrix & Multi-valued categorical membership across a fixed set of categories & Surfaces intersections that area-based visualisations cannot & Yes \\
-Pie chart & Composition of a small number of categories & --- & No (rejected; see Section~\ref{sec:solution:viz}) \\
-Three-dimensional bar chart & Comparison across three encoded dimensions & --- & No (rejected) \\
-Choropleth map & Spatial density by administrative region & --- & No (rejected in favour of hexagonal-bin grid) \\
+Treemap                                     & Hierarchical composition and relative magnitude across many categories \\
+Calendar heatmap                            & Temporal patterns across two cyclic dimensions (hour, day) \\
+Parallel coordinates                        & Multi-dimensional comparison across records \\
+Hexagonal-bin grid                          & Spatial density at uniform area per bin \\
+Scatter quadrant                            & Two metrics with qualitative quadrant interpretation, plus a third encoded by bubble size \\
+Sankey diagram                              & Flow between source and destination categories with conservation \\
+Ranked bar                                  & Top-$k$ of a one-dimensional distribution \\
+Two-dimensional projection scatter (UMAP)   & Cluster structure in a high-dimensional feature space \\
+Time-distance trip diagram                  & Per-route trip trajectories over time \\
+Set-intersection matrix                     & Multi-valued categorical membership across a fixed set of categories \\
+Bipartite graph                             & Two-sided categorical association with weighted edges \\
 \hline
 \end{tabularx}
 \end{table}
 
-Table~\ref{tab:foundations:primitives} lists every primitive considered
-for the proposed system together with the analytical question it
-supports and the property that motivates its inclusion. The detailed
-reasoning per primitive (when each is chosen for which theme, and which
-are rejected with justification) appears in
-Section~\ref{sec:solution:viz}. The same section records the rejected
-primitives and the reasons each was set aside in favour of an
-alternative listed in the table above.
-Section~\ref{sec:solution:viz} maps these primitives to the analytical
-questions of each theme and records the primitives that were considered
-and rejected.
+Table~\ref{tab:foundations:primitives} lists the ten primitives selected
+for the platform together with the analytical question each one
+supports. Three further primitives (pie chart, three-dimensional bar
+chart, choropleth keyed to administrative regions) were considered and
+rejected; the rejection reasons are catalogued in
+Section~\ref{sec:solution:viz:alt} where each is paired with the chart
+in the catalogue that displaces it. The detailed reasoning per
+primitive (when each is chosen for which theme) appears in
+Section~\ref{sec:solution:viz}.
+
+\subsection{Chart Selection}
+\label{sec:foundations:primitives:rubric}
+
+The catalogue in Table~\ref{tab:foundations:primitives} answers \textit{what
+primitives exist}. A separate question is \textit{which primitive to choose
+for which analytical task}. The mapping is not an aesthetic preference;
+it follows from a body of perception research and task-classification
+theory that constrains the chart designer's choice once the analytical
+task and the data shape are fixed.
+
+\subsubsection*{Theoretical Foundations}
+
+Four lines of evidence ground the rubric.
+
+\textbf{Perception ranking of visual channels.}
+Elementary perceptual tasks chart readers perform are ordered from
+most to least accurate as position along a common scale, position
+along non-aligned scales, length, direction (slope or angle from
+vertical), angle, area, volume, and colour saturation
+\cite{cleveland1984}. Primitives that encode the analytical quantity
+through position (bar, dot, scatter) are read more accurately than
+primitives that encode it through area (treemap, bubble) or angle
+(pie). The rubric below ranks primitives accordingly and uses
+area-encoding primitives only when no position-encoding alternative
+expresses the relationship.
+
+\textbf{Analytical task typology.}
+Analytical tasks decompose into a small set of intents:
+\emph{compare}, \emph{distribute}, \emph{relate}, \emph{cluster},
+\emph{trend over time}, \emph{spatial}, \emph{compose}, and
+\emph{flow} \cite{munzner2014}. Each intent has a small number of
+primitives that match its visual grammar; choosing a primitive whose
+grammar does not match the intent produces a chart that is
+technically valid but analytically ineffective.
+
+\textbf{Design constraints from storytelling.}
+Three design constraints from the storytelling literature are
+inherited by the rubric as hard rules: pie charts, donut charts, and
+three-dimensional encodings are excluded under the de-clutter and
+focus-attention principles \cite{knaflic2015}, because angle and
+volume rank below position and length in the perception ordering
+\cite{cleveland1984}; every chart whose visual encoding is bar length
+must start its value axis at zero \cite{knaflic2015}; and every chart
+must surface its finding within three to eight seconds of first
+contact through an action title and a single focal accent colour
+\cite{knaflic2015}.
+
+\textbf{Multiple Coordinated Views (MCV).}
+The MCV pattern (Section~\ref{sec:foundations:mcv}) imposes a
+brushing constraint: every primitive used inside a coordinated theme
+must be capable of receiving a selection event from a sibling chart
+and re-rendering with the selection highlighted~\cite{liu2022}. The
+constraint excludes a small number of otherwise valid primitives that
+have no clean way to encode a sparse selection (Sankey,
+polar-coordinate radar) and admits them only as single charts that
+do not coordinate with siblings.
+
+\subsubsection*{Decision Matrix}
+
+The rubric prescribes one primitive per combination of analytical task
+and data shape. The eighteen tasks group into five families
+(comparison, distribution and relationship, temporal, spatial, and
+flow / set / decomposition). Each family is summarised below as a
+small table; an explanatory paragraph precedes each table. Throughout,
+\emph{T$n$} denotes the rubric row referenced from the per-theme
+selection of Section~\ref{sec:solution:viz}.
+
+\textbf{Family A: Comparison and ranking (T1, T2, T7, T8, T12).}
+These tasks compare magnitude, composition, or position across many
+entities. The prescribed primitives encode the analytical quantity
+through length, area, or position. These are the three perceptual
+channels ranked most accurate by Cleveland and
+McGill~\cite{cleveland1984}.
+
+\begin{table}[!htbp]
+\centering
+\caption{Comparison and ranking primitives (rubric rows T1, T2, T7, T8, T12).}
+\label{tab:foundations:rubric:compare}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{p{0.5cm} p{4.2cm} X X}
+\hline
+& \textbf{Task} & \textbf{Prescribed primitive} & \textbf{Why not the alternative} \\
+\hline
+T1  & Compare magnitudes (top-$k$)         & Ranked horizontal bar                                          & Pie: angle is read less accurately than length \\
+T2  & Show hierarchical composition         & Treemap                                                        & Pie: loses hierarchy; donut: arc length unreliable \\
+T7  & Reveal multi-dimensional structure     & Parallel coordinates with brushing                             & Radar: one chart per entity; heatmap: loses entity identity \\
+T8  & Reveal cluster structure in high-dim   & 2-D UMAP projection scatter~\cite{umap}                        & PCA: linear only; t-SNE: no global structure; dendrogram: forces hierarchy \\
+T12 & Show two-period change                 & Slopegraph (paired ranked bar if many crosses)                 & Bar with delta colour: compresses change to one number \\
+\hline
+\end{tabularx}
+\end{table}
+
+\textbf{Family B: Distribution and relationship (T5, T6).}
+These tasks show how a numeric quantity is distributed across groups
+(T5) or how two numerics co-vary across entities (T6). Both
+primitives surface skew, outliers, and quadrant interpretations that
+single-number summaries hide.
+
+\begin{itemize}
+\item \textbf{T5, Box plot per group} (or violin). Encodes the
+median, inter-quartile range, and outliers of a numeric distribution
+conditional on a categorical group. Preferred over a mean bar with
+error bar, which hides skew and outliers~\cite{wilke2019}.
+\item \textbf{T6, Scatter quadrant with bubble size}. Plots two
+numerics against each other with one categorical entity per point;
+bubble size encodes a third numeric. The quadrant layout makes the
+four interpretive regions visible at a glance. Dual-axis line and
+grouped bar are rejected for the reasons listed in the rubric row.
+\end{itemize}
+
+\textbf{Family C: Temporal patterns (T3, T4, T14).}
+Each temporal task uses a different primitive because the data shape
+is different: a continuous-time numeric uses a line chart; a
+two-cycle pattern (hour by day, day by month) uses a calendar
+heatmap; per-trip trajectories use a time-distance diagram.
+
+\begin{table}[!htbp]
+\centering
+\caption{Temporal-pattern primitives (rubric rows T3, T4, T14).}
+\label{tab:foundations:rubric:time}
+\footnotesize
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{p{0.5cm} p{4.0cm} X X}
+\hline
+& \textbf{Task} & \textbf{Prescribed primitive} & \textbf{Why not the alternative} \\
+\hline
+T3  & Trend over continuous time          & Line chart (or stacked area for composition trend)             & Bar chart implies false discreteness \\
+T4  & Two-cycle temporal pattern          & Calendar heatmap                                               & Two line charts lose the joint pattern; polar plot ambiguates angle \\
+T14 & Per-route trip trajectories         & Time-distance diagram (Marey~\cite{marey1885}, applied to bus arrival by Lin and Zeng~\cite{linzeng2014})               & Per-stop bar loses bunching geometry; animation lacks still-image readability \\
+\hline
+\end{tabularx}
+\end{table}
+
+\textbf{Family D: Spatial views (T9, T15, T16, T17).}
+The four spatial primitives partition the city map under different
+constraints: hexagonal bins enforce uniform area per cell, cartograms
+distort area to encode a quantity, Voronoi tessellation answers
+nearest-point questions, and isochrones answer accessibility-from-an-
+origin questions. The choice is dictated by the spatial question.
+
+\begin{itemize}
+\item \textbf{T9, Hexagonal-bin density map}. Partitions the urban
+region into hexagonal cells of uniform area and renders a numeric
+measure per cell. Preferred over a choropleth keyed to administrative
+districts because district areas vary by more than an order of
+magnitude in Ho Chi Minh City and would confound intensity with
+geometry.
+\item \textbf{T15, Cartogram}. Distorts district areas so that the
+visual area of each district is proportional to a chosen numeric
+(typically total boardings) rather than to physical land area.
+Surfaces the question \emph{which district carries the most volume}
+without forcing the reader to mentally normalise by physical size.
+\item \textbf{T16, Voronoi tessellation}. Partitions the plane
+into polygons such that each polygon contains the area closer to its
+associated point (stop) than to any other point. Answers \emph{which
+stop owns this area} and surfaces catchment gaps. Preferred over
+buffer circles, which overlap and leave gaps.
+\item \textbf{T17, Isochrone polygons}. Render the region
+reachable from a chosen origin within successive time bands (for
+example, 10, 20, and 30 minutes). Answer accessibility-from-an-origin
+questions. Preferred over a destination heatmap, which is symmetric
+in origin and destination.
+\end{itemize}
+
+\textbf{Family E: Flow, sets, and decomposition (T10, T11, T13, T18).}
+The remaining four primitives serve specialised analytical readings:
+flow between source and sink categories (T10), multi-valued set
+membership (T11), additive decomposition of a single change (T13),
+and variable-width composition across two categorical axes (T18).
+
+\begin{itemize}
+\item \textbf{T10, Sankey diagram}. Renders flow between a source
+categorical and a sink categorical, with ribbon width encoding the
+flow magnitude. Preferred over a stacked bar, which loses the
+source-to-sink linkage. Sankey ribbons receive a brushed selection
+poorly, so the primitive is admitted only as a single chart that
+does not coordinate with siblings (Multiple Coordinated Views
+constraint, Section~\ref{sec:foundations:mcv}).
+\item \textbf{T11, GroupSet (UpSet) matrix}~\cite{lex2014}.
+Renders the size of every intersection of a family of overlapping
+sets as a column in a matrix. Preferred over a Venn diagram, which
+collapses above four sets.
+\item \textbf{T13, Waterfall chart}. Decomposes a single numeric
+change (for example, ridership before, during, and after a
+promotion) into ordered additive components and renders each
+component as a positive or negative bar. Preferred over a stacked
+bar, which loses the sequence of contributing factors.
+\item \textbf{T18, Marimekko chart}. Renders a two-way categorical
+composition with variable-width bars: the width of each bar is
+proportional to the first categorical's share, and the stacked
+heights within each bar are proportional to the second categorical's
+share within the first. Preferred over a stacked bar of equal widths
+when both axes carry meaningful magnitude.
+\end{itemize}
+
+\subsubsection*{Overlay Rules}
+
+Four constraints overlay the matrix and apply across every row.
+
+\begin{itemize}
+\item Pie, donut, and three-dimensional encodings are excluded under
+the Knaflic de-clutter and focus-attention principles
+\cite{knaflic2015}, repeated here as a hard rule rather than as a
+preference.
+\item Every primitive in T1, T2, T13, T18 starts its value axis at
+zero because the encoding is bar length. The constraint does not apply
+to primitives whose encoding is position rather than length (T3, T7,
+T8).
+\item Every primitive used inside a coordinated theme must respect the
+MCV brushing protocol. Primitives that cannot cleanly receive a
+brushed selection (Sankey, T10) are admitted only as single charts
+whose siblings do not coordinate with them.
+\item Within any single analytical theme, no two chart canvases use
+the same primitive row from the matrix. This is the one-primitive-per-theme constraint of
+Section~\ref{sec:solution:interaction:storytelling}; the constraint
+forces every chart inside a theme to answer with a different lens
+rather than the same lens on different data.
+\end{itemize}
+
+\subsubsection*{Use of the Rubric}
+
+Section~\ref{sec:solution:viz} cites a row of
+the rubric (Tables~\ref{tab:foundations:rubric:compare} and
+\ref{tab:foundations:rubric:time} and the spatial paragraphs that follow)
+for each chart canvas in the catalogue. The per-theme tables in that section trace every chart to
+the row that prescribes it; cases in which two charts trace to the
+same row are admitted only when the one-primitive-per-theme constraint permits it (the two
+charts answer different analytical questions in different themes,
+using the same primitive as consistent visual vocabulary), never
+within a single theme.

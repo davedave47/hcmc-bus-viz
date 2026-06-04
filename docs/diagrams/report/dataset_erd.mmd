@@ -1,0 +1,57 @@
+%% Source-schema ERD (Section 4.2): the cross-source join spine.
+%% AFC family + GPS family + shared masters; join is route_no only.
+%% Render: mmdc -i dataset_erd.mmd -o dataset_erd.png -p ~/.puppeteer-config.json -b transparent -s 2
+
+%%{init: {'theme':'neutral','er':{'layoutDirection':'LR'},'themeVariables':{'fontFamily':'Helvetica'}}}%%
+erDiagram
+  stops {
+    bigint  stopId PK
+    varchar code
+    double  lat_lng
+  }
+  ticket_stations {
+    double  station_id PK
+    varchar station_name
+    double  lat_lng
+  }
+  tickets {
+    bigint  ticket_id PK
+    double  trip_id FK
+    double  station_id FK
+    varchar fare_class
+    bigint  time_created
+  }
+  ticket_trips {
+    bigint  trip_id PK
+    bigint  route_id FK
+    int     direction
+  }
+  ticket_routes {
+    bigint  route_id PK
+    varchar route_no
+    varchar route_name
+  }
+  gps_stations {
+    double  station_id PK
+    varchar name
+    double  lat_lng
+  }
+  gps_trips {
+    double  trip_id PK
+    double  route_id FK
+    varchar vehicle_id
+    bigint  start_time
+  }
+  gps_routes {
+    double  route_id PK
+    varchar route_no
+    double  distance_km
+  }
+
+  stops          ||--o{ ticket_stations : "maps to"
+  stops          ||--o{ gps_stations    : "maps to"
+  ticket_stations||--o{ tickets         : "boards at"
+  ticket_trips   ||--o{ tickets         : "carries"
+  ticket_routes  ||--o{ ticket_trips    : "runs"
+  gps_routes     ||--o{ gps_trips       : "runs"
+  ticket_routes  ||--|| gps_routes      : "route_no (cross-source)"

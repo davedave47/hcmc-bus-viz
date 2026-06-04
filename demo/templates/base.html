@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>{% block title %}HCMC Bus Analytics{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;500;600;700;800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', path='css/tokens.css') }}?v={{ range(1, 99999) | random }}">
+<link rel="stylesheet" href="{{ url_for('static', path='css/base.css') }}?v={{ range(1, 99999) | random }}">
+{% block stylesheets %}{% endblock %}
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+<script src="https://unpkg.com/htmx.org@2.0.3"></script>
+<script src="{{ url_for('static', path='js/charts.js') }}?v={{ range(1, 99999) | random }}"></script>
+{% block head_extra %}{% endblock %}
+</head>
+<body>
+
+{# Card-aware breadcrumb: pages that are inside a card set `card_index` (1..6) and `card_title`/`leaf`. #}
+{% set card_index = card_index|default(0) %}
+{% set card_titles = {1:'Ridership & Crowding', 2:'Schools & Students', 3:'Spatial & Connectivity', 4:'Financial & Operations', 5:'Network Health & Performance', 6:'Routes'} %}
+{% set card_dots   = {1:'var(--c1)', 2:'var(--c2)', 3:'var(--c3)', 4:'var(--c4)', 5:'var(--c5)', 6:'var(--c6)'} %}
+
+<div class="page">
+
+  <header class="tb">
+    <a class="tb-brand" href="/"><span class="tb-mark">B</span><span class="tb-name">HCMC Bus Analytics</span></a>
+    <div class="tb-div"></div>
+    <nav class="tb-cards" aria-label="Cards">
+      <a href="/" title="Hub" class="home {% if card_index == 0 %}on{% endif %}" data-c="0">⌂</a>
+      {% for i, name in card_titles.items() %}
+        {% set href = {1:'/cards/demand', 2:'/cards/schools', 3:'/cards/spatial', 4:'/cards/finance', 5:'/cards/health', 6:'/cards/routes'}[i] %}
+        <a href="{{ href }}"
+           title="{{ name }}"
+           class="{% if card_index == i %}on{% endif %}"
+           data-c="{{ i }}">
+          <span class="dot" style="background:{{ card_dots[i] }}"></span>{{ '%02d' % i }}
+        </a>
+      {% endfor %}
+    </nav>
+    {% if card_index %}
+    <div class="tb-title">{{ card_titles[card_index] }}<span class="sep">›</span><span class="leaf">{{ leaf|default('') }}</span></div>
+    {% endif %}
+    <div class="tb-space"></div>
+    <div class="tb-date" title="Data window — full AFC dataset">{{ afc_window }}</div>
+    <div class="tb-ico" title="Export">⬇</div>
+  </header>
+
+  {% block content %}{% endblock %}
+
+</div>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

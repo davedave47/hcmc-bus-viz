@@ -1,0 +1,88 @@
+<div id="school-main-canvas" class="card-main">
+
+  {# Action title + subtitle — above the canvas, Knaflic Ch.1 #}
+  <div class="chart-head">
+    <div class="ch-finding">{{ active.finding | safe }}</div>
+    <div class="ch-sub">{{ active.sub }}</div>
+  </div>
+
+  {# Flexible filter bar — every field re-queries the warehouse live. #}
+  {% if active_slug == '2.3' %}
+  <form class="vc" hx-get="/cards/schools/chart/2.3"
+        hx-target="#school-main-canvas" hx-swap="outerHTML" hx-trigger="change">
+    <div class="vc-grp">
+      <div class="vc-grp-lbl">Date range</div>
+      <div class="vc-date">
+        <input type="date" class="vc-input" name="date_from"
+               value="{{ date_from }}" min="2026-01-01" max="2026-03-31">
+        <span class="vc-dash">to</span>
+        <input type="date" class="vc-input" name="date_to"
+               value="{{ date_to }}" min="2026-01-01" max="2026-03-31">
+      </div>
+    </div>
+    <div class="vc-grp">
+      <div class="vc-grp-lbl">Route</div>
+      <select class="vc-select" name="route">
+        <option value="">All routes</option>
+        {% for r in routes %}<option value="{{ r }}" {% if route == r %}selected{% endif %}>Route {{ r }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="vc-grp">
+      <div class="vc-grp-lbl">Day type</div>
+      <select class="vc-select" name="day_type">
+        <option value="all" {% if day_type == 'all' %}selected{% endif %}>All days</option>
+        <option value="weekday" {% if day_type == 'weekday' %}selected{% endif %}>Weekdays</option>
+        <option value="weekend" {% if day_type == 'weekend' %}selected{% endif %}>Weekends</option>
+      </select>
+    </div>
+    <div class="vc-grp">
+      <div class="vc-grp-lbl">Fare class</div>
+      <select class="vc-select" name="segment">
+        {% for s, lbl in [('all','All fares'),('student','Student'),('non_student','Non-student'),('free','Free / subsidised')] %}
+        <option value="{{ s }}" {% if (segment|default('student')) == s %}selected{% endif %}>{{ lbl }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="vc-spacer"></div>
+    <div class="vc-live"><span class="vc-live-dot"></span>filters re-query live</div>
+  </form>
+  {% endif %}
+
+  <div class="canvas">
+    {% if plotly_json %}
+      <div id="plotly-target" class="plot" style="width:100%;height:100%"></div>
+      <script id="plotly-data" type="application/json">{{ plotly_json | safe }}</script>
+      <script>
+        (function(){
+          const data = document.getElementById('plotly-data');
+          if (!data) return;
+          const fig = JSON.parse(data.textContent);
+          BusCharts.mount('plotly-target', fig);
+          // Update active state on rail (HTMX swap doesn't touch the rail).
+          document.querySelectorAll('.crail-nav .crn').forEach(e => e.classList.remove('on'));
+          const link = document.querySelector('.crail-nav .crn[data-slug="{{ active_slug }}"]');
+          if (link) link.classList.add('on');
+        })();
+      </script>
+    {% else %}
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--ink-3);font-family:var(--f-d);text-align:center;padding:48px">
+        <div style="font-size:38px;color:var(--ac);font-weight:600;letter-spacing:-.02em">Phase 2</div>
+        <div style="font-family:var(--f-m);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4);margin:10px 0 18px">Pending implementation</div>
+        <div style="font-size:14.5px;color:var(--ink-2);line-height:1.5;max-width:480px">{{ active.finding }}</div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="chart-cap">
+    <span class="cc-num">{{ active.slug }}</span>
+    <span class="cc-meta">{{ active.title }}</span>
+    <span class="cc-meta-r">{% if plotly_json %}DuckDB · {{ '%.2f'|format(total_boardings / 1000000) }} M boardings · live query{% else %}Phase 2 placeholder{% endif %}</span>
+  </div>
+
+  <div class="status">
+    <div class="item"><span class="dot"></span>Hover to inspect · click a point for the detail panel</div>
+    <div class="item">Cross-chart brushing · Phase 2</div>
+    <div class="item" style="margin-left:auto">Cache hot · &lt; 0.5 s per chart</div>
+  </div>
+
+</div>

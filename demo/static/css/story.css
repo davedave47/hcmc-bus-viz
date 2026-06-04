@@ -1,0 +1,121 @@
+/* Story — pinned full-screen stage ("PowerPoint that advances on scroll").
+   ONE fixed stage; a tall invisible scroll-track drives the step machine.
+   Layout matches app-layouts.html LAYOUT 4: narration on TOP, chart BELOW,
+   full-width. Light theme, matching the hub and the theme cards. As each step
+   crosses the trigger the narration crossfades (up/out, in from below) and the
+   chart transitions in place. */
+
+:root { --story-bg:#F2F4F1; --story-ink:#1B2333; --story-mut:#6E7689; --story-dim:#A8B0C0; --story-acc:#E45A2E; }
+
+body { background:var(--story-bg); }
+
+/* ── light topbar ── */
+.story-topbar {
+  height:54px; background:#FFFFFF; border-bottom:1px solid var(--line, #E5E8EA);
+  display:flex; align-items:center; padding:0 24px; gap:14px;
+  position:fixed; top:0; left:0; right:0; z-index:80;
+}
+.story-topbar a { color:var(--story-mut); text-decoration:none; font-family:'Geist Mono',monospace; font-size:12px; letter-spacing:.08em; }
+.story-topbar a:hover { color:var(--story-ink); }
+.story-topbar .brand { font-family:'Funnel Display',serif; font-weight:600; font-size:14.5px; color:var(--story-ink); letter-spacing:-.02em; }
+
+/* ── the pinned stage (one viewport, never scrolls away) ── */
+.story-stage {
+  position:fixed; top:54px; left:0; right:0; bottom:0; z-index:10;
+  display:flex; flex-direction:column;
+  background:linear-gradient(180deg,#FFFFFF 0%,#F7F8F6 78%,#F2F4F1 100%);
+  overflow:hidden;
+}
+.story-stage::before {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 55% 40% at 16% 14%, rgba(228,90,46,.06), transparent 70%),
+    radial-gradient(ellipse 70% 50% at 90% 86%, rgba(46,93,186,.05), transparent 70%);
+}
+
+/* narration zone (top band) — all scene blocks stacked, only .active shown */
+.stage-narr-zone {
+  position:relative; z-index:2; flex:0 0 auto; height:38vh; min-height:230px;
+}
+.stage-narr {
+  position:absolute; inset:0; padding:34px 96px 8px 96px;
+  display:flex; flex-direction:column; justify-content:center;
+  opacity:0; transform:translateY(40px); pointer-events:none;
+  transition:opacity .55s cubic-bezier(.4,0,.2,1), transform .55s cubic-bezier(.4,0,.2,1);
+}
+.stage-narr.active { opacity:1; transform:translateY(0); pointer-events:auto; }
+.stage-narr.past   { opacity:0; transform:translateY(-40px); }
+
+.sf-eyebrow {
+  font-family:'Geist Mono',monospace; font-size:11px; letter-spacing:.22em;
+  color:var(--story-acc); font-weight:600; margin-bottom:20px;
+  display:flex; align-items:center; gap:14px; text-transform:uppercase;
+}
+.sf-eyebrow-line { width:36px; height:1px; background:var(--story-acc); }
+.sf-eyebrow-meta { color:var(--story-dim); font-weight:500; letter-spacing:.15em; }
+
+.sf-h1 { font-family:'Funnel Display',serif; font-weight:600; letter-spacing:-1.2px; font-size:clamp(48px,6.4vw,84px); line-height:.97; color:var(--story-ink); margin-bottom:22px; }
+.sf-h1 em { font-style:italic; color:var(--story-acc); font-weight:500; }
+.sf-h2 { font-family:'Funnel Display',serif; font-weight:500; letter-spacing:-.4px; font-size:clamp(30px,3.4vw,44px); line-height:1.08; color:var(--story-ink); margin-bottom:14px; max-width:980px; }
+.sf-h2 em { font-style:italic; color:var(--story-acc); font-weight:500; }
+.sf-lede { font-family:'Funnel Display',serif; font-weight:400; font-style:italic; font-size:19px; line-height:1.45; color:var(--story-mut); max-width:760px; }
+.sf-lede em { font-style:normal; color:var(--story-ink); font-weight:500; }
+
+/* Bing KPI */
+.sf-kpi { margin-top:32px; display:flex; align-items:baseline; gap:30px; flex-wrap:wrap; }
+.sf-kpi-v { font-family:'Funnel Display',serif; font-weight:600; font-size:clamp(110px,15vw,190px); line-height:.82; letter-spacing:-5px; color:var(--story-acc); text-shadow:0 8px 40px rgba(228,90,46,.18); }
+.sf-kpi-meta { display:flex; flex-direction:column; gap:6px; padding-bottom:16px; }
+.sf-kpi-l { font-family:'Geist Mono',monospace; font-size:10.5px; letter-spacing:.18em; color:var(--story-dim); font-weight:600; text-transform:uppercase; }
+.sf-kpi-d { font-family:'Funnel Display',serif; font-size:19px; color:var(--story-ink); line-height:1.3; max-width:380px; }
+
+/* Bongo CTA */
+.sf-cta-row { margin-top:30px; display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+.sf-cta { display:inline-flex; align-items:center; gap:14px; background:var(--story-acc); color:#FFFFFF; padding:17px 26px; font-family:'Geist Mono',monospace; font-size:13px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; text-decoration:none; transition:transform .15s, background .15s; }
+.sf-cta:hover { transform:translateX(2px); background:#C94A22; }
+.sf-cta-2 { display:inline-flex; align-items:center; gap:8px; font-family:'Geist Mono',monospace; font-size:11px; color:var(--story-mut); letter-spacing:.12em; text-transform:uppercase; background:none; border:1px solid var(--line-md, #CCD2D6); padding:13px 19px; text-decoration:none; }
+.sf-cta-2:hover { border-color:var(--story-mut); color:var(--story-ink); }
+
+/* chart zone (below) — single pinned chart card, swapped/crossfaded */
+.stage-chart-zone {
+  position:relative; z-index:2; flex:1; min-height:0;
+  padding:6px 96px 56px 96px;
+  display:flex; flex-direction:column;
+  transition:opacity .5s ease;
+}
+.stage-chart-card {
+  background:#FFFFFF; border:1px solid var(--line, #E5E8EA);
+  border-radius:6px; padding:20px 28px 22px; display:flex; flex-direction:column;
+  flex:1; min-height:0; box-shadow:0 6px 24px rgba(27,35,51,.07);
+}
+.stage-chart-hdr { display:flex; justify-content:space-between; align-items:baseline; gap:18px; margin-bottom:4px; }
+.stage-chart-title { font-family:'Funnel Display',serif; font-size:19px; font-weight:500; color:var(--story-ink); letter-spacing:-.2px;
+  opacity:0; transform:translateY(10px); transition:opacity .45s ease .1s, transform .45s ease .1s; }
+.stage-chart-title.show { opacity:1; transform:translateY(0); }
+.stage-chart-meta { font-family:'Geist Mono',monospace; font-size:10px; color:var(--story-dim); letter-spacing:.12em; white-space:nowrap; }
+.stage-chart-sub { font-family:'Geist',sans-serif; font-size:13px; color:var(--story-mut); font-style:italic; margin-bottom:10px; min-height:18px;
+  opacity:0; transition:opacity .45s ease .15s; }
+.stage-chart-sub.show { opacity:1; }
+.stage-plot-wrap { flex:1; position:relative; min-height:0; }
+#stage-plot { position:absolute; inset:0; transition:opacity .3s ease; }
+
+/* solo mode: Bing / Bongo — no chart, narration fills the whole stage */
+.story-stage.solo .stage-narr-zone { flex:1; height:auto; }
+.story-stage.solo .stage-chart-zone { display:none; }
+.story-stage.solo .stage-narr { justify-content:center; padding:34px 120px 34px 96px; }
+
+/* progress dots (fixed right) */
+.sf-progress { position:fixed; right:24px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:13px; z-index:60; align-items:center; }
+.sf-progress-dot { width:7px; height:7px; border-radius:50%; background:rgba(27,35,51,.16); transition:all .25s ease; }
+.sf-progress-dot.on { background:var(--story-acc); transform:scale(1.6); }
+.sf-progress-label { writing-mode:vertical-rl; text-orientation:mixed; font-family:'Geist Mono',monospace; font-size:10px; letter-spacing:.18em; color:var(--story-dim); margin-top:12px; text-transform:uppercase; }
+
+/* scroll cue (fixed bottom) */
+.sf-scroll-cue { position:fixed; left:50%; transform:translateX(-50%); bottom:20px; z-index:60; display:flex; flex-direction:column; align-items:center; gap:6px; font-family:'Geist Mono',monospace; font-size:10px; color:var(--story-dim); letter-spacing:.18em; text-transform:uppercase; animation:sf-bob 2.2s ease-in-out infinite; transition:opacity .4s; }
+.sf-scroll-cue svg { width:20px; height:20px; }
+.sf-scroll-cue.hide { opacity:0; }
+@keyframes sf-bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(7px)} }
+
+/* the invisible scroll track that drives the step machine */
+.story-track { position:relative; z-index:1; }
+.story-track .track-step { height:100vh; }
+.story-track .track-step:first-child { height:90vh; }

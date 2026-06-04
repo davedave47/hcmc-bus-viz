@@ -16,7 +16,7 @@ invariants applied per chart. The third is a theme-scoped state model
 that carries the user's filter and selection choices across the
 chart-by-chart navigation within a theme.
 
-\subsection{Coordination Model}
+\subsection{Coordination}
 \label{sec:solution:interaction:mcv}
 
 The Multiple Coordinated Views (MCV) pattern surveyed in
@@ -97,11 +97,11 @@ intermediate empty state.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.92\linewidth]{images/diagrams/interaction_sequence.png}
-\caption{Sequence of the three interaction patterns: click-to-panel as the primary Connect realisation, theme-scoped state persistence across chart navigation, and explicit cross-theme drill-down via the panel deep-link.}
+\caption{The three interaction patterns in sequence: click-to-panel coordination, theme-scoped state persistence, and cross-theme drill-down.}
 \label{fig:interaction:mcv}
 \end{figure}
 
-\subsection{Visual storytelling principles}
+\subsection{Invariants}
 \label{sec:solution:interaction:storytelling}
 
 Visual storytelling is the second composed pattern. The proposed
@@ -131,7 +131,7 @@ enforces the title-and-subtitle hierarchy, and enforces the zero
 baseline on bar-encoded charts at chart-construction time rather than
 at rendering time.
 
-\subsubsection*{Invariant A6: One Primitive per Theme}
+\subsubsection*{One Primitive per Theme}
 
 A sixth invariant constrains the catalogue at the theme level rather
 than at the per-chart level: within any single analytical theme, no two
@@ -142,7 +142,7 @@ becomes a \emph{filter} on the first canvas (or a \emph{mode toggle},
 or a \emph{paired-comparison overlay}), rather than a separate canvas
 slot. The word \textit{invariant} is used here in the engineering
 sense of a property the design will not violate, not in the sense of a
-perceptual law; A6 is a \textit{design constraint} we adopt for the
+perceptual law; The constraint is a \textit{design choice} adopted for the
 present project on the rationale that follows, and it is not implied
 that an empirical study has shown one-primitive-per-theme to be
 intrinsically more readable than its alternatives. The rationale is
@@ -179,7 +179,7 @@ title. A short text annotation arrow points from the title to the
 orange block. The reader sees both the finding and its location in the
 chart simultaneously, without having to scan the matrix unaided.
 
-\subsection{Entity-Detail Panel}
+\subsection{Detail Panel}
 \label{sec:solution:interaction:detail}
 
 The entity-detail panel is the load-bearing object of the coordination
@@ -245,7 +245,7 @@ shareable-link affordances. The user has obtained a complete entity
 profile in a single click and can close the panel to return to the
 map without losing the rest of the theme state.
 
-\subsection{Composition}
+\subsection{Interaction Layers}
 \label{sec:solution:interaction:composition}
 
 The three patterns compose into a single interaction layer with a
@@ -280,56 +280,15 @@ interaction layer is what makes the catalogue of
 Section~\ref{sec:solution:viz} an analytical platform rather than a
 collection of independent charts.
 
-\subsection{Rejected Interaction Patterns}
-\label{sec:solution:interaction:rejected}
+Four interaction patterns were considered and rejected in favour of the composition above; the cases are catalogued in Appendix~E, Section~E.2.
 
-Four interaction patterns were considered and rejected in favour of
-the composition above.
-
-A \emph{Multiple Coordinated Views (MCV) with simultaneous cross-chart
-brushing} model, in which a selection in one chart re-renders every
-other chart of the same theme on the same screen simultaneously, was
-the original direction inherited from the literature
-survey~\cite{liu2022,heer2012interactive} and was rejected after the
-user interface shell was finalised. The shell renders one chart per
-canvas at any time (Section~\ref{sec:solution:overview}), so the
-simultaneous re-render that MCV's analytical leverage relies on would
-be invisible to the reader. Implementing simultaneous propagation
-against an invisible state would expend implementation complexity with
-no perceptible analytical gain. The proposed click-to-entity-detail
-panel realises the same Yi (2007) Connect category that MCV
-realises~\cite{yi2007interaction}, but in a form the
-one-chart-per-canvas shell can surface.
-
-A \emph{full-page navigation} model, in which each chart occupies its
-own URL and the browser back-button is the primary navigation surface,
-was rejected because cross-chart coordination cannot be expressed
-through page transitions; the reader would lose the theme-scoped
-selection on every navigation, and the entity-detail panel would have
-no consistent rendering target.
-
-A \emph{modal-dialog entity-detail} model, in which clicking an entity
-opens a modal overlay rather than a side panel, was rejected because
-the modal blocks the analytical surface beneath it and forces the
-reader to dismiss the modal before consulting any other chart; the
-side panel preserves both surfaces simultaneously (the chart canvas
-remains visible behind the panel at reduced opacity), which keeps the
-reader's spatial context intact.
-
-A \emph{whole-application linked-brushing} model, in which a selection
-in any chart propagates to every chart in every theme, was rejected
-for the same reason MCV-simultaneous was rejected (no visible target
-charts) and additionally because it forces the reader to track changes
-on charts they are not currently viewing and grows the implementation
-surface superlinearly in the catalogue size.
-
-\subsection{Solution Justification Summary}
+\subsection{Rationale}
 \label{sec:solution:summary}
 
 The proposed system responds to the requirements of Section~\ref{sec:solution:problem} through the following composition of decisions.
 
 \begin{enumerate}
-\item The four-layer warehouse architecture (Section~\ref{sec:solution:architecture}) keeps the analytical query path within the latency budget (N1) and ensures consistent identifier reconciliation across all themes (N3, N4).
+\item The Medallion warehouse architecture (Section~\ref{sec:solution:architecture}) keeps the analytical query path within the latency budget (N1) and ensures consistent identifier reconciliation across all themes (N3, N4).
 \item The six analytical themes (Section~\ref{sec:solution:themes}) cover the functional capabilities R1 through R10 by partitioning the analytical surface along user-question boundaries rather than user-role boundaries.
 \item The visualisation catalogue (Section~\ref{sec:solution:viz}) selects established primitives whose suitability is grounded in the literature surveyed in Chapter~\ref{chapter:foundations}.
 \item The interaction model (click-to-entity-detail panel as the Yi (2007) Connect realisation, visual storytelling as per-chart invariants, theme-scoped state for navigation continuity) bounds the user's cognitive load by routing every entity click to a single panel and reserving cross-theme navigation for the panel's explicit deep-link footer.

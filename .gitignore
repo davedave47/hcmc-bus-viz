@@ -1,0 +1,15 @@
+# Large data + warehouse (never tracked)
+data/*
+db/*
+
+# Environments / tooling
+.venv/*
+.aider*
+
+# Python caches
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# OS cruft
+.DS_Store

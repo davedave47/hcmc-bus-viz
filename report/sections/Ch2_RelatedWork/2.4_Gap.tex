@@ -1,15 +1,42 @@
-\section{Research Gap}
+\section{Gap}
 \label{sec:related:gap}
 
 The preceding three sections taken together set out the analytical landscape that the
 present project enters. The existing tools surveyed in Section
-\ref{sec:related:tools} serve passenger routing; the existing research surveyed in
-Sections \ref{sec:related:ops} and \ref{sec:related:viz} provides methods for parts of
-the analytical problem: quality-of-service indicators from telemetry, traffic sensing
-from bus GPS, short-horizon arrival prediction, visualisation primitives for
-spatial-temporal data, the Multiple Coordinated Views interaction model, and the design
-principles of analytical charts. No integrated analytical platform that combines all of
-these methods into a single tool for the Ho Chi Minh City bus network has been published.
+\ref{sec:related:tools} serve passenger navigation and ticketing rather than analytical
+inspection; the existing research surveyed in Sections \ref{sec:related:ops} and
+\ref{sec:related:viz} provides methods for parts of the analytical problem:
+quality-of-service indicators from telemetry, traffic sensing from bus GPS, short-horizon
+arrival prediction, visualisation primitives for spatial-temporal data, the Multiple
+Coordinated Views interaction model, and the design principles of analytical charts.
+\textit{No publicly accessible, integrated analytical platform that combines these
+methods into a single tool for the Ho Chi Minh City bus network has been published.}
+Internal operational dashboards may exist inside the operating authority, but they are
+not exposed to operators, passengers, or independent researchers; the gap framed here is
+therefore about the absence of an \emph{externally accessible, multi-stakeholder}
+analytical surface, not a claim that the authority has no internal tooling.
+
+Table~\ref{tab:related:gap} compares the three contributing bodies of work
+along the three gap dimensions identified above and records the position
+of the proposed system on each.
+
+\begin{table}[!htbp]
+\centering
+\caption{Coverage of the three gap dimensions across the contributing bodies of work and the proposed system.}
+\label{tab:related:gap}
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{p{4.6cm} X X X}
+\hline
+\textbf{Body of work} & \textbf{Cross-source integration (GPS + AFC)} & \textbf{Multi-stakeholder access} & \textbf{HCMC-specific deployment} \\
+\hline
+Existing public-facing tools (BusMap, MultiGo, Go!Bus)                & --- (passenger routing only)        & passenger only                                  & yes  \\
+Bus operational analytics research \cite{srisakaokul2023,derevitskiy2016,linzeng2014} & GPS-only                            & transport-research analyst only                 & Bangkok, European cities  \\
+Visual analytics research \cite{liu2022,knaflic2015,segelheer2010}    & n/a (generic methods)               & generic (single perspective per study)          & generic  \\
+\textbf{Proposed system \textit{(this report)}}                       & \textbf{joined at route $\times$ hour $\times$ day-type} & \textbf{passenger, operating company, public-transport authority} & \textbf{yes}  \\
+\hline
+\end{tabularx}
+\end{table}
 
 The gap can be decomposed into three specific open problems that the proposed system
 addresses.
@@ -23,14 +50,16 @@ addresses.
         ridership has been studied largely outside the operational-analytics literature.
         No published method integrates the two feeds at a granularity that supports both
         reliability questions and demand questions on the same analytical surface.
-  \item \noindent\textbf{Stakeholder-aware analytical access.} The four user roles named
-        in Chapter \ref{chapter:solution} (passenger, driver, operating company, and
+  \item \noindent\textbf{Stakeholder-aware analytical access.} The three user roles named
+        in Chapter \ref{chapter:solution} (passenger, operating company, and
         public-transport authority) have different analytical questions. The existing
         tools serve only the passenger role; the existing research presents results from
         a single perspective per study, typically that of a transport-research analyst.
-        An analytical platform that addresses all four roles within a single
+        An analytical platform that addresses all three roles within a single
         coordinated interface has not been demonstrated for any city, let alone for
-        Ho Chi Minh City.
+        Ho Chi Minh City. Driver-level records flow into the warehouse as a data
+        source but no driver-facing screen is produced, since drivers receive route
+        assignments through dispatch channels rather than through analytical dashboards.
   \item \noindent\textbf{City-specific deployment.} Most of the academic methods cited
         in the preceding sections were demonstrated on data from cities other than
         Ho Chi Minh City. The Quality of Service framework was demonstrated on Bangkok
@@ -50,7 +79,7 @@ the GPS and AFC identifier spaces and joins them at an aggregate granularity tha
 preserves the analytical questions of interest. Stakeholder-aware analytical access is
 achieved through the analytical themes of Section \ref{sec:solution:themes} and the
 interaction model of Section \ref{sec:solution:interaction}, which together cover the
-analytical questions of all four user roles within a single coordinated interface.
+analytical questions of all three user roles within a single coordinated interface.
 City-specific deployment is achieved through the preprocessing pipeline of Section
 \ref{sec:solution:preprocessing}, which performs the identifier reconciliation,
 geocoding, and parameter tuning required by the Ho Chi Minh City dataset. The chapter

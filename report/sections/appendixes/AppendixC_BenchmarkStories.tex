@@ -1,0 +1,87 @@
+\chapter*{Appendix C: Architecture Benchmark Data}
+\label{appendix:supplementary}
+\addcontentsline{toc}{chapter}{Appendix C: Architecture Benchmark Data}
+
+\section*{C.1 Architecture Benchmark Detail}
+\label{appendix:benchmark}
+
+\subsection*{C.1.1 In-process LRU cache counterfactual}
+\label{sec:solution:architecture:lru}
+
+A natural objection to materialising a Gold tier is that the same
+latency could be achieved by an in-process least-recently-used (LRU)
+cache wrapped around the Silver-only query. The counterfactual is
+worth measuring rather than dismissing on principle: a process-local
+LRU is simpler than a persistent Gold table and incurs no warehouse
+build step. Table~\ref{tab:arch:lru} measures it against the same six
+aggregates of Table~\ref{tab:arch:quantitative}, with cold and warm
+runs separated.
+
+\begin{table}[!htbp]
+\centering
+\caption{LRU result cache versus persistent Gold tables, cold and warm runs.}
+\label{tab:arch:lru}
+\footnotesize
+\renewcommand{\arraystretch}{1.20}
+\begin{tabularx}{\linewidth}{p{4.8cm} r r r X}
+\hline
+\textbf{Aggregate} & \textbf{LRU cold} & \textbf{LRU warm} & \textbf{Gold} & \textbf{Outcome} \\
+\hline
+\texttt{agg\_network\_day}     &   893.7 ms &  $<$ 0.1 ms &    0.4 ms & Gold $\ll$ LRU cold \\
+\texttt{agg\_route\_hour}      & 1{,}324.7 ms &  $<$ 0.1 ms &   35.0 ms & Gold $\ll$ LRU cold \\
+\texttt{agg\_stop\_hour}       & 2{,}453.7 ms &  $<$ 0.1 ms &  852.7 ms & Gold $\ll$ LRU cold \\
+\texttt{agg\_school\_route}    &   319.3 ms &  $<$ 0.1 ms &   30.3 ms & Gold $\ll$ LRU cold \\
+\texttt{agg\_stop\_total}      &   477.2 ms &  $<$ 0.1 ms &    4.7 ms & Gold $\ll$ LRU cold \\
+\texttt{agg\_hub\_kpis}        &   272.1 ms &  $<$ 0.1 ms &    0.3 ms & Gold $\ll$ LRU cold \\
+\hline
+\end{tabularx}
+\end{table}
+
+The cache-warm path is sub-millisecond and beats the Gold read on
+every aggregate, which would be a point in favour of the cache if
+warmth were free. The cache-cold path costs exactly what the
+Silver-only mode of Table~\ref{tab:arch:quantitative} costs: the
+first call against an empty cache executes the full Silver-only
+query, and a process restart resets every entry. The cache also has
+two further weaknesses that a Gold table does not: a per-process
+memory ceiling that grows with cache entries times result-set size,
+and no cross-process sharing (a multi-user deployment with $k$
+worker processes pays the cold cost $k$ times). The Gold tier is
+persistent on disk, shared across every worker process, and reload
+on server start is bounded at the size of the materialised table
+($\sim$30~MB for the seven Gold aggregates combined).
+
+\subsection*{C.1.2 Build-time scaling validation}
+\label{sec:solution:architecture:scaling}
+
+The build-time penalty of materialising the Gold tier is paid offline
+at data-refresh boundaries, but the penalty must scale predictably
+against the underlying input volume for the architecture to remain
+defensible as the data grows. Table~\ref{tab:arch:scaling} validates
+the scaling empirically by running the heaviest single Gold build
+(\texttt{agg\_route\_hour}) at one and two times the baseline input
+size and measuring the build-time ratio.
+
+\begin{table}[!htbp]
+\centering
+\caption{Build-time scaling for \texttt{agg\_route\_hour}, median of three runs.}
+\label{tab:arch:scaling}
+\footnotesize
+\renewcommand{\arraystretch}{1.20}
+\begin{tabularx}{\linewidth}{p{5.8cm} r X}
+\hline
+\textbf{Input size} & \textbf{Build time} & \textbf{Notes} \\
+\hline
+1$\times$ input ($17{,}883{,}623$ rows) & 1{,}361.8 ms & Measured. \\
+2$\times$ input ($35{,}767{,}246$ rows) & 2{,}650.2 ms & Measured. \\
+Empirical scaling ratio                 & \textbf{1.95$\times$} & Ideal O($N$) = 2.00$\times$; 2.5\% deviation is fixed-overhead outside the row scan. \\
+5$\times$ input ($\approx$89.4~M rows)  & $\approx$6{,}809 ms & Linear projection. \\
+10$\times$ input ($\approx$178.8~M rows) & $\approx$13{,}618 ms & Linear projection. \\
+\hline
+\end{tabularx}
+\end{table}
+
+The empirical scaling ratio of 1.95$\times$ for a 2$\times$ input
+confirms that the Gold build-time cost is linear in input volume,
+with a small constant overhead that becomes proportionally smaller
+at larger scales.

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Nine days without a network · HCMC Bus Analytics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;500;600;700;800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', path='css/tokens.css') }}?v={{ range(1, 99999) | random }}">
+<link rel="stylesheet" href="{{ url_for('static', path='css/story.css') }}?v={{ range(1, 99999) | random }}">
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+<div class="story-topbar">
+  <a href="/" class="brand">B&nbsp; HCMC Bus Analytics</a>
+  <span style="color:#3A4256">·</span>
+  <a href="/cards/health">← Network Health</a>
+</div>
+
+{# ── the pinned stage (never scrolls away) ── #}
+<div class="story-stage solo" id="stage">
+
+  {# narration zone: all scenes stacked, JS toggles .active / .past #}
+  <div class="stage-narr-zone">
+    {% for s in scenes %}
+    <div class="stage-narr {% if loop.first %}active{% endif %}" data-narr="{{ loop.index0 }}" data-kind="{{ s.kind }}">
+      <div class="sf-eyebrow"><span class="sf-eyebrow-line"></span>{{ s.act }}{% if s.act_meta %}<span class="sf-eyebrow-meta">{{ s.act_meta }}</span>{% endif %}</div>
+      {% if s.kind == 'bang' %}
+        <div class="sf-h2">{{ s.h2 | safe }}</div>
+      {% else %}
+        <div class="sf-h1">{{ s.h1 | safe }}</div>
+      {% endif %}
+      <div class="sf-lede">{{ s.lede | safe }}</div>
+      {% if s.kind == 'bing' %}
+        <div class="sf-kpi">
+          <div class="sf-kpi-v">{{ s.kpi }}</div>
+          <div class="sf-kpi-meta"><div class="sf-kpi-l">{{ s.kpi_l }}</div><div class="sf-kpi-d">{{ s.kpi_d }}</div></div>
+        </div>
+      {% endif %}
+      {% if s.kind == 'bongo' %}
+        <div class="sf-cta-row">
+          <a href="/cards/health" class="sf-cta">Open the Network Health card <span class="sf-cta-arr">→</span></a>
+          <a href="/" class="sf-cta-2">Back to the hub</a>
+        </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  {# chart zone: single pinned chart, swapped per step #}
+  <div class="stage-chart-zone">
+    <div class="stage-chart-card">
+      <div class="stage-chart-hdr">
+        <div class="stage-chart-title" id="stage-chart-title"></div>
+        <div class="stage-chart-meta" id="stage-chart-meta"></div>
+      </div>
+      <div class="stage-chart-sub" id="stage-chart-sub"></div>
+      <div class="stage-plot-wrap"><div id="stage-plot"></div></div>
+    </div>
+  </div>
+</div>
+
+{# progress dots + scroll cue (fixed) #}
+<div class="sf-progress">
+  {% for s in scenes %}<span class="sf-progress-dot {% if loop.first %}on{% endif %}" data-dot="{{ loop.index0 }}"></span>{% endfor %}
+  <div class="sf-progress-label">1 / {{ n_scenes }}</div>
+</div>
+<div class="sf-scroll-cue" id="scroll-cue">scroll
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12l7 7 7-7"/></svg>
+</div>
+
+{# invisible scroll track that drives the step machine #}
+<div class="story-track">
+  {% for s in scenes %}<div class="track-step" data-step="{{ loop.index0 }}"></div>{% endfor %}
+</div>
+
+<script id="story-scenes" type="application/json">{{ scenes_json | safe }}</script>
+<script id="story-chart-bundle" type="application/json">{{ chart_bundle_json | safe }}</script>
+<script src="https://unpkg.com/scrollama@3.2.0/build/scrollama.min.js"></script>
+<script>
+(function(){
+  const scenes = JSON.parse(document.getElementById('story-scenes').textContent);
+  const bundle = JSON.parse(document.getElementById('story-chart-bundle').textContent);
+  const stage  = document.getElementById('stage');
+  const narrs  = [...document.querySelectorAll('.stage-narr')];
+  const dots   = [...document.querySelectorAll('.sf-progress-dot')];
+  const label  = document.querySelector('.sf-progress-label');
+  const cue    = document.getElementById('scroll-cue');
+  const plot   = document.getElementById('stage-plot');
+  const cTitle = document.getElementById('stage-chart-title');
+  const cMeta  = document.getElementById('stage-chart-meta');
+  const cSub   = document.getElementById('stage-chart-sub');
+  let current = -1, currentChartSpec = null;
+
+  function setChartText(s){
+    // fade the header text, swap, fade in
+    cTitle.classList.remove('show'); cSub.classList.remove('show');
+    setTimeout(() => {
+      cTitle.textContent = s.chart_title || '';
+      cMeta.textContent  = s.chart_meta || '';
+      cSub.textContent   = s.chart_sub || '';
+      cTitle.classList.add('show'); cSub.classList.add('show');
+    }, 180);
+  }
+
+  function morphChart(spec){
+    if (!spec){ return; }                       // bing/bongo: leave last chart
+    if (spec === currentChartSpec) return;       // same chart, skip
+    const fig = JSON.parse(bundle[spec] || '{}');
+    if (!fig.data) return;
+    const prevSpec = currentChartSpec;
+    currentChartSpec = spec;
+    function render(){
+      if (!window.Plotly) return setTimeout(render, 40);
+      // same chart family (pulse:*) → animate morph; else crossfade
+      const sameFamily = prevSpec && prevSpec.split(':')[0] === spec.split(':')[0]
+                         && prevSpec.startsWith('pulse');
+      if (sameFamily && plot.data){
+        Plotly.animate(plot, {data: fig.data, layout: fig.layout},
+          {transition:{duration:600, easing:'cubic-in-out'}, frame:{duration:600}});
+      } else {
+        plot.style.opacity = 0;
+        setTimeout(() => {
+          Plotly.react(plot, fig.data, fig.layout, {displayModeBar:false, responsive:true});
+          plot.style.opacity = 1;
+        }, 280);
+      }
+    }
+    render();
+  }
+
+  function activate(i){
+    if (i === current) return;
+    current = i;
+    const s = scenes[i];
+    narrs.forEach((n, k) => {
+      n.classList.toggle('active', k === i);
+      n.classList.toggle('past', k < i);
+    });
+    dots.forEach((d, k) => d.classList.toggle('on', k === i));
+    if (label) label.textContent = (i + 1) + ' / ' + scenes.length;
+    cue.classList.toggle('hide', i === scenes.length - 1);
+    // solo (no chart) for bing/bongo
+    stage.classList.toggle('solo', s.kind !== 'bang');
+    if (s.kind === 'bang'){ setChartText(s); morphChart(s.chart); }
+  }
+
+  function init(){
+    if (!window.scrollama) return setTimeout(init, 60);
+    activate(0);
+    const scroller = scrollama();
+    scroller.setup({ step: '.track-step', offset: 0.6 })
+      .onStepEnter(resp => activate(+resp.element.dataset.step));
+  }
+  init();
+  window._storyActivate = activate;
+})();
+</script>
+</body>
+</html>

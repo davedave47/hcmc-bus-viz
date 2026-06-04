@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>HCMC Bus Analytics · v8</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Funnel+Display:wght@400;500;600;700;800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#F2F4F1; --surface:#FFFFFF; --surface-2:#FAFBF9; --surface-3:#F4F6F2;
+  --ink:#1B2333; --ink-2:#3A4256; --ink-3:#6E7689; --ink-4:#A8B0C0;
+  --line:#E5E8EA; --line-md:#CCD2D6;
+  --o:#E45A2E; --o-50:#FFF1EB; --o-100:#FFE0D2; --o-line:#FBC9B3; --o-deep:#A93D1B;
+  --b:#2E5DBA; --b-50:#EBF1FA; --b-line:#B8CCEB;
+  --g:#2F8A4F; --g-50:#EBF6EE; --g-line:#B3D9BD;
+  --r:#C03A3A; --y:#D9A12C; --p:#6A4DB0;
+  --f-d:'Funnel Display',system-ui,sans-serif;
+  --f-s:'Geist',system-ui,sans-serif;
+  --f-m:'Geist Mono',ui-monospace,monospace;
+  --rad:6px;--rad-md:10px;--rad-lg:16px;--rad-full:999px;
+  --sh-sm:0 1px 2px rgba(27,35,51,.05),0 0 0 1px rgba(27,35,51,.06);
+  --sh-md:0 6px 24px rgba(27,35,51,.08),0 0 0 1px rgba(27,35,51,.06);
+  --sh-lg:0 24px 60px rgba(27,35,51,.16),0 0 0 1px rgba(27,35,51,.08);
+}
+body{font-family:var(--f-s);background:var(--bg);color:var(--ink);padding:36px 24px 96px;min-height:100vh;-webkit-font-smoothing:antialiased}
+
+/* ── showcase chrome ── */
+.sc-label{font-family:var(--f-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:60px 0 14px;display:flex;align-items:center;gap:10px}
+.sc-label::before{content:'';width:20px;height:1px;background:var(--ink-4)}
+.sc-label:first-child{margin-top:0}
+.frame{background:var(--surface);border-radius:var(--rad-lg);box-shadow:var(--sh-lg);overflow:hidden;max-width:1180px}
+
+/* ── topbar ── */
+.tb{height:54px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 22px;gap:12px;flex-shrink:0}
+.tb-brand{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+.tb-mark{width:24px;height:24px;background:var(--ink);border-radius:5px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--f-d);font-weight:800;font-size:14px;letter-spacing:-.04em}
+.tb-name{font-family:var(--f-d);font-weight:600;font-size:14.5px;color:var(--ink);letter-spacing:-.02em}
+.tb-div{width:1px;height:18px;background:var(--line-md);flex-shrink:0}
+.tb-crumb{font-size:12.5px;color:var(--ink-3);display:flex;align-items:center;gap:6px;min-width:0}
+.tb-sep{color:var(--ink-4)}
+.tb-cur{color:var(--ink);font-weight:500;white-space:nowrap}
+.tb-space{flex:1}
+.tb-date{display:flex;align-items:center;gap:6px;font-family:var(--f-m);font-size:11px;color:var(--ink-2);background:var(--surface-2);border:1px solid var(--line);padding:6px 12px;border-radius:var(--rad-full);white-space:nowrap;cursor:pointer}
+.tb-search{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--line);padding:6px 12px;border-radius:var(--rad);font-size:12px;color:var(--ink-4);width:230px;cursor:text}
+.tb-kbd{margin-left:auto;font-family:var(--f-m);font-size:9.5px;background:var(--line);color:var(--ink-3);padding:1px 5px;border-radius:3px}
+.tb-ico{width:32px;height:32px;border-radius:var(--rad);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--ink-2);cursor:pointer;background:var(--surface-2);flex-shrink:0}
+
+/* ════════ HUB (vertical editorial, NO rail) ════════ */
+.hub-hero{background:var(--surface);padding:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;align-items:stretch;min-height:340px;position:relative;overflow:hidden}
+.hh-left{padding:56px 48px 52px;display:flex;flex-direction:column;justify-content:center;border-right:1px solid var(--line);position:relative}
+.hh-corner-mark{position:absolute;top:18px;left:48px;font-family:var(--f-m);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4);display:flex;gap:14px}
+.hh-corner-mark span:not(:first-child)::before{content:'·';margin-right:14px;color:var(--line-md)}
+.hh-eyebrow{font-family:var(--f-m);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--o);margin-bottom:22px;display:flex;align-items:center;gap:10px;font-weight:600}
+.hh-eyebrow::before{content:'';width:22px;height:1.5px;background:var(--o)}
+.hh-h1{font-family:var(--f-d);font-size:56px;font-weight:700;color:var(--ink);letter-spacing:-.05em;line-height:.96;margin-bottom:22px}
+.hh-h1 em{font-style:normal;color:var(--o)}
+.hh-h1 .underline{position:relative;display:inline-block}
+.hh-h1 .underline::after{content:'';position:absolute;left:0;right:0;bottom:.04em;height:.10em;background:var(--y);opacity:.7;z-index:-1}
+.hh-desc{font-size:14.5px;color:var(--ink-2);line-height:1.62;margin-bottom:30px;max-width:400px}
+.hh-actions{display:flex;gap:10px;align-items:center}
+.btn-primary{display:inline-flex;align-items:center;gap:8px;background:var(--o);color:#fff;font-weight:600;font-size:13px;padding:12px 22px;border-radius:var(--rad);border:none;cursor:pointer;font-family:var(--f-s);letter-spacing:-.01em}
+.btn-primary:hover{background:var(--o-deep)}
+.btn-secondary{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1.5px solid var(--ink);color:var(--ink);font-weight:600;font-size:13px;padding:10.5px 20px;border-radius:var(--rad);cursor:pointer;font-family:var(--f-s)}
+.btn-secondary:hover{background:var(--ink);color:#fff}
+.hh-right{position:relative;background:var(--surface-3);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hh-right::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(27,35,51,.06) 1px,transparent 1px);background-size:14px 14px;pointer-events:none}
+.hh-corner-meta{position:absolute;top:18px;right:18px;font-family:var(--f-m);font-size:9.5px;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase;text-align:right;line-height:1.7;z-index:2}
+.hh-corner-meta strong{color:var(--ink);font-weight:600}
+.hh-map-corner{position:absolute;bottom:18px;left:18px;display:flex;flex-direction:column;gap:5px;font-family:var(--f-m);font-size:9.5px;color:var(--ink-3);z-index:2}
+.hh-mc-row{display:flex;align-items:center;gap:6px}
+.hh-mc-sw{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.stats{background:var(--surface);border-bottom:1px solid var(--line);display:grid;grid-template-columns:repeat(6,1fr);padding:0}
+.stat{padding:20px 22px;border-right:1px solid var(--line)}
+.stat:last-child{border-right:none}
+.stat-v{font-family:var(--f-d);font-size:26px;font-weight:600;color:var(--ink);letter-spacing:-.025em;line-height:1;display:flex;align-items:baseline;gap:5px}
+.stat-v small{font-family:var(--f-m);font-size:10px;color:var(--g);font-weight:500;letter-spacing:0}
+.stat-l{font-family:var(--f-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:7px}
+.hub-intro{background:var(--surface);padding:42px 56px 36px;display:grid;grid-template-columns:140px 1fr;gap:34px;border-bottom:1px dashed var(--line-md)}
+.intro-marker{padding-top:6px}
+.intro-marker-num{font-family:var(--f-d);font-size:40px;font-weight:600;color:var(--ink-4);letter-spacing:-.03em;line-height:1}
+.intro-marker-lbl{font-family:var(--f-m);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-top:8px;font-weight:500}
+.intro-essay{font-family:var(--f-d);font-size:20px;color:var(--ink);line-height:1.55;font-weight:400;letter-spacing:-.012em;max-width:680px}
+.intro-essay em{font-style:italic;color:var(--o)}
+.intro-essay .pull{color:var(--o);font-weight:600;font-style:normal}
+.divider{padding:36px 48px 32px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;background:var(--bg)}
+.div-num{font-family:var(--f-d);font-size:14px;font-weight:600;color:var(--ink-3);letter-spacing:.04em}
+.div-line{height:1px;background:var(--line-md);position:relative}
+.div-line::before,.div-line::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:5px;height:5px;border-radius:50%;background:var(--line-md)}
+.div-line::before{left:0}.div-line::after{right:0}
+.div-tag{font-family:var(--f-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.feat{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line);display:grid;min-height:380px}
+.feat.layout-img-l{grid-template-columns:1.05fr 1fr}
+.feat.layout-img-r{grid-template-columns:1fr 1.05fr}
+.feat-text{padding:44px 48px;display:flex;flex-direction:column;justify-content:center;position:relative}
+.feat-text.right{order:2}
+.feat-tag-row{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.feat-tag{font-family:var(--f-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
+.feat-tag.with-dot{display:flex;align-items:center;gap:6px}
+.feat-tag .td{width:7px;height:7px;border-radius:50%;background:var(--o)}
+.feat-h{font-family:var(--f-d);font-size:38px;font-weight:600;color:var(--ink);letter-spacing:-.035em;line-height:1.04;margin-bottom:14px;max-width:440px}
+.feat-h em{font-style:italic;color:var(--o);font-weight:500}
+.feat-lede{font-size:14.5px;color:var(--ink-2);line-height:1.65;margin-bottom:18px;max-width:460px}
+.feat-quote{font-family:var(--f-d);font-style:italic;font-size:15.5px;color:var(--ink-2);line-height:1.5;border-left:3px solid var(--o);padding:6px 0 6px 18px;margin-bottom:22px;max-width:440px;font-weight:500}
+.feat-quote strong{color:var(--ink);font-style:normal;font-weight:700}
+.feat-meta{display:flex;gap:32px;margin-bottom:26px}
+.fm-v{font-family:var(--f-d);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.022em;line-height:1;display:block}
+.fm-v.o{color:var(--o)}
+.fm-l{font-family:var(--f-m);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:5px;display:block;font-weight:500}
+.feat-cta{display:inline-flex;align-items:center;gap:9px;color:var(--o);font-family:var(--f-s);font-weight:600;font-size:13.5px;cursor:pointer;letter-spacing:-.01em;width:fit-content;padding:0;background:none;border:none}
+.feat-cta:hover .cta-arr{transform:translateX(4px)}
+.feat-cta .cta-arr{font-family:var(--f-m);transition:transform .18s;display:inline-block}
+.feat-cta::before{content:'';width:30px;height:1.5px;background:var(--o);display:inline-block}
+.feat-num-bg{position:absolute;font-family:var(--f-d);font-size:160px;font-weight:700;color:var(--ink);opacity:.025;letter-spacing:-.06em;line-height:1;pointer-events:none;top:30px;right:30px}
+.feat-img{background:var(--surface-3);position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:32px;border-left:1px solid var(--line)}
+.feat-img.left{order:1;border-left:none;border-right:1px solid var(--line)}
+.feat-img-tag{position:absolute;top:18px;left:18px;font-family:var(--f-m);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:500;background:var(--surface);border:1px solid var(--line);padding:4px 10px;border-radius:var(--rad-full);display:flex;align-items:center;gap:5px}
+.feat-img-tag .ftd{width:6px;height:6px;border-radius:50%;background:var(--o)}
+.feat-img-cap{position:absolute;bottom:18px;left:18px;right:18px;font-family:var(--f-m);font-size:9.5px;letter-spacing:.05em;color:var(--ink-3);line-height:1.5;text-align:center}
+.feat-img-cap em{font-style:italic;color:var(--ink-2)}
+.ornament{padding:48px 48px;background:var(--surface);text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;border-bottom:1px solid var(--line)}
+.orn-rule{display:flex;align-items:center;gap:18px;width:100%;max-width:560px}
+.orn-rule .line{flex:1;height:1px;background:var(--line-md)}
+.orn-rule .glyph{font-family:var(--f-d);font-size:18px;color:var(--ink-3);font-weight:600;letter-spacing:.1em}
+.orn-pull{font-family:var(--f-d);font-style:italic;font-size:24px;color:var(--ink);line-height:1.4;max-width:620px;font-weight:500;letter-spacing:-.018em}
+.orn-pull em{color:var(--o);font-style:normal;font-weight:600}
+.orn-attr{font-family:var(--f-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:500;margin-top:6px}
+.upcoming{background:var(--bg);padding:42px 56px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:center;border-top:1px solid var(--line)}
+.upc-eb{font-family:var(--f-m);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4);margin-bottom:10px;font-weight:500}
+.upc-h{font-family:var(--f-d);font-size:24px;font-weight:600;color:var(--ink-2);letter-spacing:-.025em;margin-bottom:6px}
+.upc-desc{font-size:12.5px;color:var(--ink-3);line-height:1.5;max-width:380px}
+.upc-r{display:flex;align-items:center;gap:10px}
+.upc-tag{font-family:var(--f-m);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);background:var(--surface);border:1px solid var(--line);padding:5px 11px;border-radius:var(--rad-full);font-weight:500}
+.hub-foot{padding:24px 48px;background:var(--ink);color:rgba(255,255,255,.7);display:flex;justify-content:space-between;align-items:center;font-family:var(--f-m);font-size:10.5px;letter-spacing:.06em}
+.hub-foot .l{display:flex;gap:18px}
+.hub-foot .l span:not(:first-child)::before{content:'·';margin-right:18px;color:rgba(255,255,255,.3)}
+
+/* ════════ TOPBAR NAV MENU ════════ */
+.tb-nav{display:flex;align-items:center;gap:2px;margin-left:4px}
+.tb-nav-btn{position:relative;display:flex;align-items:center;gap:5px;padding:6px 10px;font-size:12px;font-weight:600;color:var(--ink-2);border-radius:var(--rad);cursor:pointer;font-family:var(--f-s);border:1px solid transparent;transition:all .12s;user-select:none;white-space:nowrap}
+.tb-nav-btn:hover,.tb-nav-btn:focus-within{background:var(--surface-2);border-color:var(--line);color:var(--ink)}
+.tb-nav-drop{position:absolute;top:calc(100% + 8px);left:0;background:var(--surface);border:1px solid var(--line-md);border-radius:var(--rad-md);box-shadow:var(--sh-lg);min-width:272px;z-index:200;opacity:0;pointer-events:none;transform:translateY(-4px);transition:opacity .15s,transform .15s;overflow:hidden}
+.tb-nav-btn:hover .tb-nav-drop,.tb-nav-btn:focus-within .tb-nav-drop{opacity:1;pointer-events:auto;transform:translateY(0)}
+.tb-nav-sec{padding:8px 14px 4px;font-family:var(--f-m);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4);font-weight:600}
+.tb-nav-link{display:flex;align-items:center;gap:10px;padding:9px 14px;text-decoration:none;color:var(--ink-2);font-size:12px;font-weight:500;transition:background .12s;cursor:pointer}
+.tb-nav-link:hover{background:var(--surface-2);color:var(--ink)}
+.tb-nav-link .nno{font-family:var(--f-m);font-size:9px;color:var(--ink-4);width:26px;flex-shrink:0}
+.tb-nav-link .nac{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.tb-nav-link .ntip{margin-left:auto;font-family:var(--f-m);font-size:9px;color:var(--ink-4);letter-spacing:.04em}
+.tb-nav-link .ntag{font-family:var(--f-m);font-size:9px;letter-spacing:.08em;padding:2px 6px;border-radius:3px;font-weight:600;margin-left:6px}
+.tb-nav-div{height:1px;background:var(--line);margin:4px 0}
+
+/* ════════ PER-CARD ACCENT SYSTEM ════════ */
+.feat{--ac:var(--o);--ac-bg:var(--o-50);--ac-line:var(--o-line)}
+.feat.c2{--ac:#B8920A;--ac-bg:#FFFAEB;--ac-line:#E8CC80}
+.feat.c3{--ac:var(--g);--ac-bg:var(--g-50);--ac-line:var(--g-line)}
+.feat.c4{--ac:var(--r);--ac-bg:#FEF2F2;--ac-line:#FECACA}
+.feat.c5{--ac:var(--p);--ac-bg:#F3F0FA;--ac-line:#C4B5E8}
+.feat.c6{--ac:#334155;--ac-bg:var(--surface-3);--ac-line:var(--line-md)}
+.feat .feat-tag .td{background:var(--ac,var(--o))}
+.feat .feat-h em{color:var(--ac,var(--o))}
+.feat .feat-quote{border-left-color:var(--ac,var(--o))}
+.feat .feat-cta{color:var(--ac,var(--o))}
+.feat .feat-cta::before{background:var(--ac,var(--o))}
+.feat .fm-v.o{color:var(--ac,var(--o))}
+.feat .feat-img,.feat .feat-img.left{background:var(--ac-bg,var(--surface-3))}
+.feat.c2 .feat-img-tag .ftd,.feat.c2 .feat-tag .td{background:var(--ac)}
+.feat.c2 .feat-h::after{content:' ★';color:var(--ac);font-size:.68em;vertical-align:super}
+
+/* ════════ HOVER TOOLTIP (glossary) ════════ */
+.tip{border-bottom:1.5px dotted var(--b);color:inherit;cursor:help;position:relative;display:inline}
+.tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;font-size:11px;line-height:1.5;padding:8px 12px;border-radius:6px;white-space:normal;min-width:200px;max-width:300px;text-align:left;opacity:0;pointer-events:none;transition:opacity .15s;z-index:500;font-family:var(--f-s);font-weight:400;letter-spacing:0;box-shadow:0 8px 24px rgba(27,35,51,.3)}
+.tip::before{content:'';position:absolute;bottom:calc(100% + 2px);left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--ink);opacity:0;transition:opacity .15s;z-index:501;pointer-events:none}
+.tip:hover::after,.tip:hover::before{opacity:1}
+
+/* ════════ CARD SHELL · narrow rail (Atlas proportions, light theme) ════════ */
+.card-shell{display:grid;grid-template-columns:108px 1fr;min-height:640px}
+
+/* PER-CARD RAIL · light · icon-above-label · Atlas proportions */
+.crail{background:var(--surface-2);border-right:1px solid var(--line);display:flex;flex-direction:column}
+.crail-hdr{padding:14px 6px 12px;border-bottom:1px solid var(--line);text-align:center}
+.crail-num{font-family:var(--f-m);font-size:9px;letter-spacing:.14em;color:var(--o);font-weight:600;margin-bottom:4px}
+.crail-theme{font-family:var(--f-d);font-size:12.5px;font-weight:600;color:var(--ink);line-height:1.2;letter-spacing:-.01em}
+.crail-section{font-family:var(--f-m);font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-4);padding:10px 6px 4px;text-align:center;font-weight:500}
+.crail-nav{flex:1;display:flex;flex-direction:column;padding:2px 0}
+.crn{padding:11px 4px;display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer;color:var(--ink-2);text-decoration:none;border-left:2.5px solid transparent;transition:all .14s;text-align:center}
+.crn:hover{background:rgba(27,35,51,.04);color:var(--ink)}
+.crn.on{color:var(--o-deep);background:var(--o-50);border-left-color:var(--o)}
+.crn-ic{width:26px;height:26px;display:flex;align-items:center;justify-content:center;color:inherit}
+.crn-ic svg{width:100%;height:100%}
+.crn-lbl{font-family:var(--f-m);font-size:9px;letter-spacing:.05em;text-transform:uppercase;line-height:1.3;font-weight:600;color:inherit}
+.crail-foot{padding:10px 8px;border-top:1px solid var(--line)}
+.crail-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:5px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);padding:7px 4px;font-size:10px;font-weight:600;color:var(--ink-2);cursor:pointer;font-family:var(--f-s);letter-spacing:.02em}
+.crail-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* card main column */
+.card-main{display:flex;flex-direction:column;min-width:0;background:var(--surface)}
+
+/* ════════ VIEW CONTROLS · Atlas-style typed knobs ════════ */
+.vc{padding:13px 22px;background:var(--surface-2);border-bottom:1px solid var(--line);display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap;flex-shrink:0}
+.vc-grp{display:flex;flex-direction:column;gap:5px;min-width:0}
+.vc-grp-lbl{font-family:var(--f-m);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.vc-radio{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);overflow:hidden;height:30px}
+.vc-radio-btn{padding:0 11px;font-size:11.5px;color:var(--ink-2);cursor:pointer;font-family:var(--f-s);font-weight:500;border-right:1px solid var(--line);transition:all .12s;display:flex;align-items:center}
+.vc-radio-btn:last-child{border-right:none}
+.vc-radio-btn:hover{background:var(--surface-3)}
+.vc-radio-btn.on{background:var(--ink);color:#fff}
+.vc-combo{background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);padding:0 9px 0 11px;font-size:11.5px;color:var(--ink);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:600;min-width:130px;height:30px;transition:border-color .12s}
+.vc-combo:hover{border-color:var(--line-md)}
+.vc-combo .ch{margin-left:auto;color:var(--ink-3);font-family:var(--f-m);font-size:10px}
+.vc-sep{width:1px;height:30px;background:var(--line);align-self:flex-end}
+.vc-spacer{flex:1}
+.vc-settings{display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--line);font-family:var(--f-s);font-size:11.5px;color:var(--ink-2);cursor:pointer;font-weight:600;padding:0 11px;border-radius:var(--rad);height:30px}
+.vc-settings:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ════════ LEGEND ════════ */
+.legend{padding:9px 22px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap;flex-shrink:0}
+.lg-title{font-family:var(--f-m);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600;flex-shrink:0}
+.lg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink-2);font-weight:500;cursor:pointer;transition:opacity .12s}
+.lg-sw{width:11px;height:11px;border-radius:2.5px;flex-shrink:0}
+.lg-item .ct{font-family:var(--f-m);font-size:10px;color:var(--ink-3);font-weight:500;margin-left:1px}
+.lg-item:hover{color:var(--ink)}
+.lg-item.dim{opacity:.4}
+.lg-scale{display:inline-flex;align-items:center;gap:8px;margin-left:auto;padding-left:14px;border-left:1px solid var(--line)}
+.lg-scale-lbl{font-family:var(--f-m);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.lg-grad{width:84px;height:7px;border-radius:2px;background:linear-gradient(90deg,#FFF1EB 0%,#FBC9B3 30%,#F39A6F 60%,#E45A2E 100%)}
+
+/* ════════ CANVAS · treemap · popover ════════ */
+.canvas{flex:1;position:relative;overflow:hidden;background:var(--surface);min-height:380px}
+.tm{position:absolute;inset:0;display:grid;grid-template-columns:2fr 1.3fr 1fr;grid-template-rows:1fr 1fr;gap:5px;padding:18px}
+.tm-cell{border-radius:var(--rad);padding:18px;display:flex;flex-direction:column;justify-content:flex-end;cursor:pointer;transition:transform .15s,box-shadow .15s;overflow:hidden;position:relative;border:1px solid transparent;color:#fff}
+.tm-cell:hover{transform:scale(1.012);box-shadow:0 8px 24px rgba(27,35,51,.18)}
+.tm-cell.sel{box-shadow:0 0 0 3px var(--ink),0 10px 28px rgba(27,35,51,.2)}
+.tm-cell::before{content:attr(data-school);position:absolute;top:14px;left:16px;font-family:var(--f-m);font-size:9.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+.tm-route{font-family:var(--f-d);font-size:18px;font-weight:600;letter-spacing:-.02em;display:flex;align-items:baseline;gap:8px}
+.tm-count{font-family:var(--f-m);font-size:13.5px;opacity:.7;font-weight:500}
+.tm-sub{font-size:11.5px;margin-top:4px;opacity:.75}
+.tm-cell.span2{grid-row:span 2}
+
+.pop{position:absolute;right:24px;top:50%;transform:translateY(-50%);background:var(--surface);border:1px solid var(--line-md);border-radius:var(--rad-md);box-shadow:var(--sh-lg);min-width:268px;z-index:10;overflow:hidden;animation:popIn .2s cubic-bezier(.2,.8,.2,1)}
+@keyframes popIn{from{opacity:0;transform:translateY(-48%) scale(.95)}to{opacity:1;transform:translateY(-50%) scale(1)}}
+.pop-hdr{background:var(--surface-3);padding:14px 18px 12px;border-bottom:1px solid var(--line);position:relative}
+.pop-stripe{position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--o)}
+.pop-route-tag{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-m);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px;font-weight:500}
+.pop-route-tag .dot{width:7px;height:7px;border-radius:50%;background:var(--o)}
+.pop-name{font-family:var(--f-d);font-weight:700;font-size:21px;color:var(--ink);letter-spacing:-.03em;line-height:1.05;margin-bottom:2px}
+.pop-ctx{font-size:11px;color:var(--ink-3)}
+.pop-body{padding:14px 18px 12px}
+.pop-metrics{display:grid;grid-template-columns:1fr 1fr;gap:11px 16px;margin-bottom:13px}
+.pop-mv{font-family:var(--f-m);font-size:15.5px;font-weight:500;color:var(--ink);letter-spacing:-.02em;line-height:1}
+.pop-mv.orange{color:var(--o)}
+.pop-mv.green{color:var(--g)}
+.pop-ml{font-family:var(--f-m);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-top:4px;font-weight:500}
+.pop-spark-lbl{font-family:var(--f-m);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);margin-bottom:6px;font-weight:500;display:flex;justify-content:space-between}
+.pop-acts{border-top:1px solid var(--line);margin:0 -18px -12px;padding:8px 12px 12px;background:var(--surface-2)}
+.pop-act{display:flex;align-items:center;gap:9px;font-size:12px;color:var(--ink);cursor:pointer;font-weight:500;padding:7px 10px;border-radius:var(--rad)}
+.pop-act:hover{background:var(--surface)}
+.pop-act-ic{width:22px;height:22px;background:var(--surface);border:1px solid var(--line);border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:var(--ink-2)}
+.pop-act:hover .pop-act-ic{background:var(--ink);color:#fff;border-color:var(--ink)}
+.pop-act-arr{margin-left:auto;color:var(--ink-3);font-family:var(--f-m);font-size:12px}
+
+/* ════════ CAPTION BELOW CHART (small, secondary) ════════ */
+.chart-cap{padding:11px 22px 13px;border-top:1px solid var(--line);flex-shrink:0;background:var(--surface)}
+.cc-row{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.cc-num{font-family:var(--f-m);font-size:10px;color:var(--ink-3);letter-spacing:.06em;font-weight:500;flex-shrink:0}
+.cc-title{font-family:var(--f-d);font-size:14px;font-weight:600;color:var(--ink);letter-spacing:-.015em}
+.cc-meta{margin-left:auto;font-family:var(--f-m);font-size:9.5px;color:var(--ink-4);font-weight:500}
+.cc-sub{font-size:11px;color:var(--ink-3);line-height:1.45;margin-bottom:7px;max-width:760px}
+.cc-story{display:flex;align-items:flex-start;gap:8px;font-size:11px;color:var(--ink-2);line-height:1.45;padding-top:7px;border-top:1px dashed var(--o-line)}
+.cc-star{color:var(--o);font-size:10px;flex-shrink:0;margin-top:2px}
+.cc-story em{font-style:italic;font-family:var(--f-d);font-size:11.5px;font-weight:500}
+.cc-story strong{color:var(--o);font-style:normal;font-weight:600}
+
+/* status bar */
+.status{height:32px;background:var(--surface-3);border-top:1px solid var(--line);display:flex;align-items:center;padding:0 22px;gap:18px;flex-shrink:0}
+.st-i{font-family:var(--f-m);font-size:9.5px;color:var(--ink-3);display:flex;align-items:center;gap:6px;font-weight:500}
+.st-dot{width:6px;height:6px;border-radius:50%;background:var(--g);flex-shrink:0;box-shadow:0 0 0 3px rgba(47,138,79,.15)}
+
+/* ════════ MAP LAYOUT ════════ */
+.map-frame{display:grid;grid-template-columns:1fr 360px;flex:1;min-height:0}
+.map-canvas{position:relative;overflow:hidden;background:var(--surface-3);border-right:1px solid var(--line)}
+.map-canvas::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(27,35,51,.06) 1px,transparent 1px);background-size:18px 18px}
+.map-svg-wrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.map-svg-wrap svg{width:100%;height:100%}
+.map-ctrls{position:absolute;top:18px;right:18px;display:flex;flex-direction:column;gap:6px;z-index:5}
+.mc-btn{width:34px;height:34px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--ink-2);cursor:pointer;font-family:var(--f-m);font-weight:500;box-shadow:var(--sh-sm)}
+.mc-btn:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.mc-grp{background:var(--surface);border:1px solid var(--line);border-radius:var(--rad);display:flex;flex-direction:column;box-shadow:var(--sh-sm);overflow:hidden}
+.mc-grp .mc-btn{border:none;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none}
+.mc-grp .mc-btn:last-child{border-bottom:none}
+.map-layers{position:absolute;top:18px;left:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rad-md);box-shadow:var(--sh-sm);min-width:178px;overflow:hidden;z-index:5}
+.ml-hdr{padding:9px 12px;border-bottom:1px solid var(--line);background:var(--surface-2);font-family:var(--f-m);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.ml-row{padding:7px 12px;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:11.5px;color:var(--ink-2)}
+.ml-row:hover{background:var(--surface-2)}
+.ml-sw{width:18px;height:3px;border-radius:2px;flex-shrink:0}
+.ml-row.off{opacity:.45}
+.ml-row.off .ml-sw{background:var(--ink-4) !important}
+.ml-toggle{margin-left:auto;width:24px;height:14px;background:var(--line-md);border-radius:7px;position:relative;flex-shrink:0;transition:background .14s}
+.ml-row.on .ml-toggle{background:var(--g)}
+.ml-toggle::after{content:'';position:absolute;top:1.5px;left:1.5px;width:11px;height:11px;background:#fff;border-radius:50%;transition:left .14s}
+.ml-row.on .ml-toggle::after{left:11px}
+.map-hint{position:absolute;bottom:18px;left:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--rad-full);padding:7px 14px;display:flex;align-items:center;gap:14px;box-shadow:var(--sh-sm);z-index:5}
+.mh-i{display:flex;align-items:center;gap:6px;font-family:var(--f-m);font-size:10px;color:var(--ink-3);font-weight:500}
+.mh-i .kbd{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:16px;padding:0 4px;background:var(--surface-2);border:1px solid var(--line);border-radius:3px;font-family:var(--f-m);font-size:9px;color:var(--ink-2);font-weight:500}
+.map-scale{position:absolute;bottom:18px;right:18px;font-family:var(--f-m);font-size:9.5px;color:var(--ink-3);background:var(--surface);border:1px solid var(--line);padding:5px 10px;border-radius:var(--rad);display:flex;flex-direction:column;gap:2px;font-weight:500;line-height:1.5;box-shadow:var(--sh-sm);text-align:right;z-index:5}
+
+/* ════════ ENTITY PANEL ════════ */
+.ep{background:var(--surface);border-left:1px solid var(--line);display:flex;flex-direction:column;overflow:hidden}
+.ep-hdr{position:relative;flex-shrink:0;background:var(--surface);border-bottom:1px solid var(--line)}
+.ep-band{height:5px;background:linear-gradient(90deg,var(--o) 0%,var(--o) 35%,var(--y) 35%,var(--y) 50%,var(--b) 50%,var(--b) 80%,var(--g) 80%,var(--g) 100%)}
+.ep-hdr-body{padding:20px 22px 18px;position:relative;overflow:hidden}
+.ep-hdr-body::before{content:'1042';position:absolute;right:-12px;top:50%;transform:translateY(-50%);font-family:var(--f-d);font-size:140px;font-weight:800;color:var(--ink);opacity:.034;letter-spacing:-.08em;line-height:1;pointer-events:none;white-space:nowrap;user-select:none}
+.ep-type-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;position:relative;z-index:1}
+.ep-tags-l{display:flex;align-items:center;gap:8px}
+.ep-pill{background:var(--ink);color:#fff;padding:4px 11px;border-radius:var(--rad-full);font-family:var(--f-m);font-size:9.5px;letter-spacing:.08em;font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.ep-loc{font-family:var(--f-m);font-size:10.5px;color:var(--ink-3);letter-spacing:.04em}
+.ep-close-btn{width:28px;height:28px;border-radius:var(--rad);background:var(--surface-2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--ink-2);cursor:pointer;flex-shrink:0}
+.ep-name-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:8px;position:relative;z-index:1;gap:14px}
+.ep-name{font-family:var(--f-d);font-size:26px;font-weight:700;color:var(--ink);letter-spacing:-.04em;line-height:1.02}
+.ep-hkpi{text-align:right;flex-shrink:0}
+.ep-hkpi-v{font-family:var(--f-d);font-size:26px;font-weight:700;color:var(--o);letter-spacing:-.035em;line-height:.95}
+.ep-hkpi-l{font-family:var(--f-m);font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-top:4px;font-weight:500}
+.ep-sub{font-family:var(--f-m);font-size:10.5px;color:var(--ink-3);margin-bottom:12px;position:relative;z-index:1}
+.ep-chips{display:flex;gap:6px;flex-wrap:wrap;position:relative;z-index:1}
+.ep-chip{background:var(--surface-2);border:1px solid var(--line);color:var(--ink-2);font-family:var(--f-m);font-size:9.5px;padding:3.5px 10px;border-radius:var(--rad-full);font-weight:500;display:inline-flex;align-items:center;gap:5px}
+.ep-chip-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.ep-tabs{display:flex;border-bottom:1px solid var(--line);background:var(--surface);flex-shrink:0}
+.ep-tab{padding:10px 14px;font-size:11.5px;font-weight:600;color:var(--ink-3);cursor:pointer;border-bottom:2.5px solid transparent;white-space:nowrap;font-family:var(--f-s)}
+.ep-tab:first-child{padding-left:22px}
+.ep-tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+.ep-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line);flex-shrink:0;background:var(--surface-2)}
+.ep-kpi-c{padding:13px 0 11px;border-right:1px solid var(--line);text-align:center}
+.ep-kpi-c:last-child{border-right:none}
+.ep-kv{font-family:var(--f-d);font-size:19px;font-weight:600;color:var(--ink);letter-spacing:-.035em;line-height:1}
+.ep-kl{font-family:var(--f-m);font-size:7.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-3);margin-top:5px;font-weight:500}
+.ep-kd{font-family:var(--f-m);font-size:9px;color:var(--g);margin-top:3px;font-weight:500}
+.ep-sec-hdr{padding:13px 22px 9px;display:flex;justify-content:space-between;align-items:center}
+.ep-sec-label{font-family:var(--f-m);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.ep-sec-hint{font-family:var(--f-m);font-size:9.5px;color:var(--ink-4);font-weight:500}
+.ep-svg{display:block;width:100%;height:110px;flex-shrink:0}
+.ep-xax{display:flex;justify-content:space-between;padding:3px 22px 14px;border-bottom:1px solid var(--line)}
+.ep-xl{font-family:var(--f-m);font-size:9px;color:var(--ink-3)}
+.ep-routes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:0 22px}
+.rbg{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--rad);padding:9px 6px 7px;text-align:center;cursor:pointer}
+.rbg:hover{background:var(--b-50);border-color:var(--b-line)}
+.rbg:hover .rbg-num{color:var(--b)}
+.rbg-num{font-family:var(--f-d);font-size:15px;font-weight:700;color:var(--ink);line-height:1;letter-spacing:-.025em}
+.rbg-share{font-family:var(--f-m);font-size:9.5px;color:var(--ink-3);margin-top:3px;font-weight:500}
+.rbg-bar{height:3px;background:var(--line);border-radius:2px;margin:5px 5px 0;overflow:hidden}
+.rbg-fill{height:100%;background:var(--ink);border-radius:2px}
+.ep-actions{padding:14px 22px 20px;display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.ep-act-p{width:100%;background:var(--ink);border:none;border-radius:var(--rad-md);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--f-s);letter-spacing:-.01em}
+.ep-act-p:hover{background:var(--o)}
+.ep-act-arr{font-size:17px;font-family:var(--f-m);font-weight:400}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════
+     LAYOUT 1 · HUB
+═══════════════════════════════ -->
+<div class="sc-label">01 · Hub (vertical editorial scroll, no rail)</div>
+<div class="frame">
+
+  <div class="tb">
+    <a class="tb-brand" href="#"><span class="tb-mark">B</span><span class="tb-name">HCMC Bus Analytics</span></a>
+    <div class="tb-div"></div>
+    <nav class="tb-nav">
+      <div class="tb-nav-btn" tabindex="0">Cards ▾
+        <div class="tb-nav-drop">
+          <div class="tb-nav-sec">The six cards</div>
+          <a class="tb-nav-link" href="#c01"><span class="nno">N°01</span><span class="nac" style="background:var(--o)"></span>Demand &amp; Crowding<span class="ntip">5 charts</span></a>
+          <a class="tb-nav-link" href="#c02"><span class="nno">N°02</span><span class="nac" style="background:#B8920A"></span>School-Aware Demand<span class="ntip">5 charts</span></a>
+          <a class="tb-nav-link" href="#c03"><span class="nno">N°03</span><span class="nac" style="background:var(--g)"></span>Spatial &amp; Connectivity<span class="ntip">5 charts</span></a>
+          <a class="tb-nav-link" href="#c04"><span class="nno">N°04</span><span class="nac" style="background:var(--r)"></span>Financial &amp; Operations<span class="ntip">6 charts</span></a>
+          <a class="tb-nav-link" href="#c05"><span class="nno">N°05</span><span class="nac" style="background:var(--p)"></span>Network Health &amp; Performance<span class="ntip">5 charts</span></a>
+          <a class="tb-nav-link" href="#c06"><span class="nno">N°06</span><span class="nac" style="background:#334155"></span>Routes<span class="ntip">9 charts · 2 modes</span></a>
+          <div class="tb-nav-div"></div>
+          <div class="tb-nav-sec">Reference techniques</div>
+          <a class="tb-nav-link" href="#c02"><span class="nno">Liu</span><span class="nac" style="background:var(--ink-4)"></span><span class="tip" data-tip="Treemap, Gridify, GroupSet, FuzzyCut. From Liu 2022 PhD on Multiple Coordinated Visualisation.">MCV · GroupSet · Gridify</span></a>
+          <a class="tb-nav-link" href="#c05"><span class="nno">QoS</span><span class="nac" style="background:var(--p)"></span><span class="tip" data-tip="Quality of Service tiers from Chawuthai 2023 Bangkok GPS study: QoS-1 trip completion · QoS-2 on-path · QoS-3 on-schedule">QoS-1/2/3 reliability scoring</span></a>
+          <a class="tb-nav-link" href="#c06"><span class="nno">L&Z</span><span class="nac" style="background:var(--ink-3)"></span><span class="tip" data-tip="Marey time–distance diagram from Lin & Zeng: each trip is a diagonal line on a time × stop-distance grid. Bunching shows as converging lines.">Marey time–distance diagram</span></a>
+        </div>
+      </div>
+    </nav>
+    <div class="tb-space"></div>
+    <div class="tb-search">⌕&nbsp; Search route, stop, school…<span class="tb-kbd">⌘K</span></div>
+    <div class="tb-date">Jan 1 – Mar 31, 2026 ▾</div>
+    <div class="tb-ico">⚙</div>
+  </div>
+
+  <div class="hub-hero">
+    <div class="hh-left">
+      <div class="hh-corner-mark"><span>Capstone</span><span>v0.5</span><span>2026.05</span></div>
+      <div class="hh-eyebrow">A Saigon Mobility Atlas</div>
+      <div class="hh-h1">See how<br><em>Saigon<br><span class="underline">moves</span></em>.</div>
+      <div class="hh-desc">An atlas of the city's bus network across six themes: when it pulses, who rides it, where it underserves, what it earns, how it recovers from shock, and how each route really runs. Built from ninety days of fare data and fifty days of GPS.</div>
+      <div class="hh-actions">
+        <button class="btn-primary">Start exploring →</button>
+        <button class="btn-secondary">Read the methodology</button>
+      </div>
+    </div>
+    <div class="hh-right">
+      <div class="hh-corner-meta">
+        <strong>Hồ Chí Minh City</strong><br>
+        Jan 1 to Mar 31, 2026<br>
+        163 routes · 4,710 stops
+      </div>
+      <div class="hh-map-corner">
+        <div class="hh-mc-row"><span class="hh-mc-sw" style="background:var(--b)"></span>Metro L1</div>
+        <div class="hh-mc-row"><span class="hh-mc-sw" style="background:var(--o)"></span>University</div>
+        <div class="hh-mc-row"><span class="hh-mc-sw" style="background:var(--ink)"></span>Major stop</div>
+        <div class="hh-mc-row"><span class="hh-mc-sw" style="background:var(--g);opacity:.5"></span>Boarding density</div>
+      </div>
+      <svg viewBox="0 0 480 300" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" style="max-height:280px">
+        <polygon points="60,30 380,20 430,80 440,180 410,250 320,290 200,300 90,280 50,210 55,120 70,55" fill="none" stroke="rgba(27,35,51,.18)" stroke-width="1.5"/>
+        <ellipse cx="220" cy="160" rx="80" ry="60" fill="rgba(228,90,46,.04)"/>
+        <path d="M70,80 Q170,130 220,160 Q280,210 320,290" fill="none" stroke="rgba(27,35,51,.18)" stroke-width="1.2"/>
+        <path d="M380,40 Q300,110 220,160 Q140,210 90,280" fill="none" stroke="rgba(27,35,51,.18)" stroke-width="1.2"/>
+        <path d="M60,180 Q140,165 220,160 Q300,160 440,170" fill="none" stroke="rgba(27,35,51,.18)" stroke-width="1.2"/>
+        <path d="M150,40 Q200,90 220,160 Q240,230 250,295" fill="none" stroke="rgba(27,35,51,.12)" stroke-width="1"/>
+        <path d="M310,30 Q280,100 220,160 Q160,220 110,280" fill="none" stroke="rgba(27,35,51,.12)" stroke-width="1"/>
+        <path d="M70,120 Q150,140 220,160 Q300,180 400,240" fill="none" stroke="rgba(27,35,51,.10)" stroke-width="1"/>
+        <path d="M70,230 Q160,200 230,170 Q310,140 430,110" fill="none" stroke="#2E5DBA" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="195" cy="190" r="6" fill="#E45A2E"/>
+        <text x="205" y="194" font-family="Geist Mono,monospace" font-size="10" fill="#E45A2E" font-weight="600">HCMUT</text>
+        <circle cx="252" cy="138" r="5" fill="#E45A2E"/>
+        <text x="261" y="141" font-family="Geist Mono,monospace" font-size="9.5" fill="#E45A2E" font-weight="500">HCMUS</text>
+        <circle cx="155" cy="155" r="4" fill="#E45A2E" opacity=".75"/>
+        <text x="113" y="152" font-family="Geist Mono,monospace" font-size="9" fill="#E45A2E" font-weight="500">UEH</text>
+        <circle cx="222" cy="172" r="7" fill="#fff" stroke="#1B2333" stroke-width="2"/>
+        <text x="232" y="176" font-family="Geist Mono,monospace" font-size="9.5" fill="#1B2333" font-weight="600">Bến Thành</text>
+        <circle cx="220" cy="172" r="24" fill="rgba(47,138,79,.1)" stroke="rgba(47,138,79,.25)" stroke-width=".8"/>
+        <circle cx="175" cy="190" r="15" fill="rgba(47,138,79,.09)"/>
+        <circle cx="257" cy="167" r="13" fill="rgba(47,138,79,.07)"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-v">17.8M <small>▲2.3%</small></div><div class="stat-l">Boardings</div></div>
+    <div class="stat"><div class="stat-v">₫72.4B</div><div class="stat-l">Revenue</div></div>
+    <div class="stat"><div class="stat-v">34%</div><div class="stat-l">Student share</div></div>
+    <div class="stat"><div class="stat-v">163</div><div class="stat-l">Routes</div></div>
+    <div class="stat"><div class="stat-v">4,710</div><div class="stat-l">Stops</div></div>
+    <div class="stat"><div class="stat-v">19</div><div class="stat-l">Metro feeders</div></div>
+  </div>
+
+  <div class="hub-intro">
+    <div class="intro-marker">
+      <div class="intro-marker-num">¶</div>
+      <div class="intro-marker-lbl">Editor's note</div>
+    </div>
+    <div class="intro-essay">
+      Fares record where you board. GPS records where the bus is. Neither alone tells the story of a route.
+    </div>
+  </div>
+
+  <!-- N° 01 DEMAND -->
+  <div id="c01" class="divider"><div class="div-num">N° 01</div><div class="div-line"></div><div class="div-tag">When the city rides · 5 charts</div></div>
+  <div class="feat layout-img-r c1">
+    <div class="feat-text">
+      <div class="feat-num-bg">01</div>
+      <div class="feat-tag-row"><span class="feat-tag with-dot"><span class="td"></span>When &amp; where</span><span class="feat-tag">heatmap · forecast</span></div>
+      <div class="feat-h">Demand &amp; <em>crowding</em>.</div>
+      <div class="feat-lede">Saigon's buses pulse twice a day. The hourly <span class="tip" data-tip="A grid where colour intensity equals value. Rows are routes, columns are hours of day, colour is boardings. Bright cell means peak demand.">heatmap</span> plots every route against every hour so you can see exactly when the crowd arrives and when each route goes quiet. A 14-day <span class="tip" data-tip="Statistical forecast with 80% and 95% confidence bands, generated from 90 days of AFC boarding history.">forecast</span> shows what next week is likely to look like.</div>
+      <div class="feat-quote">"Thirty routes carry <strong>80%</strong> of crowding, and they all peak at the same hour."</div>
+      <div class="feat-meta">
+        <div><span class="fm-v o">7am</span><span class="fm-l">Morning peak</span></div>
+        <div><span class="fm-v">5pm</span><span class="fm-l">Evening peak</span></div>
+        <div><span class="fm-v">14d</span><span class="fm-l">Forecast window</span></div>
+      </div>
+      <button class="feat-cta">Start exploring <span class="cta-arr">→</span></button>
+    </div>
+    <div class="feat-img">
+      <div class="feat-img-tag"><span class="ftd"></span>Route × Hour heatmap</div>
+      <svg viewBox="0 0 360 200" width="100%" style="max-width:360px" preserveAspectRatio="xMidYMid meet">
+        <text x="14" y="22" font-family="Geist Mono,monospace" font-size="9" fill="#6E7689">R152</text>
+        <text x="14" y="40" font-family="Geist Mono,monospace" font-size="9" fill="#6E7689">R61</text>
+        <text x="14" y="58" font-family="Geist Mono,monospace" font-size="9" fill="#6E7689">R29</text>
+        <text x="14" y="76" font-family="Geist Mono,monospace" font-size="9" fill="#6E7689">R84</text>
+        <line x1="95" y1="14" x2="95" y2="156" stroke="#E45A2E" stroke-width="1" stroke-dasharray="3,2" opacity=".5"/>
+        <line x1="245" y1="14" x2="245" y2="156" stroke="#E45A2E" stroke-width="1" stroke-dasharray="3,2" opacity=".42"/>
+        <text x="78" y="11" font-family="Geist Mono,monospace" font-size="8.5" fill="#E45A2E" font-weight="600">7AM</text>
+        <text x="232" y="11" font-family="Geist Mono,monospace" font-size="8.5" fill="#E45A2E" font-weight="600">5PM</text>
+        <g>
+          <rect x="38" y="14" width="14" height="16" fill="#FFE0D2"/><rect x="53" y="14" width="14" height="16" fill="#FBC9B3"/><rect x="68" y="14" width="14" height="16" fill="#E45A2E"/><rect x="83" y="14" width="14" height="16" fill="#E45A2E"/><rect x="98" y="14" width="14" height="16" fill="#F39A6F"/><rect x="113" y="14" width="14" height="16" fill="#FFE0D2"/><rect x="128" y="14" width="14" height="16" fill="#FFF1EB"/><rect x="143" y="14" width="14" height="16" fill="#FFF1EB"/><rect x="158" y="14" width="14" height="16" fill="#FFE0D2"/><rect x="173" y="14" width="14" height="16" fill="#FBC9B3"/><rect x="188" y="14" width="14" height="16" fill="#F39A6F"/><rect x="203" y="14" width="14" height="16" fill="#E45A2E"/><rect x="218" y="14" width="14" height="16" fill="#E45A2E"/><rect x="233" y="14" width="14" height="16" fill="#E45A2E"/><rect x="248" y="14" width="14" height="16" fill="#F39A6F"/><rect x="263" y="14" width="14" height="16" fill="#FBC9B3"/><rect x="278" y="14" width="14" height="16" fill="#FFE0D2"/>
+          <rect x="38" y="32" width="14" height="16" fill="#FFF1EB"/><rect x="53" y="32" width="14" height="16" fill="#FFE0D2"/><rect x="68" y="32" width="14" height="16" fill="#E45A2E"/><rect x="83" y="32" width="14" height="16" fill="#F39A6F"/><rect x="98" y="32" width="14" height="16" fill="#FFE0D2"/><rect x="113" y="32" width="14" height="16" fill="#FFF1EB"/><rect x="128" y="32" width="14" height="16" fill="#FFF1EB"/><rect x="143" y="32" width="14" height="16" fill="#FFF1EB"/><rect x="158" y="32" width="14" height="16" fill="#FFE0D2"/><rect x="173" y="32" width="14" height="16" fill="#FBC9B3"/><rect x="188" y="32" width="14" height="16" fill="#F39A6F"/><rect x="203" y="32" width="14" height="16" fill="#F39A6F"/><rect x="218" y="32" width="14" height="16" fill="#E45A2E"/><rect x="233" y="32" width="14" height="16" fill="#E45A2E"/><rect x="248" y="32" width="14" height="16" fill="#FBC9B3"/><rect x="263" y="32" width="14" height="16" fill="#FFE0D2"/>
+          <rect x="38" y="50" width="14" height="16" fill="#FFF1EB"/><rect x="53" y="50" width="14" height="16" fill="#FFE0D2"/><rect x="68" y="50" width="14" height="16" fill="#F39A6F"/><rect x="83" y="50" width="14" height="16" fill="#FBC9B3"/><rect x="98" y="50" width="14" height="16" fill="#FFF1EB"/><rect x="113" y="50" width="14" height="16" fill="#FFF1EB"/><rect x="128" y="50" width="14" height="16" fill="#FFF1EB"/><rect x="143" y="50" width="14" height="16" fill="#FFF1EB"/><rect x="158" y="50" width="14" height="16" fill="#FFF1EB"/><rect x="173" y="50" width="14" height="16" fill="#FFE0D2"/><rect x="188" y="50" width="14" height="16" fill="#FBC9B3"/><rect x="203" y="50" width="14" height="16" fill="#F39A6F"/><rect x="218" y="50" width="14" height="16" fill="#E45A2E"/><rect x="233" y="50" width="14" height="16" fill="#E45A2E"/><rect x="248" y="50" width="14" height="16" fill="#FBC9B3"/><rect x="263" y="50" width="14" height="16" fill="#FFE0D2"/>
+          <rect x="38" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="53" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="68" y="68" width="14" height="16" fill="#FBC9B3"/><rect x="83" y="68" width="14" height="16" fill="#FFE0D2"/><rect x="98" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="113" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="128" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="143" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="158" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="173" y="68" width="14" height="16" fill="#FFF1EB"/><rect x="188" y="68" width="14" height="16" fill="#FFE0D2"/><rect x="203" y="68" width="14" height="16" fill="#FBC9B3"/><rect x="218" y="68" width="14" height="16" fill="#F39A6F"/><rect x="233" y="68" width="14" height="16" fill="#E45A2E"/><rect x="248" y="68" width="14" height="16" fill="#FFE0D2"/><rect x="263" y="68" width="14" height="16" fill="#FFF1EB"/>
+          <rect x="38" y="86" width="240" height="60" fill="#FFF1EB" opacity=".55"/>
+          <rect x="218" y="86" width="14" height="16" fill="#F39A6F"/><rect x="218" y="104" width="14" height="16" fill="#FBC9B3"/>
+        </g>
+      </svg>
+      <div class="feat-img-cap"><em>Brightest cells = morning rush.</em> Every cell is clickable for hour-of-day breakdown.</div>
+    </div>
+  </div>
+
+  <!-- N° 02 SCHOOL -->
+  <div id="c02" class="divider"><div class="div-num">N° 02</div><div class="div-line"></div><div class="div-tag">Universities &amp; the school commute · 5 charts</div></div>
+  <div class="feat layout-img-l c2">
+    <div class="feat-img left">
+      <div class="feat-img-tag"><span class="ftd"></span>Schools → Routes treemap</div>
+      <svg viewBox="0 0 360 220" width="100%" style="max-width:360px" preserveAspectRatio="xMidYMid meet">
+        <rect x="0" y="0" width="190" height="220" rx="6" fill="#E45A2E" opacity=".9"/>
+        <text x="14" y="22" font-family="Geist Mono,monospace" font-size="10" fill="#fff" font-weight="500" letter-spacing="1.2" opacity=".75">HCMUT</text>
+        <text x="14" y="178" font-family="Funnel Display,sans-serif" font-size="22" fill="#fff" font-weight="600" letter-spacing="-.5">Route 152</text>
+        <text x="14" y="200" font-family="Geist Mono,monospace" font-size="13" fill="#fff" font-weight="500" opacity=".75">482K boardings</text>
+        <rect x="196" y="0" width="96" height="108" rx="6" fill="#2E5DBA" opacity=".88"/>
+        <text x="206" y="22" font-family="Geist Mono,monospace" font-size="9.5" fill="#fff" letter-spacing="1.2" opacity=".75" font-weight="500">HCMUS</text>
+        <text x="206" y="78" font-family="Funnel Display,sans-serif" font-size="16" fill="#fff" font-weight="600">Rt 61</text>
+        <text x="206" y="96" font-family="Geist Mono,monospace" font-size="10" fill="#fff" opacity=".7">287K</text>
+        <rect x="298" y="0" width="60" height="108" rx="6" fill="#2F8A4F" opacity=".85"/>
+        <text x="306" y="22" font-family="Geist Mono,monospace" font-size="9" fill="#fff" letter-spacing="1" opacity=".75" font-weight="500">UEH</text>
+        <text x="306" y="78" font-family="Funnel Display,sans-serif" font-size="14" fill="#fff" font-weight="600">Rt 29</text>
+        <text x="306" y="94" font-family="Geist Mono,monospace" font-size="9" fill="#fff" opacity=".7">198K</text>
+        <rect x="196" y="114" width="60" height="106" rx="6" fill="#D9A12C" opacity=".88"/>
+        <text x="204" y="190" font-family="Funnel Display,sans-serif" font-size="14" fill="#fff" font-weight="600">Rt 84</text>
+        <rect x="262" y="114" width="96" height="62" rx="6" fill="#6A4DB0" opacity=".85"/>
+        <text x="270" y="160" font-family="Funnel Display,sans-serif" font-size="13" fill="#fff" font-weight="600">Rt 41</text>
+        <rect x="262" y="182" width="96" height="38" rx="6" fill="#1B2333" opacity=".75"/>
+        <text x="270" y="200" font-family="Geist Mono,monospace" font-size="9" fill="#fff" letter-spacing="1" opacity=".55" font-weight="500">OTHERS</text>
+        <text x="270" y="214" font-family="Geist,sans-serif" font-size="10" fill="#fff" opacity=".7">21 schools · 41 routes</text>
+      </svg>
+      <div class="feat-img-cap"><em>Each block sized by student fares carried.</em> Click any block → Route Detail.</div>
+    </div>
+    <div class="feat-text">
+      <div class="feat-num-bg">02</div>
+      <div class="feat-tag-row"><span class="feat-tag with-dot"><span class="td"></span>Who rides</span><span class="feat-tag">treemap · proximity map</span></div>
+      <div class="feat-h">School-aware <em>demand</em>.</div>
+      <div class="feat-lede">Eight universities anchor the weekday morning. Once you split <span class="tip" data-tip="HS-SV (high school and university) discounted fare tickets. 34% of all AFC boardings, concentrated in four hours of the weekday.">student fares</span> from the rest, a parallel route family appears: heavy on Monday at seven, nearly empty by Saturday. The <span class="tip" data-tip="Parallel coordinates. Each vertical axis is one metric, each route is a polyline threading through them. Brush an axis to filter.">classifier</span> scores every route on how 'school-like' it is.</div>
+      <div class="feat-quote">"Route 152 alone moves more HCMUT students than the next three routes combined."</div>
+      <div class="feat-meta">
+        <div><span class="fm-v o">34%</span><span class="fm-l">Student share</span></div>
+        <div><span class="fm-v">8</span><span class="fm-l">Universities</span></div>
+        <div><span class="fm-v">7</span><span class="fm-l">School-only routes</span></div>
+      </div>
+      <a href="#" style="margin-top:22px;padding:16px 18px;display:flex;align-items:center;gap:16px;background:#FFFAEB;border-left:3px solid #B8920A;text-decoration:none;color:inherit;border-radius:0 6px 6px 0">
+        <div style="flex:0 0 auto">
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#B8920A;font-weight:600;margin-bottom:2px">STORY</div>
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;color:#A07B0A">8 scenes · 6 min</div>
+        </div>
+        <div style="flex:1 1 auto">
+          <div style="font-family:Funnel Display,serif;font-size:17px;font-weight:600;color:#1B2333;line-height:1.25">The school commute, in numbers.</div>
+        </div>
+        <div style="flex:0 0 auto;font-family:Geist Mono,monospace;font-size:11px;color:#B8920A;font-weight:600">Read →</div>
+      </a>
+      <button class="feat-cta" style="margin-top:14px">Start exploring <span class="cta-arr">→</span></button>
+    </div>
+  </div>
+
+  <!-- N° 03 SPATIAL -->
+  <div id="c03" class="divider"><div class="div-num">N° 03</div><div class="div-line"></div><div class="div-tag">The city as geography · 1 map, 5 layers</div></div>
+  <div class="feat layout-img-r c3">
+    <div class="feat-text">
+      <div class="feat-num-bg">03</div>
+      <div class="feat-tag-row"><span class="feat-tag with-dot"><span class="td"></span>Where it happens</span><span class="feat-tag">map · hex grid · transfer</span></div>
+      <div class="feat-h">Spatial &amp; <em>connectivity</em>.</div>
+      <div class="feat-lede">One map, five layers. Every stop, every route polyline, a <span class="tip" data-tip="Gridify (Liu 2022). Boardings aggregated into 200m to 1km hex cells, colour-coded by intensity. Tune cell size and weight; reveals which city blocks drive the most demand.">hex-cell boarding heatmap</span>, the bus and metro transfer matrix, and 566 <span class="tip" data-tip="Ghost stop. A stop that appears in schedule data but where GPS logs show doors opening on fewer than 20% of scheduled visits. Bus passes but nobody boards.">ghost stops</span> where buses pass but doors rarely open.</div>
+      <div class="feat-quote">"Five hex cells in District 1 capture <strong>20%</strong> of all city boardings."</div>
+      <div class="feat-meta">
+        <div><span class="fm-v o">5</span><span class="fm-l">Hot cells</span></div>
+        <div><span class="fm-v">19</span><span class="fm-l">Metro feeders</span></div>
+        <div><span class="fm-v">12%</span><span class="fm-l">Ghost stops</span></div>
+      </div>
+      <a href="#" style="margin-top:22px;padding:16px 18px;display:flex;align-items:center;gap:16px;background:#F0F8F3;border-left:3px solid #2F8A4F;text-decoration:none;color:inherit;border-radius:0 6px 6px 0">
+        <div style="flex:0 0 auto">
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#2F8A4F;font-weight:600;margin-bottom:2px">STORY</div>
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;color:#25703F">7 scenes · 5 min</div>
+        </div>
+        <div style="flex:1 1 auto">
+          <div style="font-family:Funnel Display,serif;font-size:17px;font-weight:600;color:#1B2333;line-height:1.25">Where the city actually rides.</div>
+        </div>
+        <div style="flex:0 0 auto;font-family:Geist Mono,monospace;font-size:11px;color:#2F8A4F;font-weight:600">Read →</div>
+      </a>
+      <button class="feat-cta" style="margin-top:14px">Start exploring <span class="cta-arr">→</span></button>
+    </div>
+    <div class="feat-img">
+      <div class="feat-img-tag"><span class="ftd" style="background:var(--g)"></span>Boarding density grid</div>
+      <svg viewBox="0 0 360 220" width="100%" style="max-width:360px" preserveAspectRatio="xMidYMid meet">
+        <polygon points="40,28 280,18 322,52 332,140 296,180 200,196 80,180 32,140 24,72 36,38" fill="none" stroke="#CCD2D6" stroke-width="1.5"/>
+        <circle cx="170" cy="100" r="22" fill="#2F8A4F" opacity=".85"/>
+        <circle cx="142" cy="118" r="16" fill="#2F8A4F" opacity=".7"/>
+        <circle cx="200" cy="92" r="14" fill="#2F8A4F" opacity=".65"/>
+        <circle cx="160" cy="138" r="13" fill="#2F8A4F" opacity=".58"/>
+        <circle cx="186" cy="124" r="10" fill="#2F8A4F" opacity=".5"/>
+        <line x1="52" y1="148" x2="290" y2="80" stroke="#2E5DBA" stroke-width="3" stroke-linecap="round"/>
+        <text x="56" y="142" font-family="Geist Mono,monospace" font-size="10" fill="#2E5DBA" font-weight="600">Metro L1</text>
+        <circle cx="170" cy="100" r="6" fill="#fff" stroke="#1B2333" stroke-width="2"/>
+        <text x="180" y="103" font-family="Geist Mono,monospace" font-size="10" fill="#1B2333" font-weight="600">Bến Thành</text>
+      </svg>
+      <div class="feat-img-cap"><em>500m hex cells, coloured by boarding intensity.</em> Pan, zoom, switch layers.</div>
+    </div>
+  </div>
+
+  <!-- N° 04 FINANCIAL -->
+  <div id="c04" class="divider"><div class="div-num">N° 04</div><div class="div-line"></div><div class="div-tag">Operations &amp; revenue · 6 charts</div></div>
+  <div class="feat layout-img-l c4">
+    <div class="feat-img left">
+      <div class="feat-img-tag"><span class="ftd" style="background:var(--r)"></span>P&amp;L quadrant</div>
+      <svg viewBox="0 0 360 220" width="100%" style="max-width:360px" preserveAspectRatio="xMidYMid meet">
+        <line x1="180" y1="14" x2="180" y2="200" stroke="#CCD2D6" stroke-width="1"/>
+        <line x1="20" y1="108" x2="340" y2="108" stroke="#CCD2D6" stroke-width="1"/>
+        <text x="24" y="28" font-family="Geist Mono,monospace" font-size="9" fill="#6E7689">High ₫/trip</text>
+        <text x="186" y="194" font-family="Geist Mono,monospace" font-size="10" fill="#C03A3A" font-weight="600">12 bleeding ↙</text>
+        <circle cx="68" cy="50" r="7" fill="#1B2333" opacity=".75"/><circle cx="100" cy="40" r="5" fill="#1B2333" opacity=".62"/><circle cx="52" cy="74" r="7.5" fill="#1B2333" opacity=".7"/><circle cx="130" cy="56" r="5" fill="#1B2333" opacity=".58"/>
+        <circle cx="200" cy="138" r="7" fill="#C03A3A" opacity=".85"/><circle cx="228" cy="152" r="8" fill="#C03A3A" opacity=".82"/><circle cx="252" cy="130" r="6" fill="#C03A3A" opacity=".74"/><circle cx="276" cy="166" r="6.5" fill="#C03A3A" opacity=".82"/><circle cx="300" cy="138" r="5.5" fill="#C03A3A" opacity=".74"/><circle cx="208" cy="174" r="7.5" fill="#C03A3A" opacity=".88"/><circle cx="236" cy="186" r="6" fill="#C03A3A" opacity=".78"/>
+      </svg>
+      <div class="feat-img-cap"><em>X = waste · Y = revenue per trip · size = volume.</em></div>
+    </div>
+    <div class="feat-text">
+      <div class="feat-num-bg">04</div>
+      <div class="feat-tag-row"><span class="feat-tag with-dot"><span class="td"></span>What it earns</span><span class="feat-tag">quadrant · scorecard · adoption</span></div>
+      <div class="feat-h">Financial &amp; <em>operations</em>.</div>
+      <div class="feat-lede">Every route on one quadrant: revenue per trip on one axis, <span class="tip" data-tip="Ghost-run %: trips in the schedule where GPS shows no door openings. A proxy for operational waste. Not the same as 'no passengers'.">waste</span> on the other. Drill into operator scorecards, <span class="tip" data-tip="AFC: Automated Fare Collection. The ticketing system that logs every boarding event, fare class, and payment channel (cash, smart card, QR, free).">payment-channel</span> trends, the lift from free-fare days, and the treemap that shows two companies running sixty percent of the network.</div>
+      <div class="feat-quote">"<strong>Twelve routes</strong> sit in the bleeding quadrant: high waste, low revenue per trip."</div>
+      <div class="feat-meta">
+        <div><span class="fm-v o">₫72B</span><span class="fm-l">Quarter revenue</span></div>
+        <div><span class="fm-v">96%</span><span class="fm-l">Cash share</span></div>
+        <div><span class="fm-v">+12%</span><span class="fm-l">Promo lift</span></div>
+      </div>
+      <a href="#" style="margin-top:22px;padding:16px 18px;display:flex;align-items:center;gap:16px;background:#FFF5F2;border-left:3px solid #C03A3A;text-decoration:none;color:inherit;border-radius:0 6px 6px 0">
+        <div style="flex:0 0 auto">
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#C03A3A;font-weight:600;margin-bottom:2px">STORY</div>
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;color:#9A2E2E">8 scenes · 5 min</div>
+        </div>
+        <div style="flex:1 1 auto">
+          <div style="font-family:Funnel Display,serif;font-size:17px;font-weight:600;color:#1B2333;line-height:1.25">Who runs Saigon's buses.</div>
+        </div>
+        <div style="flex:0 0 auto;font-family:Geist Mono,monospace;font-size:11px;color:#C03A3A;font-weight:600">Read →</div>
+      </a>
+      <button class="feat-cta" style="margin-top:14px">Start exploring <span class="cta-arr">→</span></button>
+    </div>
+  </div>
+
+  <!-- N° 05 NETWORK HEALTH -->
+  <div id="c05" class="divider"><div class="div-num">N° 05</div><div class="div-line"></div><div class="div-tag">Reliability &amp; anomalies · 5 charts</div></div>
+  <div class="feat layout-img-r c5">
+    <div class="feat-text">
+      <div class="feat-num-bg">05</div>
+      <div class="feat-tag-row"><span class="feat-tag with-dot"><span class="td"></span>How well it runs</span><span class="feat-tag">QoS · anomaly · calendar</span></div>
+      <div class="feat-h">Network <em>health</em>.</div>
+      <div class="feat-lede">The daily pulse of the network: trip completion, on-path adherence, schedule reliability (the <span class="tip" data-tip="From Chawuthai 2023 Bangkok GPS study. Three quality tiers. QoS-1: trip ran to completion. QoS-2: stayed on-path. QoS-3: ran on-schedule within tolerance T.">QoS-1/2/3</span> tiers). Tune the anomaly threshold and watch the Tết dip and the April 30th parade week appear as natural experiments.</div>
+      <div class="feat-quote">"Tết drops daily ridership <strong>67%</strong> for nine days. Recovery completes by Feb 12."</div>
+      <div class="feat-meta">
+        <div><span class="fm-v o">−67%</span><span class="fm-l">Tết dip</span></div>
+        <div><span class="fm-v">9d</span><span class="fm-l">Recovery</span></div>
+        <div><span class="fm-v">14</span><span class="fm-l">Routes &lt; 60% on-time</span></div>
+      </div>
+      <a href="#" style="margin-top:22px;padding:16px 18px;display:flex;align-items:center;gap:16px;background:#F4F1FB;border-left:3px solid #6A4DB0;text-decoration:none;color:inherit;border-radius:0 6px 6px 0">
+        <div style="flex:0 0 auto">
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;letter-spacing:1.5px;color:#6A4DB0;font-weight:600;margin-bottom:2px">STORY</div>
+          <div style="font-family:Geist Mono,monospace;font-size:9.5px;color:#523A8E">6 scenes · 4 min</div>
+        </div>
+        <div style="flex:1 1 auto">
+          <div style="font-family:Funnel Display,serif;font-size:17px;font-weight:600;color:#1B2333;line-height:1.25">Nine days without a network.</div>
+        </div>
+        <div style="flex:0 0 auto;font-family:Geist Mono,monospace;font-size:11px;color:#6A4DB0;font-weight:600">Read →</div>
+      </a>
+      <button class="feat-cta" style="margin-top:14px">Start exploring <span class="cta-arr">→</span></button>
+    </div>
+    <div class="feat-img">
+      <div class="feat-img-tag"><span class="ftd" style="background:var(--r)"></span>Daily volume · Tết</div>
+      <svg viewBox="0 0 360 200" width="100%" style="max-width:360px" preserveAspectRatio="xMidYMid meet">
+        <rect x="148" y="20" width="44" height="156" fill="#C03A3A" opacity=".07"/>
+        <text x="154" y="34" font-family="Geist Mono,monospace" font-size="9.5" fill="#C03A3A" font-weight="600">Tết</text>
+        <line x1="20" y1="80" x2="340" y2="80" stroke="#E5E8EA" stroke-width=".5"/>
+        <path d="M20,48 50,46 80,50 110,46 140,48 148,48 154,90 160,130 168,154 174,118 180,84 192,50 220,48 248,52 276,46 306,50 340,48 L340,170 L20,170 Z" fill="#C03A3A" opacity=".11"/>
+        <polyline points="20,48 50,46 80,50 110,46 140,48 148,48 154,90 160,130 168,154 174,118 180,84 192,50 220,48 248,52 276,46 306,50 340,48" fill="none" stroke="#C03A3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <text x="154" y="148" font-family="Geist Mono,monospace" font-size="11" fill="#C03A3A" font-weight="600">−67%</text>
+      </svg>
+      <div class="feat-img-cap"><em>The 9-day Tết flatline as a natural experiment</em> in network shock.</div>
+    </div>
+  </div>
+
+  <!-- N° 06 ROUTES -->
+  <div id="c06" class="divider"><div class="div-num">N° 06</div><div class="div-line"></div><div class="div-tag">Per-route deep-dive + cross-route discovery · 9 charts, 2 modes</div></div>
+  <div class="feat layout-img-l c6">
+    <div class="feat-img left">
+      <div class="feat-img-tag"><span class="ftd" style="background:var(--p)"></span>Route constellation (UMAP)</div>
+      <svg viewBox="0 0 360 220" width="100%" style="max-width:360px" preserveAspectRatio="xMidYMid meet">
+        <circle cx="22" cy="14" r="4" fill="#1B2333"/><text x="30" y="18" font-family="Geist Mono,monospace" font-size="9" fill="#3A4256">Commuter</text>
+        <circle cx="22" cy="30" r="4" fill="#E45A2E"/><text x="30" y="34" font-family="Geist Mono,monospace" font-size="9" fill="#3A4256">School</text>
+        <circle cx="110" cy="14" r="4" fill="#2F8A4F"/><text x="118" y="18" font-family="Geist Mono,monospace" font-size="9" fill="#3A4256">All-day</text>
+        <circle cx="110" cy="30" r="4" fill="#6A4DB0"/><text x="118" y="34" font-family="Geist Mono,monospace" font-size="9" fill="#3A4256">Weekend</text>
+        <circle cx="80" cy="100" r="6" fill="#1B2333" opacity=".82"/><circle cx="62" cy="120" r="5" fill="#1B2333" opacity=".75"/><circle cx="100" cy="110" r="5.5" fill="#1B2333" opacity=".82"/><circle cx="90" cy="86" r="4" fill="#1B2333" opacity=".7"/>
+        <circle cx="260" cy="106" r="7" fill="#E45A2E" opacity=".88"/><circle cx="278" cy="92" r="5" fill="#E45A2E" opacity=".82"/><circle cx="244" cy="124" r="5.5" fill="#E45A2E" opacity=".88"/>
+        <circle cx="170" cy="178" r="6.5" fill="#2F8A4F" opacity=".82"/><circle cx="152" cy="170" r="5" fill="#2F8A4F" opacity=".75"/>
+        <circle cx="244" cy="48" r="6" fill="#6A4DB0" opacity=".82"/>
+        <circle cx="90" cy="86" r="8" fill="none" stroke="#1B2333" stroke-width="1.5"/>
+        <text x="102" y="82" font-family="Geist Mono,monospace" font-size="10" fill="#1B2333" font-weight="600">152</text>
+      </svg>
+      <div class="feat-img-cap"><em>Each dot is one route, coloured by archetype.</em> Click a dot → Detail mode.</div>
+    </div>
+    <div class="feat-text">
+      <div class="feat-num-bg">06</div>
+      <div class="feat-tag-row"><span class="feat-tag with-dot"><span class="td"></span>Discovery + Detail</span><span class="feat-tag">UMAP · Marey · box · compare</span></div>
+      <div class="feat-h">Routes.</div>
+      <div class="feat-lede">Two modes in one card. Discovery clusters all 184 routes into <span class="tip" data-tip="UMAP (Uniform Manifold Approximation and Projection). A dimensionality-reduction method that maps each route's multi-metric fingerprint to 2D. Routes with similar demand patterns appear nearby.">archetypes</span> you can browse. Detail opens a single route's page with the <span class="tip" data-tip="Marey time-distance diagram (Lin & Zeng). Each trip plotted as a diagonal line, with time-check-stop bands and auto-detected bunching events.">Marey diagram</span>, per-stop arrival distributions, segment-by-segment delay correlation, and a <span class="tip" data-tip="Method Card. A side panel that explains how each chart was computed: model, inputs, accuracy, what was excluded.">Method Card</span> explaining how each chart was computed.</div>
+      <div class="feat-quote">"Seven routes are school-only. They would vanish in summer break."</div>
+      <div class="feat-meta">
+        <div><span class="fm-v o">4</span><span class="fm-l">Archetypes</span></div>
+        <div><span class="fm-v">184</span><span class="fm-l">Routes mapped</span></div>
+        <div><span class="fm-v">2</span><span class="fm-l">Modes</span></div>
+      </div>
+      <button class="feat-cta">Start exploring <span class="cta-arr">→</span></button>
+    </div>
+  </div>
+
+  <div class="upcoming">
+    <div>
+      <div class="upc-eb">Soon</div>
+      <div class="upc-h">Ask the data.</div>
+      <div class="upc-desc">A natural-language SQL companion. Type a question, get the chart that answers it. Slated for v0.6, built by a separate team.</div>
+    </div>
+    <div class="upc-r">
+      <span class="upc-tag">External</span>
+      <span class="upc-tag">v0.6</span>
+    </div>
+  </div>
+
+  <div class="hub-foot">
+    <div class="l">
+      <span>HCMC Bus Analytics · Capstone 2026</span>
+      <span>Six cards · four stories · ninety days of fares · fifty days of GPS</span>
+    </div>
+    <div>Last refreshed Mar 31, 2026 03:00 ICT · Data window: Jan 1 to Mar 31, 2026</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════
+     LAYOUT 2 · CARD INTERIOR
+═══════════════════════════════ -->
+<div class="sc-label">02 · Card interior (per-card rail, Atlas proportions, light theme)</div>
+<div class="frame">
+
+  <div class="card-shell">
+
+    <!-- ── PER-CARD RAIL · 5 charts in this theme ── -->
+    <div class="crail">
+      <div class="crail-hdr">
+        <div class="crail-num">N° 02</div>
+        <div class="crail-theme">School<br>Demand</div>
+      </div>
+      <div class="crail-section">5 Charts</div>
+      <div class="crail-nav">
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="currentColor"><rect x="2" y="4" width="22" height="4" rx="1"/><rect x="2" y="11" width="17" height="4" rx="1" opacity=".75"/><rect x="2" y="18" width="11" height="4" rx="1" opacity=".55"/></svg></div>
+          <div class="crn-lbl">Top<br>Schools</div>
+        </a>
+        <a class="crn on" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="currentColor"><rect x="1" y="1" width="13" height="24" rx="1"/><rect x="15" y="1" width="10" height="14" rx="1" opacity=".7"/><rect x="15" y="16" width="5" height="9" rx="1" opacity=".5"/><rect x="21" y="16" width="4" height="9" rx="1" opacity=".35"/></svg></div>
+          <div class="crn-lbl">Schools<br>→ Routes</div>
+        </a>
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="currentColor"><rect x="2" y="2" width="4" height="4" rx=".5" opacity=".2"/><rect x="8" y="2" width="4" height="4" rx=".5" opacity=".9"/><rect x="14" y="2" width="4" height="4" rx=".5" opacity=".4"/><rect x="20" y="2" width="4" height="4" rx=".5" opacity=".2"/><rect x="2" y="8" width="4" height="4" rx=".5" opacity=".5"/><rect x="8" y="8" width="4" height="4" rx=".5" opacity=".85"/><rect x="14" y="8" width="4" height="4" rx=".5" opacity=".3"/><rect x="20" y="8" width="4" height="4" rx=".5" opacity=".15"/><rect x="2" y="14" width="4" height="4" rx=".5" opacity=".35"/><rect x="8" y="14" width="4" height="4" rx=".5" opacity=".7"/><rect x="14" y="14" width="4" height="4" rx=".5" opacity=".25"/><rect x="20" y="14" width="4" height="4" rx=".5" opacity=".15"/><rect x="2" y="20" width="4" height="4" rx=".5" opacity=".15"/><rect x="8" y="20" width="4" height="4" rx=".5" opacity=".4"/><rect x="14" y="20" width="4" height="4" rx=".5" opacity=".15"/><rect x="20" y="20" width="4" height="4" rx=".5" opacity=".15"/></svg></div>
+          <div class="crn-lbl">Student<br>Week</div>
+        </a>
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor"><line x1="4" y1="3" x2="4" y2="23" stroke-width="1"/><line x1="13" y1="3" x2="13" y2="23" stroke-width="1"/><line x1="22" y1="3" x2="22" y2="23" stroke-width="1"/><path d="M4 7 L13 14 L22 9" stroke-width="1.5" stroke-linecap="round" opacity=".85"/><path d="M4 17 L13 9 L22 17" stroke-width="1.5" stroke-linecap="round" opacity=".55"/><path d="M4 12 L13 18 L22 13" stroke-width="1.5" stroke-linecap="round" opacity=".4"/></svg></div>
+          <div class="crn-lbl">Classifier</div>
+        </a>
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 3 C 8 3, 4 7, 4 12 C 4 18, 13 24, 13 24 C 13 24, 22 18, 22 12 C 22 7, 18 3, 13 3 Z"/><circle cx="13" cy="12" r="3" fill="currentColor"/></svg></div>
+          <div class="crn-lbl">Proximity</div>
+        </a>
+      </div>
+      <div class="crail-foot">
+        <button class="crail-btn">Export ↓</button>
+      </div>
+    </div>
+
+    <!-- ── MAIN COLUMN ── -->
+    <div class="card-main">
+
+      <div class="tb">
+        <a class="tb-brand" href="#"><span class="tb-mark">B</span><span class="tb-name">HCMC Bus Analytics</span></a>
+        <div class="tb-div"></div>
+        <div style="display:flex;align-items:center;gap:0;border:1px solid #E5E8EA;border-radius:6px;overflow:hidden;height:30px">
+          <a href="#" title="Hub" style="padding:0 12px;height:100%;display:flex;align-items:center;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA">⌂</a>
+          <a href="#c01" title="Demand &amp; Crowding" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#E45A2E;border-radius:50%"></span>01</a>
+          <a href="#c02" title="School-Aware Demand" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#B8920A;font-weight:600;background:#FFFAEB;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#B8920A;border-radius:50%"></span>02</a>
+          <a href="#c03" title="Spatial &amp; Connectivity" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#2F8A4F;border-radius:50%"></span>03</a>
+          <a href="#c04" title="Financial &amp; Operations" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#C03A3A;border-radius:50%"></span>04</a>
+          <a href="#c05" title="Network Health" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#6A4DB0;border-radius:50%"></span>05</a>
+          <a href="#c06" title="Routes" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none"><span style="width:6px;height:6px;background:#334155;border-radius:50%"></span>06</a>
+        </div>
+        <div style="margin-left:14px;font-family:Funnel Display,serif;font-size:15px;font-weight:500;color:#1B2333">School-Aware Demand <span style="color:#A5ABB5;margin:0 8px">›</span><span style="color:#3A4256">Schools to Routes treemap</span></div>
+        <div class="tb-space"></div>
+        <div class="tb-date">Jan 1 to Mar 31, 2026</div>
+        <div class="tb-ico">⬇</div><div class="tb-ico">🔖</div>
+      </div>
+
+      <!-- view controls -->
+
+      <div class="vc">
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Schools</div>
+          <div class="vc-combo"><span>All 8 schools</span><span class="ch">▾</span></div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Day type</div>
+          <div class="vc-radio">
+            <span class="vc-radio-btn on">Weekday</span>
+            <span class="vc-radio-btn">Weekend</span>
+            <span class="vc-radio-btn">All</span>
+          </div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Fare class</div>
+          <div class="vc-radio">
+            <span class="vc-radio-btn on">Student</span>
+            <span class="vc-radio-btn">All fares</span>
+          </div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Compare</div>
+          <div class="vc-radio">
+            <span class="vc-radio-btn on">Off</span>
+            <span class="vc-radio-btn">vs network avg</span>
+            <span class="vc-radio-btn">vs prior period</span>
+          </div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Date range</div>
+          <div class="vc-combo"><span>Jan – Mar 2026</span><span class="ch">▾</span></div>
+        </div>
+        <div class="vc-spacer"></div>
+        <button class="vc-settings">⚙ More ▾</button>
+      </div>
+
+      <!-- legend -->
+      <div class="legend">
+        <div class="lg-title">Color</div>
+        <div class="lg-item"><span class="lg-sw" style="background:#E45A2E"></span>HCMUT<span class="ct">482K</span></div>
+        <div class="lg-item"><span class="lg-sw" style="background:#2E5DBA"></span>HCMUS<span class="ct">287K</span></div>
+        <div class="lg-item"><span class="lg-sw" style="background:#2F8A4F"></span>UEH<span class="ct">198K</span></div>
+        <div class="lg-item"><span class="lg-sw" style="background:#D9A12C"></span>GTVT<span class="ct">156K</span></div>
+        <div class="lg-item"><span class="lg-sw" style="background:#6A4DB0"></span>UIT<span class="ct">112K</span></div>
+        <div class="lg-item dim"><span class="lg-sw" style="background:#566070"></span>21 others<span class="ct">288K</span></div>
+        <div class="lg-scale">
+          <span class="lg-scale-lbl">Size = boardings</span>
+          <div class="lg-grad"></div>
+        </div>
+      </div>
+
+      <!-- canvas: chart owns the screen -->
+      <div class="canvas">
+        <div class="tm">
+          <div class="tm-cell sel span2" data-school="HCMUT" style="background:#E45A2E">
+            <div class="tm-route">Route 152<span class="tm-count">482K</span></div>
+            <div class="tm-sub">+Routes 14, 65, 88</div>
+          </div>
+          <div class="tm-cell" data-school="HCMUS" style="background:#2E5DBA">
+            <div class="tm-route">Route 61<span class="tm-count">287K</span></div>
+          </div>
+          <div class="tm-cell" data-school="UEH" style="background:#2F8A4F">
+            <div class="tm-route">Rt 29<span class="tm-count">198K</span></div>
+          </div>
+          <div class="tm-cell" data-school="GTVT" style="background:#D9A12C">
+            <div class="tm-route">Rt 84<span class="tm-count">156K</span></div>
+          </div>
+          <div class="tm-cell" data-school="UIT" style="background:#6A4DB0">
+            <div class="tm-route">Rt 41<span class="tm-count">112K</span></div>
+          </div>
+          <div class="tm-cell" data-school="Others" style="background:#566070">
+            <div class="tm-route" style="font-size:14px;font-weight:500">21 schools · 41 routes</div>
+          </div>
+        </div>
+
+        <div class="pop">
+          <div class="pop-hdr">
+            <div class="pop-stripe"></div>
+            <div class="pop-route-tag"><span class="dot"></span>Route 152 · School route</div>
+            <div class="pop-name">Bến Thành ↔ HCMUT</div>
+            <div class="pop-ctx">Inbound + Outbound · ~28 km loop</div>
+          </div>
+          <div class="pop-body">
+            <div class="pop-metrics">
+              <div><div class="pop-mv orange">482K</div><div class="pop-ml">Student brd / 90d</div></div>
+              <div><div class="pop-mv">68%</div><div class="pop-ml">Student share</div></div>
+              <div><div class="pop-mv green">+34pp ▲</div><div class="pop-ml">vs network avg</div></div>
+              <div><div class="pop-mv">07:00</div><div class="pop-ml">Peak hour</div></div>
+              <div><div class="pop-mv">₫9,240</div><div class="pop-ml">Revenue / trip</div></div>
+              <div><div class="pop-mv">71%</div><div class="pop-ml">On-time rate</div></div>
+            </div>
+            <div class="pop-spark-lbl"><span>24h profile</span><span style="color:var(--o);font-weight:600">7am peak</span></div>
+            <svg viewBox="0 0 232 32" width="100%" height="32" style="display:block;margin-bottom:14px" preserveAspectRatio="none">
+              <defs><linearGradient id="psg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E45A2E" stop-opacity=".25"/><stop offset="100%" stop-color="#E45A2E" stop-opacity=".02"/></linearGradient></defs>
+              <path d="M0,28 10,27 20,28 30,29 40,28 50,26 60,18 70,3 80,12 90,18 100,21 110,22 120,22 130,22 140,21 150,21 160,22 170,8 180,14 190,19 200,23 210,26 220,27 232,28 L232,32 L0,32 Z" fill="url(#psg)"/>
+              <polyline points="0,28 10,27 20,28 30,29 40,28 50,26 60,18 70,3 80,12 90,18 100,21 110,22 120,22 130,22 140,21 150,21 160,22 170,8 180,14 190,19 200,23 210,26 220,27 232,28" fill="none" stroke="#E45A2E" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="70" cy="3" r="3.5" fill="#E45A2E"/>
+            </svg>
+            <div class="pop-acts">
+              <div class="pop-act"><span class="pop-act-ic">↗</span>Open Route 152 detail<span class="pop-act-arr">→</span></div>
+              <div class="pop-act"><span class="pop-act-ic">⇄</span>Compare with similar routes<span class="pop-act-arr">→</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- caption · title, meta, story all small, below chart -->
+      <div class="chart-cap">
+        <div class="cc-row">
+          <span class="cc-num">02.2</span>
+          <span class="cc-title">Schools → Routes treemap</span>
+          <span class="cc-meta">163 routes · 8 universities · 90 days · weekday</span>
+        </div>
+        <div class="cc-sub">Scaled by student-fare boardings · click any cell to open Route Detail · brush a school in the legend to filter</div>
+        <div class="cc-story">
+          <span class="cc-star">★</span>
+          <span><em>"Route 152 alone moves more HCMUT students than the next 3 routes combined."</em> Route 152 student share: <strong>68%</strong>.</span>
+        </div>
+      </div>
+
+      <div class="status">
+        <div class="st-i"><span class="st-dot"></span>Linked · all charts in sync</div>
+        <div class="st-i">Hover to inspect · Click for detail · Shift-click multi-select</div>
+        <div class="st-i" style="margin-left:auto">Last refreshed 03:00 ICT</div>
+      </div>
+
+    </div><!-- /card-main -->
+  </div><!-- /card-shell -->
+</div><!-- /frame -->
+
+
+<!-- ═══════════════════════════════
+     LAYOUT 3 · MAP CARD with NAVIGATION
+═══════════════════════════════ -->
+<div class="sc-label">03 · Map card (same per-card rail pattern, map controls, entity panel)</div>
+<div class="frame">
+
+  <div class="card-shell">
+
+    <!-- per-card rail · 5 charts in Spatial theme -->
+    <div class="crail">
+      <div class="crail-hdr">
+        <div class="crail-num">N° 03</div>
+        <div class="crail-theme">Spatial &amp;<br>Connect</div>
+      </div>
+      <div class="crail-section">5 Charts</div>
+      <div class="crail-nav">
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"><rect x="2" y="2" width="22" height="22" rx="1.5" stroke-width="1"/><path d="M5 8 Q 11 12, 16 10 Q 20 9, 22 14"/><path d="M3 18 Q 9 15, 14 17 Q 20 19, 22 14" opacity=".55"/><path d="M8 4 Q 13 11, 19 22" opacity=".4"/></svg></div>
+          <div class="crn-lbl">Network<br>Overview</div>
+        </a>
+        <a class="crn on" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="currentColor"><circle cx="13" cy="13" r="5" opacity=".9"/><circle cx="8" cy="9" r="3" opacity=".6"/><circle cx="17" cy="9" r="3" opacity=".55"/><circle cx="8" cy="18" r="3" opacity=".5"/><circle cx="17" cy="18" r="2.5" opacity=".4"/><circle cx="20" cy="13" r="2" opacity=".3"/><circle cx="5" cy="13" r="2" opacity=".3"/></svg></div>
+          <div class="crn-lbl">Density<br>Grid</div>
+        </a>
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="13" cy="11" r="7"/><circle cx="13" cy="11" r="2.5" fill="currentColor" stroke="none"/><path d="M13 18 L13 23" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="crn-lbl">Stop<br>Explorer</div>
+        </a>
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.3" stroke-dasharray="2 1.5"><circle cx="9" cy="9" r="3"/><circle cx="17" cy="11" r="2.5"/><circle cx="13" cy="17" r="3"/><circle cx="20" cy="18" r="2"/></svg></div>
+          <div class="crn-lbl">Ghost<br>Stops</div>
+        </a>
+        <a class="crn" href="#">
+          <div class="crn-ic"><svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9 H18 M14 5 L18 9 L14 13"/><path d="M22 17 H8 M12 13 L8 17 L12 21" opacity=".7"/></svg></div>
+          <div class="crn-lbl">Bus ↔<br>Metro</div>
+        </a>
+      </div>
+      <div class="crail-foot">
+        <button class="crail-btn">Export ↓</button>
+      </div>
+    </div>
+
+    <!-- main column -->
+    <div class="card-main">
+
+      <div class="tb">
+        <a class="tb-brand" href="#"><span class="tb-mark">B</span><span class="tb-name">HCMC Bus Analytics</span></a>
+        <div class="tb-div"></div>
+        <div style="display:flex;align-items:center;gap:0;border:1px solid #E5E8EA;border-radius:6px;overflow:hidden;height:30px">
+          <a href="#" title="Hub" style="padding:0 12px;height:100%;display:flex;align-items:center;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA">⌂</a>
+          <a href="#c01" title="Demand &amp; Crowding" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#E45A2E;border-radius:50%"></span>01</a>
+          <a href="#c02" title="School-Aware Demand" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#B8920A;border-radius:50%"></span>02</a>
+          <a href="#c03" title="Spatial &amp; Connectivity" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#2F8A4F;font-weight:600;background:#F0F8F3;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#2F8A4F;border-radius:50%"></span>03</a>
+          <a href="#c04" title="Financial &amp; Operations" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#C03A3A;border-radius:50%"></span>04</a>
+          <a href="#c05" title="Network Health" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none;border-right:1px solid #E5E8EA"><span style="width:6px;height:6px;background:#6A4DB0;border-radius:50%"></span>05</a>
+          <a href="#c06" title="Routes" style="padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;font-family:Geist Mono,monospace;font-size:11px;color:#6E7689;text-decoration:none"><span style="width:6px;height:6px;background:#334155;border-radius:50%"></span>06</a>
+        </div>
+        <div style="margin-left:14px;font-family:Funnel Display,serif;font-size:15px;font-weight:500;color:#1B2333">Spatial &amp; Connectivity <span style="color:#A5ABB5;margin:0 8px">›</span><span style="color:#3A4256">Density grid</span></div>
+        <div class="tb-space"></div>
+        <div class="tb-date">Jan 1 to Mar 31, 2026</div>
+        <div class="tb-ico">⬇</div>
+      </div>
+
+      <div class="vc">
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Cell size</div>
+          <div class="vc-radio">
+            <span class="vc-radio-btn">200m</span>
+            <span class="vc-radio-btn on">500m</span>
+            <span class="vc-radio-btn">1km</span>
+          </div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Day type</div>
+          <div class="vc-radio">
+            <span class="vc-radio-btn on">All</span>
+            <span class="vc-radio-btn">Weekday</span>
+            <span class="vc-radio-btn">Weekend</span>
+          </div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Hour</div>
+          <div class="vc-combo"><span>All hours</span><span class="ch">▾</span></div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Operator</div>
+          <div class="vc-combo"><span>All operators</span><span class="ch">▾</span></div>
+        </div>
+        <div class="vc-grp">
+          <div class="vc-grp-lbl">Date range</div>
+          <div class="vc-combo"><span>Jan – Mar 2026</span><span class="ch">▾</span></div>
+        </div>
+        <div class="vc-spacer"></div>
+        <button class="vc-settings">⚙ More ▾</button>
+      </div>
+
+      <div class="map-frame">
+        <div class="map-canvas">
+          <div class="map-layers">
+            <div class="ml-hdr">Map layers</div>
+            <div class="ml-row on"><span class="ml-sw" style="background:var(--g)"></span>Boarding density<span class="ml-toggle"></span></div>
+            <div class="ml-row on"><span class="ml-sw" style="background:var(--b)"></span>Metro Line 1<span class="ml-toggle"></span></div>
+            <div class="ml-row on"><span class="ml-sw" style="background:var(--ink)"></span>Major stops<span class="ml-toggle"></span></div>
+            <div class="ml-row off"><span class="ml-sw" style="background:var(--o)"></span>Universities<span class="ml-toggle"></span></div>
+            <div class="ml-row off"><span class="ml-sw" style="background:var(--ink-3)"></span>All routes<span class="ml-toggle"></span></div>
+          </div>
+
+          <div class="map-ctrls">
+            <div class="mc-grp">
+              <div class="mc-btn">+</div>
+              <div class="mc-btn">−</div>
+            </div>
+            <div class="mc-btn" title="Recenter">⌖</div>
+            <div class="mc-btn" title="Satellite">◐</div>
+          </div>
+
+          <div class="map-hint">
+            <div class="mh-i"><span class="kbd">drag</span>pan</div>
+            <div class="mh-i"><span class="kbd">scroll</span>zoom</div>
+            <div class="mh-i"><span class="kbd">click</span>stop detail</div>
+            <div class="mh-i"><span class="kbd">⇧</span>multi-select</div>
+          </div>
+
+          <div class="map-scale">
+            <span>10.7725°N · 106.6980°E</span>
+            <span><strong style="color:var(--ink)">Zoom 13</strong> · 500m / hex</span>
+          </div>
+
+          <div class="map-svg-wrap">
+            <svg viewBox="0 0 600 580" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">
+              <polygon points="80,40 480,30 540,90 560,260 530,400 460,500 320,540 180,520 80,460 50,300 70,140" fill="none" stroke="rgba(27,35,51,.18)" stroke-width="1.5"/>
+              <path d="M100,440 Q220,380 320,300 Q420,220 540,160" fill="none" stroke="#2E5DBA" stroke-width="3.5" stroke-linecap="round"/>
+              <text x="106" y="432" font-family="Geist Mono,monospace" font-size="11" fill="#2E5DBA" font-weight="600">Metro L1</text>
+              <circle cx="290" cy="290" r="48" fill="#2F8A4F" opacity=".82"/>
+              <circle cx="240" cy="316" r="32" fill="#2F8A4F" opacity=".66"/>
+              <circle cx="338" cy="266" r="28" fill="#2F8A4F" opacity=".58"/>
+              <circle cx="280" cy="350" r="26" fill="#2F8A4F" opacity=".5"/>
+              <circle cx="330" cy="330" r="20" fill="#2F8A4F" opacity=".48"/>
+              <circle cx="218" cy="262" r="20" fill="#2F8A4F" opacity=".46"/>
+              <circle cx="378" cy="304" r="18" fill="#2F8A4F" opacity=".42"/>
+              <circle cx="306" cy="408" r="16" fill="#2F8A4F" opacity=".36"/>
+              <circle cx="208" cy="220" r="14" fill="#2F8A4F" opacity=".34"/>
+              <circle cx="412" cy="356" r="13" fill="#2F8A4F" opacity=".3"/>
+              <circle cx="180" cy="360" r="13" fill="#2F8A4F" opacity=".3"/>
+              <circle cx="290" cy="290" r="52" fill="none" stroke="#E45A2E" stroke-width="2.5" stroke-dasharray="6,4"/>
+              <circle cx="290" cy="290" r="60" fill="none" stroke="#E45A2E" stroke-width="1" opacity=".35"/>
+              <circle cx="296" cy="294" r="7" fill="#fff" stroke="#1B2333" stroke-width="2.5"/>
+              <text x="308" y="298" font-family="Geist Mono,monospace" font-size="11" fill="#1B2333" font-weight="600">Bến Thành</text>
+              <circle cx="244" cy="260" r="4" fill="#1B2333" opacity=".55"/>
+              <circle cx="354" cy="232" r="4" fill="#1B2333" opacity=".5"/>
+              <circle cx="270" cy="378" r="4" fill="#1B2333" opacity=".5"/>
+              <circle cx="386" cy="350" r="4" fill="#1B2333" opacity=".48"/>
+            </svg>
+          </div>
+        </div>
+
+        <!-- entity panel -->
+        <div class="ep">
+          <div class="ep-hdr">
+            <div class="ep-band"></div>
+            <div class="ep-hdr-body">
+              <div class="ep-type-row">
+                <div class="ep-tags-l">
+                  <span class="ep-pill">▣ &nbsp;Stop</span>
+                  <span class="ep-loc">District 1</span>
+                </div>
+                <div class="ep-close-btn">✕</div>
+              </div>
+              <div class="ep-name-row">
+                <div class="ep-name">Bến Thành<br>Terminal</div>
+                <div class="ep-hkpi">
+                  <div class="ep-hkpi-v">48.2K</div>
+                  <div class="ep-hkpi-l">Board / mo</div>
+                </div>
+              </div>
+              <div class="ep-sub">Stop #1042 · 10.7725°N 106.6980°E</div>
+              <div class="ep-chips">
+                <span class="ep-chip"><span class="ep-chip-dot" style="background:var(--ink)"></span>23 routes</span>
+                <span class="ep-chip"><span class="ep-chip-dot" style="background:var(--b)"></span>Metro transfer</span>
+                <span class="ep-chip"><span class="ep-chip-dot" style="background:var(--o)"></span>High demand</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ep-tabs">
+            <div class="ep-tab on">Overview</div>
+            <div class="ep-tab">Demand</div>
+            <div class="ep-tab">Routes</div>
+          </div>
+
+          <div class="ep-kpi-row">
+            <div class="ep-kpi-c"><div class="ep-kv">23</div><div class="ep-kl">Routes</div></div>
+            <div class="ep-kpi-c"><div class="ep-kv">07:00</div><div class="ep-kl">Peak hr</div></div>
+            <div class="ep-kpi-c"><div class="ep-kv">4×</div><div class="ep-kl">P/T</div></div>
+            <div class="ep-kpi-c"><div class="ep-kv">94%</div><div class="ep-kl">Door</div><div class="ep-kd">▲ top 8%</div></div>
+          </div>
+
+          <div class="ep-sec-hdr">
+            <span class="ep-sec-label">Hourly boardings</span>
+            <span class="ep-sec-hint">90-day avg</span>
+          </div>
+          <svg class="ep-svg" viewBox="0 0 360 110" preserveAspectRatio="none">
+            <defs><linearGradient id="meg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#1B2333" stop-opacity=".24"/><stop offset="100%" stop-color="#1B2333" stop-opacity=".02"/></linearGradient></defs>
+            <line x1="0" y1="2" x2="360" y2="2" stroke="#E5E8EA" stroke-width=".5"/>
+            <line x1="0" y1="54" x2="360" y2="54" stroke="#E5E8EA" stroke-width=".5"/>
+            <path d="M0,88 16,90 32,90 48,90 64,88 80,85 96,48 112,5 128,40 144,57 160,66 176,70 192,70 208,70 224,69 240,67 256,68 272,26 288,42 304,58 320,70 336,76 352,82 360,88 L360,110 L0,110 Z" fill="url(#meg)"/>
+            <polyline points="0,88 16,90 32,90 48,90 64,88 80,85 96,48 112,5 128,40 144,57 160,66 176,70 192,70 208,70 224,69 240,67 256,68 272,26 288,42 304,58 320,70 336,76 352,82 360,88" fill="none" stroke="#1B2333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="112" y1="5" x2="112" y2="106" stroke="#E45A2E" stroke-width="1.2" stroke-dasharray="3,2" opacity=".7"/>
+            <circle cx="112" cy="5" r="4" fill="#E45A2E"/>
+            <rect x="117" y="0" width="68" height="16" rx="3" fill="#E45A2E"/>
+            <text x="121" y="11" font-family="Geist Mono,monospace" font-size="9" fill="#fff" font-weight="600">7am · 4,820</text>
+          </svg>
+          <div class="ep-xax"><span class="ep-xl">0h</span><span class="ep-xl">6h</span><span class="ep-xl">12h</span><span class="ep-xl">18h</span><span class="ep-xl">23h</span></div>
+
+          <div class="ep-sec-hdr"><span class="ep-sec-label">Top routes</span><span class="ep-sec-hint">by boardings</span></div>
+          <div class="ep-routes">
+            <div class="rbg"><div class="rbg-num">152</div><div class="rbg-share">18%</div><div class="rbg-bar"><div class="rbg-fill" style="width:100%;background:var(--o)"></div></div></div>
+            <div class="rbg"><div class="rbg-num">29</div><div class="rbg-share">14%</div><div class="rbg-bar"><div class="rbg-fill" style="width:78%"></div></div></div>
+            <div class="rbg"><div class="rbg-num">1</div><div class="rbg-share">11%</div><div class="rbg-bar"><div class="rbg-fill" style="width:61%"></div></div></div>
+            <div class="rbg"><div class="rbg-num">54</div><div class="rbg-share">9%</div><div class="rbg-bar"><div class="rbg-fill" style="width:50%"></div></div></div>
+          </div>
+
+          <div class="ep-actions">
+            <button class="ep-act-p">Open full stop view <span class="ep-act-arr">→</span></button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /card-main -->
+  </div><!-- /card-shell -->
+</div><!-- /frame -->
+
+
+<!-- ═══════════════════════════════
+     LAYOUT 4 · STORY SCROLLYTELLING (dark, scroll-triggered)
+═══════════════════════════════ -->
+<style>
+.story-frame{
+  background:#0A0E15;color:#F4F1EC;border-radius:8px;overflow:hidden;
+  font-family:'Geist',sans-serif;position:relative;isolation:isolate;
+}
+.story-frame *{box-sizing:border-box}
+.story-frame .story-scene{
+  position:relative;min-height:760px;padding:80px 96px 64px 96px;
+  display:flex;flex-direction:column;
+  background:linear-gradient(180deg,#0E1722 0%,#0A0E15 78%,#060912 100%);
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.story-frame .story-scene::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 60% 40% at 18% 15%, rgba(228,90,46,.05), transparent 70%),
+    radial-gradient(ellipse 80% 50% at 90% 80%, rgba(46,93,186,.04), transparent 70%);
+  z-index:0;
+}
+.story-frame .story-scene::after{
+  content:'';position:absolute;inset:0;pointer-events:none;opacity:.025;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.story-frame .story-scene > *{position:relative;z-index:1}
+
+/* eyebrow */
+.story-frame .sf-eyebrow{
+  font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.22em;
+  color:#E45A2E;font-weight:600;margin-bottom:36px;
+  display:flex;align-items:center;gap:14px;
+}
+.story-frame .sf-eyebrow .sf-eyebrow-line{width:36px;height:1px;background:#E45A2E}
+.story-frame .sf-eyebrow .sf-eyebrow-meta{color:#5B6373;font-weight:500;letter-spacing:.15em}
+
+/* narrative */
+.story-frame .sf-narrative{max-width:880px;margin-bottom:48px}
+.story-frame .sf-h1{
+  font-family:'Funnel Display',serif;font-weight:600;letter-spacing:-1.2px;
+  font-size:88px;line-height:.96;color:#F4F1EC;margin-bottom:24px;
+}
+.story-frame .sf-h1 em{font-style:italic;color:#E45A2E;font-weight:500}
+.story-frame .sf-h2{
+  font-family:'Funnel Display',serif;font-weight:500;letter-spacing:-.4px;
+  font-size:46px;line-height:1.08;color:#F4F1EC;margin-bottom:20px;
+}
+.story-frame .sf-h2 em{font-style:italic;color:#E45A2E;font-weight:500}
+.story-frame .sf-lede{
+  font-family:'Funnel Display',serif;font-weight:400;font-style:italic;
+  font-size:22px;line-height:1.45;color:#A8AFBC;max-width:680px;
+}
+.story-frame .sf-lede em{font-style:normal;color:#F4F1EC;font-weight:500}
+
+/* KPI hero block (Bing) */
+.story-frame .sf-kpi{margin-top:auto;display:flex;align-items:baseline;gap:32px}
+.story-frame .sf-kpi-v{
+  font-family:'Funnel Display',serif;font-weight:600;font-size:200px;
+  line-height:.85;letter-spacing:-6px;color:#E45A2E;
+  text-shadow:0 0 60px rgba(228,90,46,.18);
+}
+.story-frame .sf-kpi-meta{display:flex;flex-direction:column;gap:6px;padding-bottom:12px}
+.story-frame .sf-kpi-l{font-family:'Geist Mono',monospace;font-size:11px;letter-spacing:.18em;color:#5B6373;font-weight:600}
+.story-frame .sf-kpi-d{font-family:'Funnel Display',serif;font-size:24px;color:#F4F1EC;line-height:1.25;max-width:380px}
+
+/* chart canvas (Bang) */
+.story-frame .sf-chart{
+  background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);
+  border-radius:4px;padding:32px 36px;margin-top:24px;flex:1;
+  display:flex;flex-direction:column;
+}
+.story-frame .sf-chart-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.story-frame .sf-chart-title{
+  font-family:'Funnel Display',serif;font-size:20px;font-weight:500;color:#F4F1EC;letter-spacing:-.2px;
+}
+.story-frame .sf-chart-meta{font-family:'Geist Mono',monospace;font-size:10px;color:#5B6373;letter-spacing:.12em}
+.story-frame .sf-chart-sub{
+  font-family:'Geist',sans-serif;font-size:13px;color:#A8AFBC;margin-bottom:20px;font-style:italic;
+}
+.story-frame .sf-chart-canvas{flex:1;display:flex;align-items:stretch}
+.story-frame .sf-chart-canvas svg{width:100%;height:100%}
+
+/* CTA (Bongo) */
+.story-frame .sf-cta-row{margin-top:auto;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.story-frame .sf-cta{
+  display:inline-flex;align-items:center;gap:14px;
+  background:#E45A2E;color:#0A0E15;padding:18px 28px;
+  font-family:'Geist Mono',monospace;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  border:none;cursor:pointer;text-decoration:none;
+  transition:transform .15s ease, background .15s ease;
+}
+.story-frame .sf-cta:hover{transform:translateX(2px);background:#F26B3D}
+.story-frame .sf-cta-arr{font-size:18px}
+.story-frame .sf-cta-2{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:'Geist Mono',monospace;font-size:11px;color:#A8AFBC;letter-spacing:.12em;text-transform:uppercase;
+  background:none;border:1px solid rgba(255,255,255,.12);padding:14px 20px;text-decoration:none;
+}
+.story-frame .sf-cta-2:hover{border-color:rgba(255,255,255,.28);color:#F4F1EC}
+
+/* scroll cue + scene progress */
+.story-frame .sf-scroll-cue{
+  position:absolute;right:96px;bottom:48px;z-index:5;
+  display:flex;align-items:center;gap:12px;
+  font-family:'Geist Mono',monospace;font-size:10px;color:#5B6373;letter-spacing:.18em;text-transform:uppercase;
+  animation:sf-bob 2.2s ease-in-out infinite;
+}
+.story-frame .sf-scroll-cue svg{width:24px;height:24px}
+@keyframes sf-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+.story-frame .sf-progress{
+  position:fixed;right:18px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:14px;z-index:10;
+}
+/* in mockup, render inline at right of the frame instead of fixed */
+.story-frame .sf-progress-inline{
+  position:absolute;right:34px;top:80px;
+  display:flex;flex-direction:column;gap:14px;z-index:5;
+}
+.story-frame .sf-progress-dot{
+  width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.16);
+  transition:background .2s ease, transform .2s ease;
+}
+.story-frame .sf-progress-dot.on{background:#E45A2E;transform:scale(1.5)}
+.story-frame .sf-progress-label{
+  writing-mode:vertical-rl;text-orientation:mixed;
+  font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.18em;
+  color:#5B6373;margin-top:18px;text-transform:uppercase;
+}
+
+/* highlights / annotations on the chart */
+.story-frame .sf-anno-flag{
+  position:absolute;background:#E45A2E;color:#0A0E15;padding:4px 10px;
+  font-family:'Geist Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+}
+.story-frame .sf-anno-line{position:absolute;border-left:1px dashed #E45A2E;opacity:.8}
+
+/* footer hint between scenes */
+.story-frame .sf-scene-divider{
+  height:80px;display:flex;align-items:center;justify-content:center;
+  background:#060912;color:#5B6373;font-family:'Geist Mono',monospace;font-size:10px;letter-spacing:.22em;
+  text-transform:uppercase;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.story-frame .sf-scene-divider span{display:inline-flex;align-items:center;gap:14px}
+.story-frame .sf-scene-divider em{font-style:normal;color:#E45A2E;font-weight:600}
+</style>
+
+<div class="sc-label">04 · Story scrollytelling (dark theme, scroll-triggered chart state)</div>
+<div class="frame story-frame">
+
+  <!-- ━━━━━ SCENE 1 · BING ━━━━━ -->
+  <div class="story-scene scene-bing">
+
+    <div class="sf-progress-inline">
+      <span class="sf-progress-dot on"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <div class="sf-progress-label">Scene 1 / 6</div>
+    </div>
+
+    <div class="sf-eyebrow">
+      <span class="sf-eyebrow-line"></span>
+      STORY 02 · NETWORK HEALTH
+      <span class="sf-eyebrow-meta">· Jan 28 to Feb 12, 2026</span>
+    </div>
+
+    <div class="sf-narrative">
+      <div class="sf-h1">Nine days<br>without a <em>network</em>.</div>
+      <div class="sf-lede">For the Lunar New Year, Hồ Chí Minh City's bus system went quiet. Then it came back. <em>This is the curve of how it happened.</em></div>
+    </div>
+
+    <div class="sf-kpi">
+      <div class="sf-kpi-v">−67%</div>
+      <div class="sf-kpi-meta">
+        <div class="sf-kpi-l">DAILY RIDERSHIP AT TẾT PEAK</div>
+        <div class="sf-kpi-d">measured against a 4-week rolling baseline of normal weekdays.</div>
+      </div>
+    </div>
+
+    <div class="sf-scroll-cue">
+      Scroll to read
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14"/><path d="M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="sf-scene-divider"><span>SCENE 1 of 6 <em>· BING</em> · the dramatic question</span></div>
+
+  <!-- ━━━━━ SCENE 2 · BANG (annotated chart) ━━━━━ -->
+  <div class="story-scene scene-bang">
+
+    <div class="sf-progress-inline">
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot on"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <div class="sf-progress-label">Scene 2 / 6</div>
+    </div>
+
+    <div class="sf-eyebrow">
+      <span class="sf-eyebrow-line"></span>
+      SCENE 02
+      <span class="sf-eyebrow-meta">· the drop</span>
+    </div>
+
+    <div class="sf-narrative">
+      <div class="sf-h2">Ridership held steady through January.<br>Then <em>January 28th</em>.</div>
+      <div class="sf-lede">The chart below shows daily boardings for the whole network over the 90-day AFC window. Notice the cliff.</div>
+    </div>
+
+    <div class="sf-chart">
+      <div class="sf-chart-hdr">
+        <div class="sf-chart-title">Tết 2026 cut daily ridership by two-thirds for nine days.</div>
+        <div class="sf-chart-meta">All routes · Jan 1 to Mar 31, 2026 · source: AFC</div>
+      </div>
+      <div class="sf-chart-sub">Vertical band marks the Tết window (Jan 28 to Feb 5). Recovery completes by Feb 12.</div>
+
+      <div class="sf-chart-canvas">
+        <svg viewBox="0 0 800 280" preserveAspectRatio="none">
+          <!-- background grid -->
+          <line x1="0" y1="60" x2="800" y2="60" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+          <line x1="0" y1="140" x2="800" y2="140" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+          <line x1="0" y1="220" x2="800" y2="220" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+
+          <!-- y axis labels -->
+          <text x="6" y="65" font-family="Geist Mono,monospace" font-size="10" fill="#5B6373">300K</text>
+          <text x="6" y="145" font-family="Geist Mono,monospace" font-size="10" fill="#5B6373">200K</text>
+          <text x="6" y="225" font-family="Geist Mono,monospace" font-size="10" fill="#5B6373">100K</text>
+
+          <!-- Tết window highlight -->
+          <rect x="240" y="20" width="105" height="240" fill="rgba(228,90,46,.10)" stroke="rgba(228,90,46,.4)" stroke-width="1" stroke-dasharray="3,4"/>
+          <text x="244" y="36" font-family="Geist Mono,monospace" font-size="10" fill="#E45A2E" font-weight="600" letter-spacing="1.5">TẾT WINDOW</text>
+
+          <!-- area fill under line -->
+          <path d="M40,80 70,75 100,82 130,78 160,72 190,75 220,78 245,80 252,140 258,200 264,235 270,240 276,238 282,232 288,220 294,210 300,195 320,165 340,130 360,100 380,85 400,78 430,82 460,80 490,76 520,82 550,78 580,82 610,78 640,82 670,76 700,80 730,78 760,82 L760,260 L40,260 Z" fill="rgba(228,90,46,.08)"/>
+
+          <!-- main timeline -->
+          <polyline points="40,80 70,75 100,82 130,78 160,72 190,75 220,78 245,80 252,140 258,200 264,235 270,240 276,238 282,232 288,220 294,210 300,195 320,165 340,130 360,100 380,85 400,78 430,82 460,80 490,76 520,82 550,78 580,82 610,78 640,82 670,76 700,80 730,78 760,82" fill="none" stroke="#F4F1EC" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+
+          <!-- annotation: peak drop -->
+          <circle cx="270" cy="240" r="5" fill="#E45A2E" stroke="#0A0E15" stroke-width="2"/>
+          <line x1="270" y1="240" x2="270" y2="160" stroke="#E45A2E" stroke-width="1.2" stroke-dasharray="2,3"/>
+          <rect x="220" y="140" width="100" height="22" fill="#E45A2E"/>
+          <text x="270" y="155" font-family="Geist Mono,monospace" font-size="11" fill="#0A0E15" font-weight="700" text-anchor="middle">−67% · Jan 30</text>
+
+          <!-- recovery marker -->
+          <circle cx="380" cy="85" r="5" fill="none" stroke="#A8AFBC" stroke-width="1.6"/>
+          <text x="388" y="80" font-family="Geist Mono,monospace" font-size="10" fill="#A8AFBC">Feb 12 · back to baseline</text>
+
+          <!-- x axis dates -->
+          <text x="40" y="276" font-family="Geist Mono,monospace" font-size="9" fill="#5B6373">Jan 1</text>
+          <text x="245" y="276" font-family="Geist Mono,monospace" font-size="9" fill="#5B6373">Jan 28</text>
+          <text x="345" y="276" font-family="Geist Mono,monospace" font-size="9" fill="#5B6373">Feb 5</text>
+          <text x="730" y="276" font-family="Geist Mono,monospace" font-size="9" fill="#5B6373">Mar 31</text>
+        </svg>
+      </div>
+    </div>
+
+    <div class="sf-scroll-cue">
+      Continue
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v14"/><path d="M5 12l7 7 7-7"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="sf-scene-divider"><span>SCENES 2 to 5 <em>· BANG</em> · four chart frames, each scroll-triggered: highlight, then chart change, then new narrative reveal</span></div>
+
+  <!-- ━━━━━ SCENE 6 · BONGO ━━━━━ -->
+  <div class="story-scene scene-bongo">
+
+    <div class="sf-progress-inline">
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot"></span>
+      <span class="sf-progress-dot on"></span>
+      <div class="sf-progress-label">Scene 6 / 6</div>
+    </div>
+
+    <div class="sf-eyebrow">
+      <span class="sf-eyebrow-line"></span>
+      WHAT NEXT
+      <span class="sf-eyebrow-meta">· the call to action</span>
+    </div>
+
+    <div class="sf-narrative">
+      <div class="sf-h1">Nine days of flatline.<br>Nine routes that<br>need a <em>contingency plan</em>.</div>
+      <div class="sf-lede">We've found the routes most vulnerable to network shocks. Each one drops more than 90% during Tết and takes longer than three days to recover. <em>The Anomaly Lab is where to start.</em></div>
+    </div>
+
+    <div class="sf-cta-row">
+      <a href="#c05" class="sf-cta">Open the Anomaly Lab <span class="sf-cta-arr">→</span></a>
+      <a href="#stories" class="sf-cta-2">Read the next story</a>
+    </div>
+
+    <div class="sf-scroll-cue" style="bottom:48px;right:96px;color:#A8AFBC;animation:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/>
+      </svg>
+      Story complete
+    </div>
+  </div>
+
+</div>
+
+
+</body>
+</html>

@@ -16,39 +16,88 @@ analytical questions that are explicitly out of scope for the present phase.
 \subsection{User Roles}
 \label{sec:solution:problem:roles}
 
-The design accounts for four stakeholder roles. The roles are recorded here
-as a design grounding only; the user interface of the proposed system does not
-expose role labels or a role switcher. The same analytical surface serves all
-four roles, with the date range and entity filters under shared control.
-Table~\ref{tab:problem:roles} lists the roles and two illustrative analytical
-questions each role typically asks of the bus data.
+Three stakeholder roles ground the design. The same analytical surface
+serves all three; the user interface exposes no role labels and no role
+switcher. Date range and entity filters are under shared control.
+
+\noindent\textbf{Passenger.} The passenger uses the tool to decide whether a route is reliable enough to commit to as a daily commute, when a route or stop is least crowded, and whether a given route serves a particular school during the commute window.
+
+\noindent\textbf{Operating company.} The company uses the tool to decide where to add or cut capacity in response to demand, which routes are profitable on a revenue-per-trip basis and which are bleeding through waste, how it ranks against peers on shared corridors, and whether a promotion produced measurable ridership lift.
+
+\noindent\textbf{Public-transport authority.} The authority uses the tool to identify where supply diverges from demand at peak hours, which routes or operators have reliability problems under the Quality of Service decomposition, how the network absorbs and recovers from large-scale shocks such as the T\^et holiday and the April thirtieth parade week, where coverage and equity gaps lie, and how effectively bus routes connect to Metro Line~1.
+
+Driver-level data, including driver license identifiers and shift
+records, flows into the warehouse and surfaces within the operating-company
+and authority views. Drivers are retained as a data source for the
+system, not as a tool user, because drivers in practice receive route
+assignments through dispatch channels and act on them in real time
+rather than through analytical dashboards.
+
+The three roles motivate the analytical content of the system but do not
+drive its surface structure. Section~\ref{sec:solution:themes} returns to the
+roles when it groups the analytical content into thematic views.
+
+\subsection{Stakeholder Questions}
+\label{sec:solution:problem:questions}
+
+Each functional capability in Section~\ref{sec:solution:problem:functional}
+responds to one or more concrete questions stakeholders bring to the
+historical bus data. The fourteen questions in
+Table~\ref{tab:problem:questions} were derived through a three-step
+process: review of the operational data available in the AFC and GPS
+streams; consultation with the project advisor on which analytical
+questions the surveyed existing tools (Chapter~\ref{chapter:related})
+do not answer; and inspection of comparable transit-analytics literature
+for stakeholder-question patterns transferrable to the Ho Chi Minh City
+context. The questions are presented as the Phase~1 specification; Phase~2
+user evaluation (Section~\ref{sec:future:eval}) will validate or revise
+the list against direct stakeholder input. The catalogue
+(Section~\ref{sec:solution:viz}) maps every chart to one or more of
+these fourteen questions. Each question is tagged with its persona, with a Must-or-Should
+priority following the MoSCoW scheme, and with the strategic or tactical
+character of the decision it informs.
 
 \begin{table}[!htbp]
   \centering
-  \caption{Stakeholder roles and illustrative analytical questions}
-  \label{tab:problem:roles}
-  \begin{tabularx}{\linewidth}{l X}
+  \caption{Stakeholder questions.}
+  \label{tab:problem:questions}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabularx}{\linewidth}{p{0.9cm}Xp{2.1cm}p{1.5cm}}
     \hline
-    \textbf{Role} & \textbf{Illustrative analytical questions} \\
+    \textbf{Id} & \textbf{Question} & \textbf{Persona} & \textbf{Priority} \\
     \hline
-    Passenger & Which routes are reliable at the hour I travel? Which stops near my school or workplace are crowded in the morning peak? \\
-    Driver & What is the demand profile of the route I am assigned to? Where along the route do the heaviest boardings occur? \\
-    Operating company & How does each of my routes compare in revenue and ridership concentration with comparable routes in the network? Which routes show payment-channel adoption that diverges from the network mean? \\
-    Public-transport authority & Which corridors are undersupplied at peak hours? Which routes connect effectively to the metro system, and which do not? \\
+    P-Q1 & Is route X reliable enough to commit to as a daily commute? & Passenger & Must, tactical \\
+    P-Q2 & When is route X or stop Y least crowded? & Passenger & Must, tactical \\
+    P-Q3 & Does this route serve my school's commute window? & Passenger & Must, tactical \\
+    C-Q1 & Which of my routes are over- or under-supplied relative to demand? & Company & Must, strategic \\
+    C-Q2 & What is my route-level revenue picture in revenue per trip and ghost-run share? & Company & Must, strategic \\
+    C-Q3 & How do I rank against other operators on the same corridors? & Company & Must, strategic \\
+    C-Q4 & Did my last promotion lift ridership in a measurable way? & Company & Should, tactical \\
+    A-Q1 & Where does supply diverge from demand across the network? & Authority & Must, strategic \\
+    A-Q2 & Which routes or operators have reliability problems under QoS-1/2/3? & Authority & Must, operational \\
+    A-Q3 & How does the network absorb and recover from shocks such as Tết and the April thirtieth parade week? & Authority & Must, strategic \\
+    A-Q4 & Where are the coverage and equity gaps, with reference to schools and underserved districts? & Authority & Must, strategic \\
+    A-Q5 & How well does bus integrate with Metro Line~1 in terms of transfer timing? & Authority & Must, operational \\
+    A-Q6 & What is the market structure of the network in terms of operator concentration? & Authority and Company & Should, strategic \\
+    A-Q7 & What will demand look like across routes over the next fourteen days? & Authority and Company & Should, strategic \\
     \hline
   \end{tabularx}
 \end{table}
 
-The four roles motivate the analytical content of the system but do not drive
-its surface structure. Section~\ref{sec:solution:themes} returns to the roles
-when it groups the analytical content into thematic views.
+Each question is materialised through a six-field requirements record that
+specifies the input aggregate tables, the computation, the output chart
+shape, the priority tier, the decision type, and a single time-bounded
+success criterion. The success criteria are testable usability targets: for
+example, P-Q3 is considered answered when a student can identify a confident
+route from their school within twenty seconds of opening the system. The
+detailed records are recorded in the project log and summarised in
+Section~\ref{sec:solution:viz} where each question is paired with its chart.
 
 \subsection{Functional Requirements}
 \label{sec:solution:problem:functional}
 
-The proposed system must provide the following functional capabilities. Each
-requirement is stated as a single obligation in the form ``The system shall
-\dots''.
+The proposed system must provide the following functional capabilities.
 
 \begin{enumerate}
   \item[\textbf{R1.}] The system shall aggregate boarding events by route and by hour of day across the available calendar window.
@@ -61,6 +110,11 @@ requirement is stated as a single obligation in the form ``The system shall
   \item[\textbf{R8.}] The system shall report financial efficiency per route through measurable proxies, including revenue per trip and the share of trips with no recorded boarding.
   \item[\textbf{R9.}] The system shall export every chart and every entity-detail view in standard image and tabular formats (Portable Network Graphics, Portable Document Format, and comma-separated values).
   \item[\textbf{R10.}] The system shall persist analytical state, comprising the active thematic view, the active chart, the active filters, and the active selection, in a form that is bookmarkable and shareable across sessions.
+  \item[\textbf{R11.}] The system shall surface school-aware demand as a distinct analytical theme, including the attribution of student-fare boardings to serving universities, the classification of routes by school-routeness, and the identification of schools that lie beyond walking distance of any served stop.
+  \item[\textbf{R12.}] The system shall rank operating companies against peers on shared corridors using demand per trip, revenue per trip, and on-schedule operation as comparison metrics. On-schedule operation depends on the full GPS window and is reported in reduced form in Phase~1 (over the locally available one-day sample) and at full coverage in Phase~2.
+  \item[\textbf{R13.}] The system shall estimate the ridership lift attributable to a promotion using a difference-in-differences design \cite{abadie2005did} with synthetic controls drawn from same-archetype routes (Section~\ref{sec:foundations:methods:did}).
+  \item[\textbf{R14.}] The system shall summarise market structure through a treemap of operator-route-trip volume accompanied by the Herfindahl-Hirschman concentration index \cite{rhoades1993herfindahl} at the network and per-corridor level (Section~\ref{sec:foundations:methods:hhi}).
+  \item[\textbf{R15.}] The system shall produce a fourteen-day demand forecast per route, with eighty- and ninety-five-percent prediction intervals, and shall expose the underlying model, its inputs, and its accuracy on a methodology side-panel. The fourteen-day horizon covers two complete weekly cycles, which is the shortest horizon at which the weekly seasonality of bus demand is observable in the forecast; the 80- and 95-percent intervals follow the convention of the \texttt{statsforecast} \cite{statsforecast} \texttt{AutoETS} model, where the 80-percent band carries the typical-range reading and the 95-percent band carries the outlier-envelope reading.
 \end{enumerate}
 
 \subsection{Non-Functional Requirements}
@@ -71,15 +125,33 @@ non-functional constraints. These constraints shape the architectural
 decisions discussed in Section~\ref{sec:solution:architecture}.
 
 \begin{enumerate}
-  \item[\textbf{N1.}] Interactive latency shall be under three seconds for a cold load of any thematic view and under fifty milliseconds for any warm chart re-render driven by a filter change.
-  \item[\textbf{N2.}] The system shall be deployable as a single process on commodity hardware, without dependence on a separate database server or a separate application server.
+  \item[\textbf{N1.}] Interactive latency shall be bounded by two budgets. Cold-load latency, defined as the time from a user opening a thematic view to the first chart fully rendered, shall be under three seconds. Warm chart re-render latency, defined as the time from a filter-change event to the affected chart's repaint, shall be under fifty milliseconds in the design budget, with a relaxed acceptance ceiling of one hundred milliseconds (the perceived-instantaneous threshold of Nielsen~\cite{nielsen1993usability}). The fifty-millisecond figure is the design target rather than a published synchrony threshold: cross-chart brushing under Multiple Coordinated Views feels synchronous when the affected chart repaints within a single browser paint cycle (16--30~milliseconds at 60~Hz refresh), and fifty milliseconds leaves headroom of one paint cycle for serialisation and re-layout. The architecture comparison of Section~\ref{sec:solution:architecture} adopts fifty milliseconds as the pass-or-fail gate; readers who treat one hundred milliseconds as the more defensible bound should still find that the selected Medallion architecture passes by a wide margin and that the alternatives fail by an even wider one.
+  \item[\textbf{N2.}] The system shall be deployable as a single Python process on commodity hardware, with the analytical engine and the HTTP server embedded in the same process rather than running as separate services.
   \item[\textbf{N3.}] The warehouse build shall be deterministic and reproducible: re-running the build on the same raw input shall produce byte-identical aggregate tables.
   \item[\textbf{N4.}] Preprocessed data shall persist on disk under approximately one hundred megabytes for the calendar window covered in the present phase.
   \item[\textbf{N5.}] The system shall be portable across Linux, macOS, and Microsoft Windows without operating-system-specific build steps.
   \item[\textbf{N6.}] The system shall contain no personally identifying data about individual passengers; only the aggregate fare records published in the dataset release are used.
 \end{enumerate}
 
-\subsection{Out-of-Scope Constraints}
+A non-functional consideration that follows from the proposed system's
+operator-comparison views (the operator scorecard and the operator-route
+marimekko in the Financial and Operations theme) is the language used to
+present those comparisons. The proxies the system surfaces (revenue per
+trip and ghost-run share) are reported as \textit{relative metrics
+against same-corridor peers}, never as absolute pass-or-fail thresholds,
+because the absence of cost data (Section~\ref{sec:solution:problem:scope})
+means a route can score low on revenue per trip for reasons unrelated to
+operator performance (subsidy-served corridors, school-only routes that
+serve a social mandate). The interface labels every operator comparison
+as ``high waste relative to corridor peers'' rather than as ``losing
+money'' or ``failing''; the language preserves the analytical reading
+while avoiding implications about operator viability or labour
+performance that the data does not support. The Methodology Side-Panel
+(Section~\ref{sec:solution:viz:methodology}) for each operator chart
+exposes this convention so that a reader who exports a chart for
+external use carries the caveat with the artefact.
+
+\subsection{Scope Limits}
 \label{sec:solution:problem:scope}
 
 Four analytical capabilities that might reasonably belong to a bus analytics
@@ -94,46 +166,42 @@ parallel team.
   \item Natural-language query over the data. A separate team is developing a text-to-Structured-Query-Language (SQL) capability, which will eventually be integrated alongside the analytical surface defined in this chapter.
 \end{itemize}
 
-\subsection{Requirement-to-Design Mapping}
+\subsection{Design Mapping}
 \label{sec:solution:problem:mapping}
 
-Each functional and non-functional requirement stated above is paired with
-the specific design response that addresses it in the rest of this chapter
-or in Chapter~\ref{chapter:implementation}. Table~\ref{tab:problem:mapping}
-records the full traceability: the requirement number, a short summary of
-the requirement, the corresponding design response, and the section that
-develops the response in detail. Subsequent sections can then be read as
-responses to a recorded specification rather than as standalone proposals.
+Every requirement maps to a design response developed in the rest of this
+chapter or in Chapter~\ref{chapter:implementation}.
+Table~\ref{tab:problem:mapping} records the traceability at a grouped level,
+so the table remains readable while still preserving every requirement
+identifier.
 
 \begin{table}[!htbp]
   \centering
-  \caption{Requirement-to-design traceability}
+  \caption{Requirement-to-design traceability.}
   \label{tab:problem:mapping}
-  \footnotesize
-  \renewcommand{\arraystretch}{1.20}
-  \begin{tabularx}{\linewidth}{p{0.9cm}p{4.0cm}Xp{2.6cm}}
+  \small
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}p{1.65cm} >{\raggedright\arraybackslash}p{3.55cm} >{\raggedright\arraybackslash}X}
     \hline
-    \textbf{Req.} & \textbf{Requirement summary} & \textbf{Design response} & \textbf{Section} \\
+    \textbf{Reqs.} & \textbf{Design concern} & \textbf{Primary response} \\
     \hline
-    R1  & Aggregate ridership by route and hour                & Aggregate-by-route-hour table in the warehouse                          & Section~\ref{sec:solution:architecture} \\
-    R2  & Compare ridership across days, weeks, seasons        & Aggregate-by-route-day and network-by-day tables; calendar dimension tags Tết and parade-week & Sections~\ref{sec:solution:architecture}, \ref{sec:solution:viz} \\
-    R3  & Stop-level demand identification                     & Aggregate-by-stop-hour table plus per-stop drill-down chart             & Sections~\ref{sec:solution:architecture}, \ref{sec:solution:viz} \\
-    R4  & Reliability indicators per route (QoS-1/2/3)         & Aggregate-by-route reliability scorecard sourced from the QoS framework & Section~\ref{sec:solution:viz} \\
-    R5  & Consistent route identifiers across GPS and AFC      & Conformed route dimension reconciles identifier spaces in layer 2       & Section~\ref{sec:solution:architecture} \\
-    R6  & Spatial demand density with uniform area             & Hexagonal-bin density map over H3 cells                                 & Section~\ref{sec:solution:viz} \\
-    R7  & Bus-to-metro feeder identification                   & Sankey diagram of feeder routes against metro stations                  & Section~\ref{sec:solution:viz} \\
-    R8  & Financial efficiency proxies per route               & Two-dimensional scatter quadrant of waste against revenue per trip      & Section~\ref{sec:solution:viz} \\
-    R9  & Export charts and entity views in standard formats   & Per-chart export controls writing PNG, PDF, and CSV                     & Section~\ref{sec:solution:interaction} \\
-    R10 & Bookmarkable, shareable analytical state             & State serialised into the browser URL on every interaction              & Section~\ref{sec:solution:interaction} \\
-    N1  & Sub-50 ms warm chart render                          & Pre-computed aggregate tables read from columnar storage                & Section~\ref{sec:solution:architecture} \\
-    N2  & Single-process deployability on commodity hardware   & In-process columnar engine over local files                             & Section~\ref{sec:solution:architecture} \\
-    N3  & Deterministic, reproducible warehouse build          & Idempotent build with conformed dimensions rebuilt before dependent aggregates & Section~\ref{sec:solution:architecture:refresh} \\
-    N4  & On-disk preprocessed size below 100~MB               & Columnar storage compression and aggregate-only persistent layer        & Section~\ref{sec:solution:preprocessing} \\
-    N5  & Cross-platform portability                           & Pure-Python pipeline; no operating-system-specific build steps          & Section~\ref{sec:solution:overview} \\
-    N6  & No personally identifying data                       & Aggregate-only fare records; user identifier dropped in preprocessing   & Section~\ref{sec:solution:preprocessing} \\
+    \multicolumn{3}{l}{\textit{Functional}} \\
+    R1--R3 & Demand volume and hotspots & Route-hour, route-day, network-day, and stop-hour aggregates with drill-downs. \\
+    R4, R12 & Reliability and operator comparison & QoS route scorecard plus peer-median operator scorecard on shared corridors. \\
+    R5 & Cross-source route identity & Conformed route dimension reconciles GPS and AFC keyspaces. \\
+    R6--R7 & Spatial demand and metro connection & H3 demand-density map and bus-to-metro Sankey. \\
+    R8, R13--R14 & Financial and policy analytics & Revenue/ghost-run quadrant, promotion-lift waterfall, and HHI operator treemap. \\
+    R9--R10 & Export and reproducible state & Per-chart PNG/PDF/CSV export and URL-serialised app state. \\
+    R11 & School-aware demand & School constellation, schools-to-routes treemap, and proximity map. \\
+    R15 & Demand forecasting & Per-route ETS forecast with 80/95\% bands and methodology side-panel. \\
+    \hline
+    \multicolumn{3}{l}{\textit{Non-functional}} \\
+    N1 & Interaction latency & Pre-computed Gold aggregates read from columnar storage keep warm renders under the target budget. \\
+    N2--N5 & Deployability and reproducibility & Single-process pure-Python pipeline over local columnar files, with idempotent warehouse builds. \\
+    N6 & Privacy & Aggregate-only fare records; passenger identifiers dropped during preprocessing. \\
     \hline
   \end{tabularx}
 \end{table}
 
-The mapping is referenced again where the design choices are introduced, so
-that each subsequent section can point back to the requirement it satisfies.
+Later design sections reference the individual requirement identifiers at the
+point where each is satisfied.

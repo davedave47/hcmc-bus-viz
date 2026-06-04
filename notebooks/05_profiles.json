@@ -1,0 +1,2197 @@
+{
+  "root.hcmc_stops_agu_2025": {
+    "source": "root",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.8,
+    "sample_note": "",
+    "rows_profiled": 4710,
+    "cols": 14,
+    "columns": [
+      "stopId",
+      "code",
+      "stop_name",
+      "type",
+      "zone",
+      "ward",
+      "address",
+      "street",
+      "support_disability",
+      "status",
+      "lng",
+      "lat",
+      "search",
+      "routes"
+    ],
+    "dtypes": {
+      "stopId": "Int64",
+      "code": "String",
+      "stop_name": "String",
+      "type": "String",
+      "zone": "String",
+      "ward": "String",
+      "address": "String",
+      "street": "String",
+      "support_disability": "String",
+      "status": "String",
+      "lng": "Float64",
+      "lat": "Float64",
+      "search": "String",
+      "routes": "String"
+    },
+    "null_pct": {
+      "stopId": 0.0,
+      "code": 0.0,
+      "stop_name": 0.0,
+      "type": 0.0,
+      "zone": 0.0,
+      "ward": 52.21,
+      "address": 0.0,
+      "street": 0.0,
+      "support_disability": 80.36,
+      "status": 0.0,
+      "lng": 0.0,
+      "lat": 0.0,
+      "search": 0.0,
+      "routes": 0.0
+    },
+    "cardinality": {
+      "stopId": 4710,
+      "code": 4706,
+      "stop_name": 2909,
+      "type": 9,
+      "zone": 28,
+      "ward": 152,
+      "address": 3748,
+      "street": 522,
+      "support_disability": 2,
+      "status": 5,
+      "lng": 4564,
+      "lat": 4558,
+      "search": 4679,
+      "routes": 769
+    },
+    "pk_candidates": [
+      "stopId"
+    ],
+    "numeric_stats": {
+      "stopId": {
+        "min": 1.0,
+        "max": 8256.0,
+        "mean": 3110.7133757961783,
+        "median": 2610.5,
+        "std": 2377.8988101109467,
+        "p5": 261.0,
+        "p95": 7959.0
+      },
+      "lng": {
+        "min": 106.087836,
+        "max": 107.217992,
+        "mean": 106.66761013843949,
+        "median": 106.6680405,
+        "std": 0.09391820174017045,
+        "p5": 106.497749,
+        "p95": 106.80994
+      },
+      "lat": {
+        "min": 10.350457,
+        "max": 11.362073,
+        "mean": 10.802676354398526,
+        "median": 10.7959055,
+        "std": 0.10272325396962377,
+        "p5": 10.657118,
+        "p95": 10.990949
+      }
+    },
+    "top_categories": {
+      "type": [
+        {
+          "type": "Tr\u1ee5 d\u1eebng",
+          "count": 3099
+        },
+        {
+          "type": "Nh\u00e0 ch\u1edd",
+          "count": 760
+        },
+        {
+          "type": "\u00d4 s\u01a1n",
+          "count": 642
+        }
+      ],
+      "zone": [
+        {
+          "zone": "Huy\u1ec7n B\u00ecnh Ch\u00e1nh",
+          "count": 467
+        },
+        {
+          "zone": "Huy\u1ec7n C\u1ee7 Chi",
+          "count": 420
+        },
+        {
+          "zone": "TP. Th\u1ee7 \u0110\u1ee9c - KV2",
+          "count": 379
+        }
+      ],
+      "support_disability": [
+        {
+          "support_disability": null,
+          "count": 3785
+        },
+        {
+          "support_disability": "C\u00f3",
+          "count": 925
+        }
+      ],
+      "status": [
+        {
+          "status": "\u0110ang khai th\u00e1c",
+          "count": 4618
+        },
+        {
+          "status": "Ch\u01b0a khai th\u00e1c",
+          "count": 49
+        },
+        {
+          "status": "T\u1ea1m ng\u01b0ng khai th\u00e1c",
+          "count": 20
+        }
+      ]
+    }
+  },
+  "root.vehicle_route_mapping": {
+    "source": "root",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.11,
+    "sample_note": "",
+    "rows_profiled": 1547,
+    "cols": 3,
+    "columns": [
+      "vehicle",
+      "route_id",
+      "route_no"
+    ],
+    "dtypes": {
+      "vehicle": "String",
+      "route_id": "Int64",
+      "route_no": "String"
+    },
+    "null_pct": {
+      "vehicle": 0.0,
+      "route_id": 0.0,
+      "route_no": 0.0
+    },
+    "cardinality": {
+      "vehicle": 967,
+      "route_id": 31,
+      "route_no": 33
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "route_id": {
+        "min": 1.0,
+        "max": 396.0,
+        "mean": 86.77181641887525,
+        "median": 66.0,
+        "std": 81.71008784017154,
+        "p5": 3.0,
+        "p95": 350.0
+      }
+    },
+    "top_categories": {
+      "route_no": [
+        {
+          "route_no": "148",
+          "count": 132
+        },
+        {
+          "route_no": "27",
+          "count": 125
+        },
+        {
+          "route_no": "45",
+          "count": 116
+        }
+      ]
+    }
+  },
+  "gps.companies": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.0,
+    "sample_note": "",
+    "rows_profiled": 10,
+    "cols": 2,
+    "columns": [
+      "company_id",
+      "company_name"
+    ],
+    "dtypes": {
+      "company_id": "Int64",
+      "company_name": "String"
+    },
+    "null_pct": {
+      "company_id": 0.0,
+      "company_name": 0.0
+    },
+    "cardinality": {
+      "company_id": 10,
+      "company_name": 10
+    },
+    "pk_candidates": [
+      "company_id",
+      "company_name"
+    ],
+    "numeric_stats": {
+      "company_id": {
+        "min": 26.0,
+        "max": 43.0,
+        "mean": 33.8,
+        "median": 32.5,
+        "std": 5.959119994689746,
+        "p5": 26.0,
+        "p95": 43.0
+      }
+    },
+    "top_categories": {
+      "company_name": [
+        {
+          "company_name": "H\u1ee3p t\u00e1c x\u00e3 v\u1eadn t\u1ea3i xe bu\u00fdt Quy\u1ebft Th\u1eafng",
+          "count": 1
+        },
+        {
+          "company_name": "C\u00f4ng ty CP V\u1eadn t\u1ea3i Th\u00e0nh Ph\u1ed1 H\u1ed3 Ch\u00ed Minh",
+          "count": 1
+        },
+        {
+          "company_name": "H\u1ee3p t\u00e1c x\u00e3 v\u1eadn t\u1ea3i s\u1ed1 26",
+          "count": 1
+        }
+      ]
+    }
+  },
+  "gps.drivers": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.05,
+    "sample_note": "",
+    "rows_profiled": 1764,
+    "cols": 3,
+    "columns": [
+      "driver_id",
+      "driver_license_number",
+      "driver_name"
+    ],
+    "dtypes": {
+      "driver_id": "String",
+      "driver_license_number": "Int64",
+      "driver_name": "String"
+    },
+    "null_pct": {
+      "driver_id": 0.0,
+      "driver_license_number": 0.06,
+      "driver_name": 58.67
+    },
+    "cardinality": {
+      "driver_id": 1764,
+      "driver_license_number": 1764,
+      "driver_name": 708
+    },
+    "pk_candidates": [
+      "driver_id"
+    ],
+    "numeric_stats": {
+      "driver_license_number": {
+        "min": 0.0,
+        "max": 112233445566777.0,
+        "mean": 830040329878.966,
+        "median": 790117246278.0,
+        "std": 2672626910677.473,
+        "p5": 460128007567.0,
+        "p95": 930120000915.0
+      }
+    },
+    "top_categories": {}
+  },
+  "gps.routes": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.03,
+    "sample_note": "",
+    "rows_profiled": 184,
+    "cols": 11,
+    "columns": [
+      "route_id",
+      "route_id_mcpt",
+      "route_no",
+      "route_name",
+      "type",
+      "distance",
+      "operation_time",
+      "headway",
+      "total_trip",
+      "time_of_trip",
+      "company_id"
+    ],
+    "dtypes": {
+      "route_id": "Int64",
+      "route_id_mcpt": "Int64",
+      "route_no": "String",
+      "route_name": "String",
+      "type": "String",
+      "distance": "Float64",
+      "operation_time": "String",
+      "headway": "String",
+      "total_trip": "String",
+      "time_of_trip": "String",
+      "company_id": "Int64"
+    },
+    "null_pct": {
+      "route_id": 0.0,
+      "route_id_mcpt": 0.0,
+      "route_no": 0.0,
+      "route_name": 0.0,
+      "type": 4.89,
+      "distance": 0.0,
+      "operation_time": 0.0,
+      "headway": 0.54,
+      "total_trip": 0.0,
+      "time_of_trip": 0.54,
+      "company_id": 22.83
+    },
+    "cardinality": {
+      "route_id": 163,
+      "route_id_mcpt": 163,
+      "route_no": 163,
+      "route_name": 162,
+      "type": 5,
+      "distance": 134,
+      "operation_time": 86,
+      "headway": 68,
+      "total_trip": 83,
+      "time_of_trip": 59,
+      "company_id": 10
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "route_id": {
+        "min": 1001.0,
+        "max": 1163.0,
+        "mean": 1081.3695652173913,
+        "median": 1080.5,
+        "std": 46.43362202601392,
+        "p5": 1010.0,
+        "p95": 1155.0
+      },
+      "route_id_mcpt": {
+        "min": 1.0,
+        "max": 10976.0,
+        "mean": 273.9076086956522,
+        "median": 98.5,
+        "std": 1132.7168592461578,
+        "p5": 11.0,
+        "p95": 414.0
+      },
+      "distance": {
+        "min": 4100.0,
+        "max": 110000.0,
+        "mean": 25107.641304347828,
+        "median": 21135.0,
+        "std": 16957.105708279993,
+        "p5": 7900.0,
+        "p95": 63500.0
+      },
+      "company_id": {
+        "min": 28.0,
+        "max": 43.0,
+        "mean": 32.95070422535211,
+        "median": 31.0,
+        "std": 4.288079245306059,
+        "p5": 29.0,
+        "p95": 42.0
+      }
+    },
+    "top_categories": {
+      "type": [
+        {
+          "type": "Ph\u1ed5 th\u00f4ng - C\u00f3 tr\u1ee3 gi\u00e1",
+          "count": 127
+        },
+        {
+          "type": "Ph\u1ed5 th\u00f4ng - Kh\u00f4ng tr\u1ee3 gi\u00e1",
+          "count": 44
+        },
+        {
+          "type": null,
+          "count": 9
+        }
+      ]
+    }
+  },
+  "gps.schedules": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 28.65,
+    "sample_note": "",
+    "rows_profiled": 283134,
+    "cols": 13,
+    "columns": [
+      "route_id",
+      "route_id_mcpt",
+      "service_type",
+      "valid_from",
+      "valid_to",
+      "direction",
+      "from_stop",
+      "to_stop",
+      "trip_no",
+      "departure_time",
+      "arrival_time",
+      "start_terminal_id",
+      "end_terminal_id"
+    ],
+    "dtypes": {
+      "route_id": "Int64",
+      "route_id_mcpt": "Int64",
+      "service_type": "String",
+      "valid_from": "String",
+      "valid_to": "String",
+      "direction": "Int64",
+      "from_stop": "String",
+      "to_stop": "String",
+      "trip_no": "Int64",
+      "departure_time": "String",
+      "arrival_time": "String",
+      "start_terminal_id": "Int64",
+      "end_terminal_id": "Int64"
+    },
+    "null_pct": {
+      "route_id": 13.67,
+      "route_id_mcpt": 0.0,
+      "service_type": 0.0,
+      "valid_from": 0.0,
+      "valid_to": 0.0,
+      "direction": 0.0,
+      "from_stop": 0.0,
+      "to_stop": 0.0,
+      "trip_no": 0.0,
+      "departure_time": 0.0,
+      "arrival_time": 0.0,
+      "start_terminal_id": 54.22,
+      "end_terminal_id": 52.21
+    },
+    "cardinality": {
+      "route_id": 99,
+      "route_id_mcpt": 99,
+      "service_type": 11,
+      "valid_from": 79,
+      "valid_to": 74,
+      "direction": 2,
+      "from_stop": 157,
+      "to_stop": 166,
+      "trip_no": 186,
+      "departure_time": 1097,
+      "arrival_time": 1116,
+      "start_terminal_id": 93,
+      "end_terminal_id": 104
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "route_id": {
+        "min": 1001.0,
+        "max": 1160.0,
+        "mean": 1061.9964855720252,
+        "median": 1061.0,
+        "std": 47.71424347383359,
+        "p5": 1003.0,
+        "p95": 1153.0
+      },
+      "route_id_mcpt": {
+        "min": 0.0,
+        "max": 375.0,
+        "mean": 54.55564503026835,
+        "median": 36.0,
+        "std": 62.02361778685915,
+        "p5": 0.0,
+        "p95": 137.0
+      },
+      "direction": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.48735934221958505,
+        "median": 0.0,
+        "std": 0.4998410709253352,
+        "p5": 0.0,
+        "p95": 1.0
+      },
+      "trip_no": {
+        "min": 1.0,
+        "max": 186.0,
+        "mean": 39.61203529071041,
+        "median": 32.0,
+        "std": 31.61039077461694,
+        "p5": 3.0,
+        "p95": 103.0
+      },
+      "start_terminal_id": {
+        "min": 8.0,
+        "max": 8207.0,
+        "mean": 2427.992154593844,
+        "median": 1101.0,
+        "std": 2816.6660014620506,
+        "p5": 35.0,
+        "p95": 8100.0
+      },
+      "end_terminal_id": {
+        "min": 8.0,
+        "max": 8207.0,
+        "mean": 2631.960254231025,
+        "median": 1116.0,
+        "std": 2920.0264440939536,
+        "p5": 35.0,
+        "p95": 8191.0
+      }
+    },
+    "top_categories": {
+      "service_type": [
+        {
+          "service_type": "unknown",
+          "count": 91366
+        },
+        {
+          "service_type": "special_day",
+          "count": 63455
+        },
+        {
+          "service_type": "special_period",
+          "count": 58324
+        }
+      ]
+    }
+  },
+  "gps.stations": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.54,
+    "sample_note": "",
+    "rows_profiled": 4710,
+    "cols": 9,
+    "columns": [
+      "station_id",
+      "code",
+      "station_name",
+      "type",
+      "zone",
+      "address",
+      "status",
+      "lng",
+      "lat"
+    ],
+    "dtypes": {
+      "station_id": "Int64",
+      "code": "String",
+      "station_name": "String",
+      "type": "String",
+      "zone": "String",
+      "address": "String",
+      "status": "String",
+      "lng": "Float64",
+      "lat": "Float64"
+    },
+    "null_pct": {
+      "station_id": 0.0,
+      "code": 0.0,
+      "station_name": 0.0,
+      "type": 0.0,
+      "zone": 0.0,
+      "address": 0.0,
+      "status": 0.0,
+      "lng": 0.0,
+      "lat": 0.0
+    },
+    "cardinality": {
+      "station_id": 4710,
+      "code": 4706,
+      "station_name": 2909,
+      "type": 9,
+      "zone": 28,
+      "address": 3748,
+      "status": 5,
+      "lng": 4564,
+      "lat": 4558
+    },
+    "pk_candidates": [
+      "station_id"
+    ],
+    "numeric_stats": {
+      "station_id": {
+        "min": 1.0,
+        "max": 8256.0,
+        "mean": 3110.7133757961783,
+        "median": 2610.5,
+        "std": 2377.8988101109476,
+        "p5": 261.0,
+        "p95": 7959.0
+      },
+      "lng": {
+        "min": 106.087836,
+        "max": 107.217992,
+        "mean": 106.66761013843941,
+        "median": 106.6680405,
+        "std": 0.09391820174016857,
+        "p5": 106.497749,
+        "p95": 106.80994
+      },
+      "lat": {
+        "min": 10.350457,
+        "max": 11.362073,
+        "mean": 10.802676354398526,
+        "median": 10.7959055,
+        "std": 0.10272325396962362,
+        "p5": 10.657118,
+        "p95": 10.990949
+      }
+    },
+    "top_categories": {
+      "type": [
+        {
+          "type": "Tr\u1ee5 d\u1eebng",
+          "count": 3099
+        },
+        {
+          "type": "Nh\u00e0 ch\u1edd",
+          "count": 760
+        },
+        {
+          "type": "\u00d4 s\u01a1n",
+          "count": 642
+        }
+      ],
+      "zone": [
+        {
+          "zone": "Huy\u1ec7n B\u00ecnh Ch\u00e1nh",
+          "count": 467
+        },
+        {
+          "zone": "Huy\u1ec7n C\u1ee7 Chi",
+          "count": 420
+        },
+        {
+          "zone": "TP. Th\u1ee7 \u0110\u1ee9c - KV2",
+          "count": 379
+        }
+      ],
+      "status": [
+        {
+          "status": "\u0110ang khai th\u00e1c",
+          "count": 4618
+        },
+        {
+          "status": "Ch\u01b0a khai th\u00e1c",
+          "count": 49
+        },
+        {
+          "status": "T\u1ea1m ng\u01b0ng khai th\u00e1c",
+          "count": 20
+        }
+      ]
+    }
+  },
+  "gps.stop_times": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 2.15,
+    "sample_note": "",
+    "rows_profiled": 56969,
+    "cols": 6,
+    "columns": [
+      "trip_id",
+      "station_id",
+      "arrival_time",
+      "dwell_time",
+      "departure_time",
+      "order"
+    ],
+    "dtypes": {
+      "trip_id": "String",
+      "station_id": "Int64",
+      "arrival_time": "Int64",
+      "dwell_time": "Int64",
+      "departure_time": "Int64",
+      "order": "Int64"
+    },
+    "null_pct": {
+      "trip_id": 0.0,
+      "station_id": 0.0,
+      "arrival_time": 0.0,
+      "dwell_time": 0.0,
+      "departure_time": 0.0,
+      "order": 0.0
+    },
+    "cardinality": {
+      "trip_id": 1244,
+      "station_id": 701,
+      "arrival_time": 32369,
+      "dwell_time": 73,
+      "departure_time": 32274,
+      "order": 61
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "station_id": {
+        "min": 27.0,
+        "max": 8196.0,
+        "mean": 2523.053730976496,
+        "median": 1857.0,
+        "std": 2073.64902859386,
+        "p5": 404.0,
+        "p95": 7648.0
+      },
+      "arrival_time": {
+        "min": 14434.0,
+        "max": 74709.0,
+        "mean": 44274.89406519335,
+        "median": 43577.0,
+        "std": 14993.682140828969,
+        "p5": 21723.0,
+        "p95": 68544.0
+      },
+      "dwell_time": {
+        "min": 0.0,
+        "max": 581.0,
+        "mean": 8.976864610577683,
+        "median": 0.0,
+        "std": 21.238831666835967,
+        "p5": 0.0,
+        "p95": 41.0
+      },
+      "departure_time": {
+        "min": 14434.0,
+        "max": 74709.0,
+        "mean": 44283.87092980393,
+        "median": 43589.0,
+        "std": 14992.281990245205,
+        "p5": 21730.0,
+        "p95": 68552.0
+      },
+      "order": {
+        "min": 1.0,
+        "max": 61.0,
+        "mean": 24.137899559409504,
+        "median": 23.0,
+        "std": 14.43941885354346,
+        "p5": 3.0,
+        "p95": 49.0
+      }
+    },
+    "top_categories": {}
+  },
+  "gps.trips": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.08,
+    "sample_note": "",
+    "rows_profiled": 1244,
+    "cols": 9,
+    "columns": [
+      "trip_id",
+      "route_id",
+      "direction",
+      "start_time",
+      "end_time",
+      "travel_time",
+      "date",
+      "driver_id",
+      "vehicle_id"
+    ],
+    "dtypes": {
+      "trip_id": "String",
+      "route_id": "Int64",
+      "direction": "Int64",
+      "start_time": "Int64",
+      "end_time": "Int64",
+      "travel_time": "Int64",
+      "date": "String",
+      "driver_id": "String",
+      "vehicle_id": "String"
+    },
+    "null_pct": {
+      "trip_id": 0.0,
+      "route_id": 0.0,
+      "direction": 0.0,
+      "start_time": 0.0,
+      "end_time": 0.0,
+      "travel_time": 0.0,
+      "date": 0.0,
+      "driver_id": 14.15,
+      "vehicle_id": 0.0
+    },
+    "cardinality": {
+      "trip_id": 1244,
+      "route_id": 9,
+      "direction": 2,
+      "start_time": 1216,
+      "end_time": 1214,
+      "travel_time": 688,
+      "date": 1,
+      "driver_id": 125,
+      "vehicle_id": 123
+    },
+    "pk_candidates": [
+      "trip_id"
+    ],
+    "numeric_stats": {
+      "route_id": {
+        "min": 1012.0,
+        "max": 1159.0,
+        "mean": 1076.2853697749197,
+        "median": 1079.0,
+        "std": 48.89677252558776,
+        "p5": 1012.0,
+        "p95": 1159.0
+      },
+      "direction": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.5016077170418006,
+        "median": 1.0,
+        "std": 0.5001985000715079,
+        "p5": 0.0,
+        "p95": 1.0
+      },
+      "start_time": {
+        "min": 14434.0,
+        "max": 72086.0,
+        "mean": 42438.127009646305,
+        "median": 41717.5,
+        "std": 14946.94184403903,
+        "p5": 19982.0,
+        "p95": 66656.0
+      },
+      "end_time": {
+        "min": 16637.0,
+        "max": 74709.0,
+        "mean": 45960.484726688104,
+        "median": 45025.0,
+        "std": 15017.278825297932,
+        "p5": 23327.0,
+        "p95": 70127.0
+      },
+      "travel_time": {
+        "min": 1743.0,
+        "max": 16376.0,
+        "mean": 3522.3577170418007,
+        "median": 3494.0,
+        "std": 1065.736644385363,
+        "p5": 2292.0,
+        "p95": 5157.0
+      }
+    },
+    "top_categories": {
+      "date": [
+        {
+          "date": "2025-03-18",
+          "count": 1244
+        }
+      ]
+    }
+  },
+  "gps.vehicles": {
+    "source": "gps",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.04,
+    "sample_note": "",
+    "rows_profiled": 2550,
+    "cols": 2,
+    "columns": [
+      "vehicle_id",
+      "vehicle_number"
+    ],
+    "dtypes": {
+      "vehicle_id": "String",
+      "vehicle_number": "String"
+    },
+    "null_pct": {
+      "vehicle_id": 0.0,
+      "vehicle_number": 0.0
+    },
+    "cardinality": {
+      "vehicle_id": 2550,
+      "vehicle_number": 2550
+    },
+    "pk_candidates": [
+      "vehicle_id",
+      "vehicle_number"
+    ],
+    "numeric_stats": {},
+    "top_categories": {}
+  },
+  "gps.raw_pings": {
+    "source": "gps",
+    "kind": "daily",
+    "n_files": 1,
+    "size_mb_total": 73.77,
+    "sample_note": "",
+    "rows_profiled": 720088,
+    "cols": 9,
+    "columns": [
+      "datetime",
+      "date",
+      "vehicle",
+      "lng",
+      "lat",
+      "driver",
+      "speed",
+      "door_up",
+      "door_down"
+    ],
+    "dtypes": {
+      "datetime": "String",
+      "date": "String",
+      "vehicle": "String",
+      "lng": "Float64",
+      "lat": "Float64",
+      "driver": "String",
+      "speed": "Float64",
+      "door_up": "Boolean",
+      "door_down": "Boolean"
+    },
+    "null_pct": {
+      "datetime": 0.0,
+      "date": 0.0,
+      "vehicle": 0.0,
+      "lng": 0.0,
+      "lat": 0.0,
+      "driver": 0.0,
+      "speed": 49.74,
+      "door_up": 0.0,
+      "door_down": 0.0
+    },
+    "cardinality": {
+      "datetime": 80292,
+      "date": 1,
+      "vehicle": 131,
+      "lng": 36302,
+      "lat": 154507,
+      "driver": 131,
+      "speed": 62,
+      "door_up": 2,
+      "door_down": 2
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "lng": {
+        "min": 106.539688,
+        "max": 106.840904,
+        "mean": 106.68897338086879,
+        "median": 106.706573,
+        "std": 0.0792261805370104,
+        "p5": 106.584595,
+        "p95": 106.803139
+      },
+      "lat": {
+        "min": 10.684394,
+        "max": 10.895743,
+        "mean": 10.791872334741043,
+        "median": 10.78959,
+        "std": 0.05519209596509969,
+        "p5": 10.705165,
+        "p95": 10.883158
+      },
+      "speed": {
+        "min": 1.0,
+        "max": 61.0,
+        "mean": 23.883638945603135,
+        "median": 24.0,
+        "std": 12.718838277832164,
+        "p5": 3.0,
+        "p95": 45.0
+      }
+    },
+    "top_categories": {
+      "date": [
+        {
+          "date": "2025-03-18",
+          "count": 720088
+        }
+      ]
+    }
+  },
+  "gps.extracted_trips": {
+    "source": "gps",
+    "kind": "per_entity",
+    "n_files": 1244,
+    "size_mb_total": 56.41,
+    "sample_note": "sampled 30 of 1,244 per-trip files",
+    "rows_profiled": 12983,
+    "cols": 14,
+    "columns": [
+      "trip_id",
+      "date",
+      "vehicle",
+      "driver",
+      "door_open",
+      "time_in_seconds",
+      "direction",
+      "ver_lat",
+      "ver_lng",
+      "nearest_stop_id",
+      "D_t",
+      "in_buffer",
+      "dt",
+      "hmm_state"
+    ],
+    "dtypes": {
+      "trip_id": "String",
+      "date": "String",
+      "vehicle": "String",
+      "driver": "String",
+      "door_open": "Boolean",
+      "time_in_seconds": "Int64",
+      "direction": "Int64",
+      "ver_lat": "Float64",
+      "ver_lng": "Float64",
+      "nearest_stop_id": "Int64",
+      "D_t": "Float64",
+      "in_buffer": "Int64",
+      "dt": "Float64",
+      "hmm_state": "String"
+    },
+    "null_pct": {
+      "trip_id": 0.0,
+      "date": 0.0,
+      "vehicle": 0.0,
+      "driver": 0.0,
+      "door_open": 0.0,
+      "time_in_seconds": 0.0,
+      "direction": 0.0,
+      "ver_lat": 0.0,
+      "ver_lng": 0.0,
+      "nearest_stop_id": 0.0,
+      "D_t": 0.0,
+      "in_buffer": 0.0,
+      "dt": 0.0,
+      "hmm_state": 0.0
+    },
+    "cardinality": {
+      "trip_id": 30,
+      "date": 1,
+      "vehicle": 4,
+      "driver": 5,
+      "door_open": 2,
+      "time_in_seconds": 12180,
+      "direction": 2,
+      "ver_lat": 12938,
+      "ver_lng": 12934,
+      "nearest_stop_id": 115,
+      "D_t": 12940,
+      "in_buffer": 2,
+      "dt": 47,
+      "hmm_state": 3
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "time_in_seconds": {
+        "min": 17041.0,
+        "max": 72658.0,
+        "mean": 41641.30039282138,
+        "median": 40733.0,
+        "std": 14643.80696872372,
+        "p5": 20218.0,
+        "p95": 68533.0
+      },
+      "direction": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.5045829161210814,
+        "median": 1.0,
+        "std": 0.49999825269227854,
+        "p5": 0.0,
+        "p95": 1.0
+      },
+      "ver_lat": {
+        "min": 10.689460580672568,
+        "max": 10.771623150283723,
+        "mean": 10.728787799576645,
+        "median": 10.728306960564709,
+        "std": 0.024766328803156837,
+        "p5": 10.693653461172293,
+        "p95": 10.769153261770374
+      },
+      "ver_lng": {
+        "min": 106.59420220859194,
+        "max": 106.72479808948073,
+        "mean": 106.65939731637809,
+        "median": 106.66107435964351,
+        "std": 0.04678352666031351,
+        "p5": 106.5972148215232,
+        "p95": 106.72170213799602
+      },
+      "nearest_stop_id": {
+        "min": 27.0,
+        "max": 7564.0,
+        "mean": 1188.2886081799277,
+        "median": 847.0,
+        "std": 1394.8084384609729,
+        "p5": 636.0,
+        "p95": 4275.0
+      },
+      "D_t": {
+        "min": 0.015919567130432525,
+        "max": 615.4235822398269,
+        "mean": 138.57334555091657,
+        "median": 114.37501111795797,
+        "std": 110.79883039991229,
+        "p5": 10.087298966787229,
+        "p95": 366.72404009368734
+      },
+      "in_buffer": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.23199568666718015,
+        "median": 0.0,
+        "std": 0.422122509121115,
+        "p5": 0.0,
+        "p95": 1.0
+      },
+      "dt": {
+        "min": 10.0,
+        "max": 681.0,
+        "mean": 11.509435415543402,
+        "median": 10.0,
+        "std": 19.944543732378886,
+        "p5": 10.0,
+        "p95": 10.0
+      }
+    },
+    "top_categories": {
+      "trip_id": [
+        {
+          "trip_id": "1012-250318-029",
+          "count": 533
+        },
+        {
+          "trip_id": "1012-250318-026",
+          "count": 533
+        },
+        {
+          "trip_id": "1012-250318-018",
+          "count": 518
+        }
+      ],
+      "date": [
+        {
+          "date": "2025-03-18",
+          "count": 12983
+        }
+      ],
+      "vehicle": [
+        {
+          "vehicle": "50H40954",
+          "count": 3480
+        },
+        {
+          "vehicle": "50H37974",
+          "count": 3440
+        },
+        {
+          "vehicle": "50H40081",
+          "count": 3303
+        }
+      ],
+      "driver": [
+        {
+          "driver": "790114269937;LE THANH TUNG",
+          "count": 3479
+        },
+        {
+          "driver": "800135006674;DANG THANH PHUONG",
+          "count": 3426
+        },
+        {
+          "driver": "790148943605;TRAN NGOC QUANG",
+          "count": 3303
+        }
+      ],
+      "hmm_state": [
+        {
+          "hmm_state": "Travel",
+          "count": 10880
+        },
+        {
+          "hmm_state": "Dwell",
+          "count": 1934
+        },
+        {
+          "hmm_state": "Outage",
+          "count": 169
+        }
+      ]
+    }
+  },
+  "afc.buses": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.05,
+    "sample_note": "",
+    "rows_profiled": 2490,
+    "cols": 4,
+    "columns": [
+      "bus_id",
+      "vehicle_number",
+      "capacity",
+      "category"
+    ],
+    "dtypes": {
+      "bus_id": "Int64",
+      "vehicle_number": "String",
+      "capacity": "Int64",
+      "category": "String"
+    },
+    "null_pct": {
+      "bus_id": 0.96,
+      "vehicle_number": 0.0,
+      "capacity": 1.04,
+      "category": 80.52
+    },
+    "cardinality": {
+      "bus_id": 2363,
+      "vehicle_number": 2069,
+      "capacity": 13,
+      "category": 15
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "bus_id": {
+        "min": 152.0,
+        "max": 8785550.0,
+        "mean": 7052405.950932684,
+        "median": 8744576.5,
+        "std": 3194743.4032568624,
+        "p5": 1001.0,
+        "p95": 8785411.0
+      },
+      "capacity": {
+        "min": 0.0,
+        "max": 80.0,
+        "mean": 10.29586038961039,
+        "median": 0.0,
+        "std": 21.443476936273978,
+        "p5": 0.0,
+        "p95": 60.0
+      }
+    },
+    "top_categories": {
+      "category": [
+        {
+          "category": null,
+          "count": 2005
+        },
+        {
+          "category": "VINFAST EB8",
+          "count": 170
+        },
+        {
+          "category": "VINFAST EB6",
+          "count": 79
+        }
+      ]
+    }
+  },
+  "afc.companies": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.0,
+    "sample_note": "",
+    "rows_profiled": 10,
+    "cols": 2,
+    "columns": [
+      "company_id",
+      "company_name"
+    ],
+    "dtypes": {
+      "company_id": "Int64",
+      "company_name": "String"
+    },
+    "null_pct": {
+      "company_id": 0.0,
+      "company_name": 0.0
+    },
+    "cardinality": {
+      "company_id": 10,
+      "company_name": 10
+    },
+    "pk_candidates": [
+      "company_id",
+      "company_name"
+    ],
+    "numeric_stats": {
+      "company_id": {
+        "min": 26.0,
+        "max": 43.0,
+        "mean": 33.8,
+        "median": 32.5,
+        "std": 5.959119994689746,
+        "p5": 26.0,
+        "p95": 43.0
+      }
+    },
+    "top_categories": {
+      "company_name": [
+        {
+          "company_name": "C\u00f4ng ty CP V\u1eadn t\u1ea3i Th\u00e0nh Ph\u1ed1 H\u1ed3 Ch\u00ed Minh",
+          "count": 1
+        },
+        {
+          "company_name": "H\u1ee3p t\u00e1c x\u00e3 v\u1eadn t\u1ea3i li\u00ean t\u1ec9nh v\u00e0 du l\u1ecbch Vi\u1ec7t Th\u1eafng",
+          "count": 1
+        },
+        {
+          "company_name": "H\u1ee3p t\u00e1c x\u00e3 v\u1eadn t\u1ea3i xe bu\u00fdt Quy\u1ebft Th\u1eafng",
+          "count": 1
+        }
+      ]
+    }
+  },
+  "afc.drivers": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.04,
+    "sample_note": "",
+    "rows_profiled": 1173,
+    "cols": 2,
+    "columns": [
+      "driver_license_number",
+      "driver_name"
+    ],
+    "dtypes": {
+      "driver_license_number": "Int64",
+      "driver_name": "String"
+    },
+    "null_pct": {
+      "driver_license_number": 0.26,
+      "driver_name": 0.0
+    },
+    "cardinality": {
+      "driver_license_number": 661,
+      "driver_name": 635
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "driver_license_number": {
+        "min": 10067017589.0,
+        "max": 990146006340.0,
+        "mean": 750086080150.0701,
+        "median": 790085633204.0,
+        "std": 150039005108.85626,
+        "p5": 400042005630.0,
+        "p95": 890134006205.0
+      }
+    },
+    "top_categories": {}
+  },
+  "afc.route_stops": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.17,
+    "sample_note": "",
+    "rows_profiled": 13226,
+    "cols": 4,
+    "columns": [
+      "route_id",
+      "direction",
+      "stop_order",
+      "station_id"
+    ],
+    "dtypes": {
+      "route_id": "Int64",
+      "direction": "Int64",
+      "stop_order": "Int64",
+      "station_id": "Int64"
+    },
+    "null_pct": {
+      "route_id": 0.0,
+      "direction": 0.0,
+      "stop_order": 0.0,
+      "station_id": 0.0
+    },
+    "cardinality": {
+      "route_id": 193,
+      "direction": 2,
+      "stop_order": 80,
+      "station_id": 5502
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "route_id": {
+        "min": 1.0,
+        "max": 103003.0,
+        "mean": 406.0681990019658,
+        "median": 81.0,
+        "std": 3600.9655689404303,
+        "p5": 8.0,
+        "p95": 413.0
+      },
+      "direction": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.5180704672614547,
+        "median": 1.0,
+        "std": 0.49969224239864346,
+        "p5": 0.0,
+        "p95": 1.0
+      },
+      "stop_order": {
+        "min": 0.0,
+        "max": 79.0,
+        "mean": 23.1816119764101,
+        "median": 21.0,
+        "std": 16.67324530839755,
+        "p5": 1.0,
+        "p95": 55.0
+      },
+      "station_id": {
+        "min": 1.0,
+        "max": 139988.0,
+        "mean": 3508.665734159988,
+        "median": 2137.5,
+        "std": 6333.135365476175,
+        "p5": 174.0,
+        "p95": 8870.0
+      }
+    },
+    "top_categories": {}
+  },
+  "afc.routes": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.01,
+    "sample_note": "",
+    "rows_profiled": 149,
+    "cols": 4,
+    "columns": [
+      "route_id",
+      "route_no",
+      "route_name",
+      "company_id"
+    ],
+    "dtypes": {
+      "route_id": "Int64",
+      "route_no": "String",
+      "route_name": "String",
+      "company_id": "Int64"
+    },
+    "null_pct": {
+      "route_id": 0.0,
+      "route_no": 0.0,
+      "route_name": 0.0,
+      "company_id": 0.0
+    },
+    "cardinality": {
+      "route_id": 131,
+      "route_no": 128,
+      "route_name": 131,
+      "company_id": 10
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "route_id": {
+        "min": 5.0,
+        "max": 2224.0,
+        "mean": 1017.3825503355705,
+        "median": 120.0,
+        "std": 1047.834308372063,
+        "p5": 11.0,
+        "p95": 2217.0
+      },
+      "company_id": {
+        "min": 26.0,
+        "max": 43.0,
+        "mean": 32.899328859060404,
+        "median": 31.0,
+        "std": 4.303902952856567,
+        "p5": 29.0,
+        "p95": 42.0
+      }
+    },
+    "top_categories": {}
+  },
+  "afc.schools": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.01,
+    "sample_note": "",
+    "rows_profiled": 60,
+    "cols": 3,
+    "columns": [
+      "school_id",
+      "school_name",
+      "school_address"
+    ],
+    "dtypes": {
+      "school_id": "Int64",
+      "school_name": "String",
+      "school_address": "String"
+    },
+    "null_pct": {
+      "school_id": 0.0,
+      "school_name": 0.0,
+      "school_address": 0.0
+    },
+    "cardinality": {
+      "school_id": 60,
+      "school_name": 60,
+      "school_address": 60
+    },
+    "pk_candidates": [
+      "school_id",
+      "school_name",
+      "school_address"
+    ],
+    "numeric_stats": {
+      "school_id": {
+        "min": 1.0,
+        "max": 104.0,
+        "mean": 51.61666666666667,
+        "median": 47.5,
+        "std": 29.880037929471687,
+        "p5": 12.0,
+        "p95": 101.0
+      }
+    },
+    "top_categories": {}
+  },
+  "afc.stations": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.27,
+    "sample_note": "",
+    "rows_profiled": 5502,
+    "cols": 4,
+    "columns": [
+      "station_id",
+      "station_name",
+      "lat",
+      "lng"
+    ],
+    "dtypes": {
+      "station_id": "Int64",
+      "station_name": "String",
+      "lat": "Float64",
+      "lng": "Float64"
+    },
+    "null_pct": {
+      "station_id": 0.0,
+      "station_name": 0.0,
+      "lat": 0.0,
+      "lng": 0.0
+    },
+    "cardinality": {
+      "station_id": 5502,
+      "station_name": 3431,
+      "lat": 5296,
+      "lng": 5289
+    },
+    "pk_candidates": [
+      "station_id"
+    ],
+    "numeric_stats": {
+      "station_id": {
+        "min": 1.0,
+        "max": 139988.0,
+        "mean": 4631.872410032715,
+        "median": 3060.5,
+        "std": 8847.59773868474,
+        "p5": 304.0,
+        "p95": 9343.0
+      },
+      "lat": {
+        "min": 8.681083,
+        "max": 11.522208,
+        "mean": 10.78444816182104,
+        "median": 10.8003365,
+        "std": 0.27468008169380664,
+        "p5": 10.590954,
+        "p95": 11.037245
+      },
+      "lng": {
+        "min": 106.087836,
+        "max": 107.217992,
+        "mean": 106.67210527504024,
+        "median": 106.67200249999999,
+        "std": 0.09929118000545215,
+        "p5": 106.49455,
+        "p95": 106.81406
+      }
+    },
+    "top_categories": {}
+  },
+  "afc.students": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.07,
+    "sample_note": "",
+    "rows_profiled": 1615,
+    "cols": 4,
+    "columns": [
+      "student_id",
+      "student_full_name",
+      "student_code",
+      "school_id"
+    ],
+    "dtypes": {
+      "student_id": "Int64",
+      "student_full_name": "String",
+      "student_code": "String",
+      "school_id": "Int64"
+    },
+    "null_pct": {
+      "student_id": 0.0,
+      "student_full_name": 0.0,
+      "student_code": 0.0,
+      "school_id": 0.0
+    },
+    "cardinality": {
+      "student_id": 1048,
+      "student_full_name": 1017,
+      "student_code": 1591,
+      "school_id": 60
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "student_id": {
+        "min": 7724.0,
+        "max": 25116.0,
+        "mean": 14189.603715170279,
+        "median": 14984.0,
+        "std": 3751.4962257851685,
+        "p5": 7971.0,
+        "p95": 20842.0
+      },
+      "school_id": {
+        "min": 1.0,
+        "max": 104.0,
+        "mean": 34.96842105263158,
+        "median": 34.0,
+        "std": 23.47441051162848,
+        "p5": 1.0,
+        "p95": 69.0
+      }
+    },
+    "top_categories": {}
+  },
+  "afc.users": {
+    "source": "afc",
+    "kind": "single",
+    "n_files": 1,
+    "size_mb_total": 0.03,
+    "sample_note": "",
+    "rows_profiled": 952,
+    "cols": 4,
+    "columns": [
+      "user_id",
+      "first_name",
+      "last_name",
+      "student_id"
+    ],
+    "dtypes": {
+      "user_id": "Int64",
+      "first_name": "String",
+      "last_name": "String",
+      "student_id": "Int64"
+    },
+    "null_pct": {
+      "user_id": 0.0,
+      "first_name": 0.0,
+      "last_name": 0.0,
+      "student_id": 0.0
+    },
+    "cardinality": {
+      "user_id": 948,
+      "first_name": 581,
+      "last_name": 492,
+      "student_id": 950
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "user_id": {
+        "min": 2054831.0,
+        "max": 2104152.0,
+        "mean": 2077866.43697479,
+        "median": 2079326.0,
+        "std": 14270.947260504976,
+        "p5": 2055641.0,
+        "p95": 2098169.0
+      },
+      "student_id": {
+        "min": 7724.0,
+        "max": 25116.0,
+        "mean": 14404.98949579832,
+        "median": 15134.5,
+        "std": 3860.171294191416,
+        "p5": 7991.0,
+        "p95": 21323.0
+      }
+    },
+    "top_categories": {}
+  },
+  "afc.trips": {
+    "source": "afc",
+    "kind": "monthly",
+    "n_files": 3,
+    "size_mb_total": 54.06,
+    "sample_note": "loaded all 3 files",
+    "rows_profiled": 1205524,
+    "cols": 7,
+    "columns": [
+      "trip_id",
+      "trip_code",
+      "route_id",
+      "direction",
+      "route_direction",
+      "bus_id",
+      "driver_license_number"
+    ],
+    "dtypes": {
+      "trip_id": "Int64",
+      "trip_code": "String",
+      "route_id": "Int64",
+      "direction": "String",
+      "route_direction": "Int64",
+      "bus_id": "Float64",
+      "driver_license_number": "Float64"
+    },
+    "null_pct": {
+      "trip_id": 0.13,
+      "trip_code": 65.88,
+      "route_id": 0.0,
+      "direction": 0.0,
+      "route_direction": 0.0,
+      "bus_id": 0.02,
+      "driver_license_number": 92.76
+    },
+    "cardinality": {
+      "trip_id": 1199767,
+      "trip_code": 372481,
+      "route_id": 146,
+      "direction": 2,
+      "route_direction": 2,
+      "bus_id": 2363,
+      "driver_license_number": 661
+    },
+    "pk_candidates": [],
+    "numeric_stats": {
+      "trip_id": {
+        "min": 0.0,
+        "max": 3083880.0,
+        "mean": 2426627.609446701,
+        "median": 2420166.0,
+        "std": 370846.5284921166,
+        "p5": 1857853.0,
+        "p95": 3014312.0
+      },
+      "route_id": {
+        "min": 5.0,
+        "max": 2224.0,
+        "mean": 726.9071548969576,
+        "median": 93.0,
+        "std": 971.1094485370478,
+        "p5": 10.0,
+        "p95": 2202.0
+      },
+      "route_direction": {
+        "min": 0.0,
+        "max": 1.0,
+        "mean": 0.5402231726618466,
+        "median": 1.0,
+        "std": 0.49837967697109303,
+        "p5": 0.0,
+        "p95": 1.0
+      },
+      "bus_id": {
+        "min": 152.0,
+        "max": 8785550.0,
+        "mean": 7109103.781899201,
+        "median": 8744538.0,
+        "std": 3114776.129885695,
+        "p5": 928.0,
+        "p95": 8785024.0
+      },
+      "driver_license_number": {
+        "min": 10067017589.0,
+        "max": 990146006340.0,
+        "mean": 763568398650.027,
+        "median": 790094246827.0,
+        "std": 135703101051.77003,
+        "p5": 510140013230.0,
+        "p95": 910107005885.0
+      }
+    },
+    "top_categories": {
+      "direction": [
+        {
+          "direction": "L\u01b0\u1ee3t \u0111i",
+          "count": 651252
+        },
+        {
+          "direction": "L\u01b0\u1ee3t v\u1ec1",
+          "count": 554272
+        }
+      ]
+    }
+  },
+  "afc.tickets": {
+    "source": "afc",
+    "kind": "daily",
+    "n_files": 90,
+    "size_mb_total": 2534.57,
+    "sample_note": "sampled 1 day per month (3 of 90 files)",
+    "rows_profiled": 585208,
+    "cols": 14,
+    "columns": [
+      "ticket_id",
+      "ticket_uuid",
+      "ticket_code",
+      "ticket_series",
+      "ticket_type",
+      "trip_id",
+      "user_id",
+      "user_id_duplicated_0",
+      "station_id",
+      "lat",
+      "lng",
+      "time_created_ticket",
+      "aggregation_status",
+      "updated_at"
+    ],
+    "dtypes": {
+      "ticket_id": "Int64",
+      "ticket_uuid": "String",
+      "ticket_code": "String",
+      "ticket_series": "Float64",
+      "ticket_type": "String",
+      "trip_id": "Float64",
+      "user_id": "Float64",
+      "user_id_duplicated_0": "Float64",
+      "station_id": "Float64",
+      "lat": "Float64",
+      "lng": "Float64",
+      "time_created_ticket": "Int64",
+      "aggregation_status": "String",
+      "updated_at": "Int64"
+    },
+    "null_pct": {
+      "ticket_id": 0.0,
+      "ticket_uuid": 0.0,
+      "ticket_code": 57.05,
+      "ticket_series": 0.05,
+      "ticket_type": 0.0,
+      "trip_id": 0.11,
+      "user_id": 99.85,
+      "user_id_duplicated_0": 99.85,
+      "station_id": 0.01,
+      "lat": 0.02,
+      "lng": 0.02,
+      "time_created_ticket": 0.0,
+      "aggregation_status": 0.0,
+      "updated_at": 0.0
+    },
+    "cardinality": {
+      "ticket_id": 585208,
+      "ticket_uuid": 585208,
+      "ticket_code": 251338,
+      "ticket_series": 13177,
+      "ticket_type": 20,
+      "trip_id": 36738,
+      "user_id": 369,
+      "user_id_duplicated_0": 369,
+      "station_id": 4588,
+      "lat": 126187,
+      "lng": 38418,
+      "time_created_ticket": 159633,
+      "aggregation_status": 2,
+      "updated_at": 72182
+    },
+    "pk_candidates": [
+      "ticket_id",
+      "ticket_uuid"
+    ],
+    "numeric_stats": {
+      "ticket_id": {
+        "min": 30276439.0,
+        "max": 42675768.0,
+        "mean": 36151906.50969741,
+        "median": 36188511.5,
+        "std": 5005432.284793097,
+        "p5": 30305853.0,
+        "p95": 41379479.0
+      },
+      "ticket_series": {
+        "min": 1.0,
+        "max": 15937.0,
+        "mean": 1090.1078725026584,
+        "median": 85.0,
+        "std": 2061.5646036371236,
+        "p5": 4.0,
+        "p95": 5616.0
+      },
+      "trip_id": {
+        "min": 0.0,
+        "max": 2819215.0,
+        "mean": 2432929.361909959,
+        "median": 2429727.0,
+        "std": 366385.8180548411,
+        "p5": 2010113.0,
+        "p95": 2814797.0
+      },
+      "user_id": {
+        "min": 2054910.0,
+        "max": 2095506.0,
+        "mean": 2072510.0980392157,
+        "median": 2073203.0,
+        "std": 13527.746493758139,
+        "p5": 2055028.0,
+        "p95": 2092640.0
+      },
+      "user_id_duplicated_0": {
+        "min": 2054910.0,
+        "max": 2095506.0,
+        "mean": 2072510.0980392157,
+        "median": 2073203.0,
+        "std": 13527.746493758139,
+        "p5": 2055028.0,
+        "p95": 2092640.0
+      },
+      "station_id": {
+        "min": 0.0,
+        "max": 63624.0,
+        "mean": 8970.522567756247,
+        "median": 1715.0,
+        "std": 18114.512819026357,
+        "p5": 156.0,
+        "p95": 61416.0
+      },
+      "lat": {
+        "min": 9.7571535,
+        "max": 106.768524,
+        "mean": 10.834786081587163,
+        "median": 10.800637,
+        "std": 1.7207942789513218,
+        "p5": 10.685592,
+        "p95": 10.948432
+      },
+      "lng": {
+        "min": 10.786672,
+        "max": 109.340416,
+        "mean": 106.65833644197494,
+        "median": 106.686424,
+        "std": 1.4902076646639222,
+        "p5": 106.550934,
+        "p95": 106.804344
+      },
+      "time_created_ticket": {
+        "min": 1768509193.0,
+        "max": 1773676956.0,
+        "mean": 1771219876.2508492,
+        "median": 1771141065.5,
+        "std": 2344939.068566408,
+        "p5": 1768520304.0,
+        "p95": 1773658588.0
+      },
+      "updated_at": {
+        "min": 1768509607.0,
+        "max": 1774860525.0,
+        "mean": 1771252291.3221674,
+        "median": 1771174348.0,
+        "std": 2340036.0247477684,
+        "p5": 1768529756.0,
+        "p95": 1773680549.0
+      }
+    },
+    "top_categories": {
+      "ticket_type": [
+        {
+          "ticket_type": "V\u00e9 TM l\u01b0\u1ee3t",
+          "count": 251515
+        },
+        {
+          "ticket_type": "V\u00e9 TM l\u01b0\u1ee3t HS-SV",
+          "count": 214411
+        },
+        {
+          "ticket_type": "V\u00e9 gi\u1ea5y mi\u1ec5n ph\u00ed",
+          "count": 52246
+        }
+      ],
+      "aggregation_status": [
+        {
+          "aggregation_status": "Th\u00e0nh c\u00f4ng",
+          "count": 585190
+        },
+        {
+          "aggregation_status": "Th\u1ea5t b\u1ea1i",
+          "count": 18
+        }
+      ]
+    }
+  },
+  "afc.payments": {
+    "source": "afc",
+    "kind": "daily",
+    "n_files": 90,
+    "size_mb_total": 899.75,
+    "sample_note": "sampled 1 day per month (3 of 90 files)",
+    "rows_profiled": 585208,
+    "cols": 10,
+    "columns": [
+      "ticket_id",
+      "amount_money",
+      "promotion_price",
+      "final_price",
+      "promotion_code",
+      "promotion_description",
+      "payment_method",
+      "emv_card_id",
+      "card_number",
+      "verification_qr"
+    ],
+    "dtypes": {
+      "ticket_id": "Int64",
+      "amount_money": "Int64",
+      "promotion_price": "Int64",
+      "final_price": "Int64",
+      "promotion_code": "String",
+      "promotion_description": "String",
+      "payment_method": "String",
+      "emv_card_id": "Float64",
+      "card_number": "String",
+      "verification_qr": "String"
+    },
+    "null_pct": {
+      "ticket_id": 0.0,
+      "amount_money": 0.0,
+      "promotion_price": 0.0,
+      "final_price": 0.0,
+      "promotion_code": 99.61,
+      "promotion_description": 99.61,
+      "payment_method": 0.0,
+      "emv_card_id": 98.93,
+      "card_number": 0.0,
+      "verification_qr": 99.91
+    },
+    "cardinality": {
+      "ticket_id": 585208,
+      "amount_money": 19,
+      "promotion_price": 3,
+      "final_price": 19,
+      "promotion_code": 2,
+      "promotion_description": 2,
+      "payment_method": 10,
+      "emv_card_id": 3239,
+      "card_number": 6745,
+      "verification_qr": 507
+    },
+    "pk_candidates": [
+      "ticket_id"
+    ],
+    "numeric_stats": {
+      "ticket_id": {
+        "min": 30276439.0,
+        "max": 42675768.0,
+        "mean": 36151906.50969741,
+        "median": 36188511.5,
+        "std": 5005432.284793107,
+        "p5": 30305853.0,
+        "p95": 41379479.0
+      },
+      "amount_money": {
+        "min": 0.0,
+        "max": 54000.0,
+        "mean": 4152.157865237659,
+        "median": 3000.0,
+        "std": 2662.0955363908865,
+        "p5": 0.0,
+        "p95": 7000.0
+      },
+      "promotion_price": {
+        "min": 0.0,
+        "max": 2000.0,
+        "mean": 5.719333980396714,
+        "median": 0.0,
+        "std": 96.71458733438335,
+        "p5": 0.0,
+        "p95": 0.0
+      },
+      "final_price": {
+        "min": 0.0,
+        "max": 54000.0,
+        "mean": 4140.712362100313,
+        "median": 3000.0,
+        "std": 2655.1493551707213,
+        "p5": 0.0,
+        "p95": 7000.0
+      },
+      "emv_card_id": {
+        "min": 32.0,
+        "max": 32482.0,
+        "mean": 16718.775095907928,
+        "median": 18180.0,
+        "std": 8750.934262171148,
+        "p5": 2017.0,
+        "p95": 30047.0
+      }
+    },
+    "top_categories": {
+      "promotion_code": [
+        {
+          "promotion_code": null,
+          "count": 582934
+        },
+        {
+          "promotion_code": "MUTIPASS5K",
+          "count": 2274
+        }
+      ],
+      "promotion_description": [
+        {
+          "promotion_description": null,
+          "count": 582934
+        },
+        {
+          "promotion_description": "(Th\u1ebb MultiPass \u0110\u1ed3ng Gi\u00e1 5K)",
+          "count": 2274
+        }
+      ],
+      "payment_method": [
+        {
+          "payment_method": "Ti\u1ec1n m\u1eb7t",
+          "count": 562176
+        },
+        {
+          "payment_method": "Mastercard",
+          "count": 8859
+        },
+        {
+          "payment_method": "Visa",
+          "count": 6775
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,29 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="h1" value="SOURCE SYSTEMS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#5B6470;strokeColor=#5B6470;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="70" width="210" height="42" as="geometry"/></mxCell>
+    <mxCell id="b1" value="Operational feeds&#10;in their native form&#10;&#10;&lt;font color=&quot;#5B6470&quot;&gt;&lt;i&gt;heterogeneous,&#10;no shared key&lt;/i&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B6470;fontColor=#1F3A5F;fontSize=13;fontFamily=Helvetica;verticalAlign=top;spacingTop=12;align=center;" vertex="1" parent="1"><mxGeometry x="40" y="112" width="210" height="160" as="geometry"/></mxCell>
+
+    <mxCell id="h2" value="BRONZE" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=#1F3A5F;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="302" y="70" width="210" height="42" as="geometry"/></mxCell>
+    <mxCell id="b2" value="Ingest each source&#10;exactly, read-only&#10;&#10;&lt;font color=&quot;#5B6470&quot;&gt;&lt;i&gt;faithful raw copy&lt;/i&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontSize=13;fontFamily=Helvetica;verticalAlign=top;spacingTop=12;align=center;" vertex="1" parent="1"><mxGeometry x="302" y="112" width="210" height="160" as="geometry"/></mxCell>
+
+    <mxCell id="h3" value="SILVER" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=#1F3A5F;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="564" y="70" width="210" height="42" as="geometry"/></mxCell>
+    <mxCell id="b3" value="Conform identifiers&#10;and clean the grain&#10;&#10;&lt;font color=&quot;#5B6470&quot;&gt;&lt;i&gt;dimensions&#10;and fact tables&lt;/i&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontSize=13;fontFamily=Helvetica;verticalAlign=top;spacingTop=12;align=center;" vertex="1" parent="1"><mxGeometry x="564" y="112" width="210" height="160" as="geometry"/></mxCell>
+
+    <mxCell id="h4" value="GOLD" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E07B2B;strokeColor=#E07B2B;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="826" y="70" width="210" height="42" as="geometry"/></mxCell>
+    <mxCell id="b4" value="Pre-aggregate to the&#10;shape each view needs&#10;&#10;&lt;font color=&quot;#5B6470&quot;&gt;&lt;i&gt;serving tables&lt;/i&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E07B2B;strokeWidth=2;fontColor=#1F3A5F;fontSize=13;fontFamily=Helvetica;verticalAlign=top;spacingTop=12;align=center;" vertex="1" parent="1"><mxGeometry x="826" y="112" width="210" height="160" as="geometry"/></mxCell>
+
+    <mxCell id="h5" value="CONSUMERS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=#1F3A5F;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1088" y="70" width="210" height="42" as="geometry"/></mxCell>
+    <mxCell id="b5" value="Read straight&#10;from the serving tier&#10;&#10;&lt;font color=&quot;#2E7D32&quot;&gt;&lt;b&gt;no per-request&#10;re-derivation&lt;/b&gt;&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontSize=13;fontFamily=Helvetica;verticalAlign=top;spacingTop=12;align=center;" vertex="1" parent="1"><mxGeometry x="1088" y="112" width="210" height="160" as="geometry"/></mxCell>
+
+    <mxCell id="e1" value="ingest" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;fontColor=#2E75B6;fontFamily=Helvetica;fontSize=12;fontStyle=2;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e2" value="conform" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;fontColor=#2E75B6;fontFamily=Helvetica;fontSize=12;fontStyle=2;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="b2" target="b3"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e3" value="aggregate" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;fontColor=#2E75B6;fontFamily=Helvetica;fontSize=12;fontStyle=2;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="b3" target="b4"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e4" value="serve" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;fontColor=#2E75B6;fontFamily=Helvetica;fontSize=12;fontStyle=2;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="b4" target="b5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#E07B2B;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="40" y="312" width="6" height="58" as="geometry"/></mxCell>
+    <mxCell id="cap" value="Each tier refines the one before it: raw fidelity is preserved at the bottom, while the cost of a query is paid once, when the serving tier is built, not on every request." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="46" y="312" width="1252" height="58" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

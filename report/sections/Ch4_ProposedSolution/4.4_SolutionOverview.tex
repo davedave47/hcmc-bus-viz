@@ -2,53 +2,36 @@
 \label{sec:solution:overview}
 
 The proposed system is an analytical platform over the preprocessed Ho Chi
-Minh City bus data. The system is organised around four design components
-that compose into the analytical surface visible to the user. First, a
-layered analytical warehouse sits over the preprocessed data and produces a
-fixed set of aggregate tables that the surface reads from. Second, the
-analytical content is grouped into a fixed catalogue of six thematic views,
-each of which addresses one class of analytical question and reads from one
-cluster of aggregate tables. Third, each visualisation in the catalogue is
-matched to a single primitive chart type selected to fit the question the
-chart answers, with rejected alternatives recorded as part of the design
-record. Fourth, an interaction model connects the visualisations across each
-thematic view and provides a uniform response to user clicks on analytical
+Minh City bus data. Four design components compose the analytical
+surface. A layered analytical warehouse sits over the preprocessed data
+and produces a fixed set of aggregate tables. The analytical content is
+grouped into a fixed catalogue of six thematic views, each addressing one
+class of analytical question and reading from one cluster of aggregate
+tables. Within each theme, every visualisation is matched to a single
+primitive chart type selected to fit the question the chart answers,
+with rejected alternatives recorded as part of the design record. An
+interaction model then connects the visualisations across each thematic
+view and provides a uniform response to user clicks on analytical
 entities.
+
+Figure~\ref{fig:solution:overview} places the platform in its
+deployment context. External data sources sit on the left; the
+platform boundary is the central box containing the Medallion
+warehouse and the analytical surface; the three user roles sit on the
+right. The diagram makes the system boundary explicit: real-time
+telemetry, the metro timetable, and OpenStreetMap road data are
+external dependencies, not part of the platform; the natural-language
+query capability is an external team's surface that will eventually
+plug into the same warehouse.
 
 \begin{figure}[!htbp]
 \centering
-\imageplaceholder{System overview diagram}{High-level architecture of the proposed system. Left to right: two raw data sources (GPS feed and AFC feed) feed into a preprocessing pipeline, which outputs a four-layer analytical warehouse (raw views, conformed dimensions, fact views, aggregate tables) stacked vertically. The aggregate layer feeds an analytical surface composed of six themed views arranged horizontally. Four user-role icons on the right (passenger, driver, operating company, public-transport authority) connect by dashed lines to the analytical surface.}{Draw in draw.io. PNG at 300 dpi. Save as images/diagrams/solution\_system\_overview.png.}
-\caption{System overview of the proposed analytical platform}
+\includegraphics[width=0.92\linewidth]{images/diagrams/solution_system_context.png}
+\caption{System context diagram (dashed boxes are external to Phase~1).}
 \label{fig:solution:overview}
 \end{figure}
 
-The remaining sections of this chapter develop the four components in turn.
-Section~\ref{sec:solution:architecture} describes the data architecture and
-records the architectural alternatives considered.
-Section~\ref{sec:solution:themes} catalogues the six thematic views, their
-target user roles, and the analytical questions they answer.
-Section~\ref{sec:solution:viz} records the chart-to-primitive mapping per
-theme, with rejected alternatives where relevant.
-Section~\ref{sec:solution:interaction} specifies the three interaction
-patterns the surface adopts from the literature on coordinated views and on
-visual storytelling.
-
-The implementation tools that realise each component are introduced in the
-foundations chapter (Chapter~\ref{chapter:foundations}) and are not named in
-this section, in order to keep the present discussion focused on the design
-decisions rather than the realisation technology.
-
-The chapter as a whole follows a four-step argument that mirrors the
-order in which a system designer reasons. Section~\ref{sec:solution:problem}
-establishes the problem, the users, the analytical needs, and the
-functional and non-functional requirements. Section~\ref{sec:solution:dataset}
-describes the data sources available to address those needs and reports
-the exploratory observations that constrain the design.
-Section~\ref{sec:solution:preprocessing} reports the pipeline that
-transforms the raw input into a queryable layer. The four design-component
-sections that follow (architecture, themes, visualisations, interactions)
-draw on the existing tools, research literature, and visualisation
-guidance surveyed in Chapter~\ref{chapter:related} and
-Chapter~\ref{chapter:foundations}, and translate the requirements of
-Section~\ref{sec:solution:problem} into the specific design responses
-recorded in each section.
+Implementation tools that realise each component are introduced in the
+foundations chapter (Chapter~\ref{chapter:foundations}) and are not
+named here, to keep the discussion focused on design rather than
+realisation.

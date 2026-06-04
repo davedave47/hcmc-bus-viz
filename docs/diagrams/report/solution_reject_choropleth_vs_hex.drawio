@@ -1,0 +1,67 @@
+<mxfile host="65bd71144e">
+    <diagram id="choropleth-vs-hex" name="Choropleth vs hex">
+        <mxGraphModel dx="1100" dy="600" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="460" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="lFrame" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="60" width="480" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="lTitle" value="&lt;b&gt;District choropleth&lt;/b&gt;  &lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;(rejected)&lt;/i&gt;&lt;/font&gt;" style="text;html=1;align=center;fontSize=12;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="30" width="480" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="dBig1" value="large rural district" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#BDBDBD;strokeColor=#000000;strokeWidth=1;fontSize=10;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="90" width="240" height="180" as="geometry"/>
+                </mxCell>
+                <mxCell id="dBig2" value="large rural district" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#A8A8A8;strokeColor=#000000;strokeWidth=1;fontSize=10;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="276" width="240" height="104" as="geometry"/>
+                </mxCell>
+                <mxCell id="dSmall1" value="D1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=10;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="90" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="dSmall2" value="D3" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=10;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="90" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="dSmall3" value="D5" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=10;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="160" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="dSmall4" value="D10" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=10;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="160" width="60" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="dSmallBlock" value="dense central&#xa;districts (small,&#xa;high intensity)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=9;align=center;verticalAlign=middle;fontFamily=Helvetica;fontStyle=2;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="230" width="130" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="lNote" value="&lt;i&gt;Large-area districts dominate the visual weight even at moderate intensity.&lt;/i&gt;" style="text;html=1;align=center;fontSize=9;fontStyle=2;fontColor=#666666;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="362" width="440" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="rFrame" value="" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="60" width="480" height="340" as="geometry"/>
+                </mxCell>
+                <mxCell id="rTitle" value="&lt;b&gt;Hexagonal-bin map&lt;/b&gt;  &lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;(selected, 500 m cells)&lt;/i&gt;&lt;/font&gt;" style="text;html=1;align=center;fontSize=12;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="30" width="480" height="22" as="geometry"/>
+                </mxCell>
+                <mxCell id="hx1" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="640" y="110" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx2" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="700" y="110" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx3" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="760" y="110" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx4" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="820" y="110" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx5" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="670" y="155" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx6" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#7F7F7F;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="730" y="155" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx7" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#3F3F3F;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="790" y="155" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx8" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="850" y="155" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx9" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="640" y="200" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx10" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#9E9E9E;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="700" y="200" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx11" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#5F5F5F;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="760" y="200" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx12" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="820" y="200" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx13" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="670" y="245" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx14" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="730" y="245" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hx15" value="" style="shape=hexagon;perimeter=hexagonPerimeter2;whiteSpace=wrap;html=1;fixedSize=1;fillColor=#FFFFFF;strokeColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1"><mxGeometry x="790" y="245" width="60" height="52" as="geometry"/></mxCell>
+                <mxCell id="hotLbl" value="hotspot (District 1)" style="text;html=1;align=center;fontSize=9;fontStyle=2;fontColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="770" y="120" width="120" height="14" as="geometry"/>
+                </mxCell>
+                <mxCell id="rNote" value="&lt;i&gt;Uniform-area cells isolate boarding intensity from administrative geometry.&lt;/i&gt;" style="text;html=1;align=center;fontSize=9;fontStyle=2;fontColor=#666666;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="362" width="440" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

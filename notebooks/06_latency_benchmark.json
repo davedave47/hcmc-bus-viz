@@ -1,0 +1,36 @@
+{
+  "duckdb_version": "1.4.4",
+  "host": "single workstation, no GPU; in-process",
+  "rows": [
+    {
+      "query": "Q_ROUTE_HOUR (90-day route x hour x day-type)",
+      "n": 30,
+      "p50_ms": 1162.66,
+      "p90_ms": 1205.13,
+      "p99_ms": 1315.42,
+      "min_ms": 1101.02,
+      "max_ms": 1315.42,
+      "mean_ms": 1169.92
+    },
+    {
+      "query": "Q_ROUTE_HOUR_ONE_DAY (single-day filter)",
+      "n": 30,
+      "p50_ms": 636.78,
+      "p90_ms": 657.02,
+      "p99_ms": 726.81,
+      "min_ms": 625.22,
+      "max_ms": 726.81,
+      "mean_ms": 642.61
+    },
+    {
+      "query": "Q_ROUTE_TOTAL (per-route lifetime count)",
+      "n": 30,
+      "p50_ms": 137.34,
+      "p90_ms": 144.34,
+      "p99_ms": 152.65,
+      "min_ms": 133.17,
+      "max_ms": 152.65,
+      "mean_ms": 138.8
+    }
+  ]
+}

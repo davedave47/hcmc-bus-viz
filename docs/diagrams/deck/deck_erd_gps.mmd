@@ -1,0 +1,69 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EBF3FB','primaryBorderColor':'#1F3A5F','primaryTextColor':'#1F3A5F','lineColor':'#2E75B6','fontFamily':'Helvetica','fontSize':'15px'}}}%%
+erDiagram
+    direction LR
+
+    RAW_GPS {
+        timestamp datetime
+        varchar vehicle
+        double  lat
+        double  lng
+        double  speed
+    }
+    EXTRACTED {
+        varchar trip_id         FK
+        varchar hmm_state
+        bigint  nearest_stop_id FK
+        bigint  time_in_seconds
+    }
+    TRIPS {
+        varchar trip_id     PK
+        bigint  route_id    FK
+        varchar vehicle_id  FK
+        varchar driver_id   FK
+        bigint  travel_time
+    }
+    STOP_TIMES {
+        varchar trip_id      FK
+        bigint  station_id   FK
+        bigint  arrival_time
+        bigint  dwell_time
+    }
+    SCHEDULES {
+        bigint  route_id     FK
+        varchar service_type
+        time    departure_time
+    }
+    ROUTES {
+        bigint  route_id    PK
+        varchar route_no
+        varchar headway
+        bigint  company_id  FK
+    }
+    STATIONS {
+        bigint  station_id   PK
+        varchar station_name
+        varchar zone
+    }
+    VEHICLES {
+        varchar vehicle_id     PK
+        varchar vehicle_number
+    }
+    DRIVERS {
+        varchar driver_id   PK
+        varchar driver_name
+    }
+    COMPANIES {
+        bigint  company_id   PK
+        varchar company_name
+    }
+
+    RAW_GPS    |o--o{  EXTRACTED : "via HMM"
+    EXTRACTED  }o--||  TRIPS     : "trip_id"
+    EXTRACTED  }o--||  STATIONS  : "nearest_stop_id"
+    STOP_TIMES }o--||  TRIPS     : "trip_id"
+    STOP_TIMES }o--||  STATIONS  : "station_id"
+    TRIPS      }o--||  ROUTES    : "route_id"
+    TRIPS      }o--||  VEHICLES  : "vehicle_id"
+    TRIPS      }o--||  DRIVERS   : "driver_id"
+    SCHEDULES  }o--||  ROUTES    : "route_id"
+    ROUTES     }o--||  COMPANIES : "company_id"

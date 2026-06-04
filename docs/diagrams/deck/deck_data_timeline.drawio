@@ -1,0 +1,23 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="afcL" value="AFC" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#2E75B6;strokeColor=#2E75B6;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="60" width="150" height="64" as="geometry"/></mxCell>
+    <mxCell id="afc1" value="Jan" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#2E75B6;fontColor=#1F3A5F;fontStyle=1;fontSize=14;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="200" y="60" width="140" height="64" as="geometry"/></mxCell>
+    <mxCell id="afc2" value="Feb" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#2E75B6;fontColor=#1F3A5F;fontStyle=1;fontSize=14;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="350" y="60" width="140" height="64" as="geometry"/></mxCell>
+    <mxCell id="afc3" value="Mar" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#2E75B6;fontColor=#1F3A5F;fontStyle=1;fontSize=14;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="500" y="60" width="140" height="64" as="geometry"/></mxCell>
+    <mxCell id="afcN" value="+ next release" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=#C7D3E2;dashed=1;fontColor=#9AA6B2;fontStyle=2;fontSize=13;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="650" y="60" width="150" height="64" as="geometry"/></mxCell>
+    <mxCell id="afcT" value="17.9 M boarding events, 90 days and growing" style="text;html=1;fontColor=#5B6470;fontSize=12;fontStyle=2;fontFamily=Helvetica;align=left;" vertex="1" parent="1"><mxGeometry x="200" y="126" width="600" height="18" as="geometry"/></mxCell>
+
+    <mxCell id="gpsL" value="GPS" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=#1F3A5F;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="170" width="150" height="64" as="geometry"/></mxCell>
+    <mxCell id="gps1" value="50-day telemetry window" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E7EFF8;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=14;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="200" y="170" width="440" height="64" as="geometry"/></mxCell>
+    <mxCell id="gpsN" value="+ next release" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=#C7D3E2;dashed=1;fontColor=#9AA6B2;fontStyle=2;fontSize=13;fontFamily=Helvetica;" vertex="1" parent="1"><mxGeometry x="650" y="170" width="150" height="64" as="geometry"/></mxCell>
+    <mxCell id="gpsT" value="approximately 32 M position pings" style="text;html=1;fontColor=#5B6470;fontSize=12;fontStyle=2;fontFamily=Helvetica;align=left;" vertex="1" parent="1"><mxGeometry x="200" y="236" width="600" height="18" as="geometry"/></mxCell>
+
+    <mxCell id="axis" value="the record only grows" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=3;fontColor=#E07B2B;fontStyle=1;fontSize=14;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;" edge="1" parent="1"><mxGeometry relative="1" as="geometry"><mxPoint x="200" y="290" as="sourcePoint"/><mxPoint x="800" y="290" as="targetPoint"/></mxGeometry></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#E07B2B;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="30" y="324" width="6" height="52" as="geometry"/></mxCell>
+    <mxCell id="cap" value="Each operating day appends fresh events; the system reads the accumulated history, not a fixed snapshot, so every released window extends the record." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="36" y="324" width="764" height="52" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

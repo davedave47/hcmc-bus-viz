@@ -1,51 +1,140 @@
-\section{Initial Requirements Evaluation}
+\section{Initial Evaluation}
 \label{sec:impl:eval}
 
-The requirements stated in Section~\ref{sec:solution:problem} comprise ten
-functional capability statements (R1 through R10) and six non-functional
-constraints (N1 through N6). This section reviews each requirement against
-the artefacts produced in Phase~One and records the current implementation
-status. Three status levels are used: \textit{Designed} for requirements
-whose specification is documented in Chapter~\ref{chapter:solution} but
-whose running code is Phase~Two work, \textit{Partially Implemented} for
-requirements whose underlying data plumbing is in place in Layer~1
-already, and \textit{Deferred to Phase~2} for requirements whose
-implementation depends on artefacts not yet built.
+The requirements stated in Section~\ref{sec:solution:problem} comprise
+fifteen functional requirements (R1 through R15) and six
+non-functional constraints (N1 through N6). This section is an
+internal self-audit: it records how far the Phase-One artefacts have
+travelled against the specification this report itself authors. It is
+not an external validation of the design. External validation, in the
+form of advisor sign-off, stakeholder review, and the two-wave user
+evaluation, is part of Phase~Two and is described in
+Section~\ref{sec:future:eval}; no such validation is claimed in the
+present chapter. Four status levels are used:
+\textit{Implemented} for requirements whose running behaviour is
+exercised by the demo on the warehouse data;
+\textit{Partially Implemented} for requirements whose running behaviour
+exists for a subset of the catalogued surface;
+\textit{Designed} for requirements whose specification is documented
+but whose code is Phase~Two work; and
+\textit{Deferred to Phase~2} for requirements whose implementation
+depends on artefacts not yet built.
 
 \begin{table}[!htbp]
   \centering
-  \caption{Phase one implementation status against the requirements of Section~\ref{sec:solution:problem}}
+  \caption{Phase One implementation status.}
   \label{tab:impl:eval}
   \footnotesize
-  \renewcommand{\arraystretch}{1.20}
-  \begin{tabularx}{\linewidth}{p{0.9cm}p{4.6cm}p{3.2cm}X}
+  \renewcommand{\arraystretch}{1.05}
+  \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{0.75cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{4.15cm}@{}}
     \hline
-    \textbf{Req.} & \textbf{Requirement summary} & \textbf{Status} & \textbf{Note} \\
+    \textbf{Req.} & \textbf{Requirement summary} & \textbf{Status} \\
     \hline
-    R1  & Aggregate ridership by route and hour                & Partially Implemented   & Raw boarding views registered in Layer~1; route-by-hour aggregate table scheduled for Layer~4. \\
-    R2  & Compare ridership across days, weeks, seasons        & Partially Implemented   & Calendar-day partitioning in place; calendar dimension and seasonal-window tagging scheduled for Layer~2. \\
-    R3  & Stop-level demand identification                     & Designed                & Stop-by-hour aggregate and per-stop drill-down chart specified; implementation scheduled for Phase~2. \\
-    R4  & Reliability indicators per route (QoS-1, 2, and 3)   & Designed                & Quality of Service (QoS) decomposition specified in Chapter~\ref{chapter:foundations}; aggregate table scheduled for Phase~2. \\
-    R5  & Consistent route identifiers across GPS and AFC      & Deferred to Phase~2     & Conformed route dimension is the first Layer~2 artefact in the Phase~2 roadmap. \\
-    R6  & Spatial demand density with uniform area             & Designed                & Hexagonal-bin density map specified using the H3 indexing system \cite{h3}; implementation scheduled for Phase~2. \\
-    R7  & Bus-to-metro feeder identification                   & Designed                & Feeder-routes chart and connectivity matrix specified; implementation scheduled for Phase~2. \\
-    R8  & Financial efficiency proxies per route               & Designed                & Two-dimensional scatter quadrant and parallel-coordinates chart specified; implementation scheduled for Phase~2. \\
-    R9  & Export charts and entity views in standard formats   & Designed                & Per-chart export controls specified; implementation scheduled for Phase~2 inside the Streamlit shell \cite{streamlit}. \\
-    R10 & Bookmarkable, shareable analytical state             & Designed                & State serialisation into the browser URL specified; implementation scheduled for Phase~2. \\
-    N1  & Sub-50~ms warm chart render                          & Designed                & Pre-computed aggregate-table strategy specified; measurement awaits Layer~4. \\
-    N2  & Single-process deployability on commodity hardware   & Partially Implemented   & In-process analytical engine \cite{duckdb} integrated; no separate server required at the Layer~1 stage. \\
-    N3  & Deterministic, reproducible warehouse build          & Partially Implemented   & Layer~1 build is idempotent and writes through atomic file replacement; deterministic behaviour to be re-verified after Layers~2 through~4 are built. \\
-    N4  & On-disk preprocessed size below 100~MB               & Partially Implemented   & Columnar compression of Layer~1 already meets the bound for the 90-day AFC window; bound to be re-verified after the aggregate layer is added. \\
-    N5  & Cross-platform portability                           & Partially Implemented   & Pipeline is pure Python with no operating-system-specific build step; portability target met for Layer~1 on Linux, macOS, and Microsoft Windows. \\
-    N6  & No personally identifying data                       & Partially Implemented   & User identifier field dropped during preprocessing; aggregate-only fare records retained. \\
+    \multicolumn{3}{l}{\textit{Functional}} \\
+    R1  & Route-hour ridership                                 & Implemented \\
+    R2  & Daily, weekly, and seasonal comparison               & Implemented \\
+    R3  & Stop-demand hotspots                                 & Implemented \\
+    R4  & Route QoS reliability                                & Partial; GPS QoS in Phase~2 \\
+    R5  & GPS--AFC route identity                              & Implemented \\
+    R6  & Uniform-area spatial density                         & Implemented; H3 in Phase~2 \\
+    R7  & Bus-to-metro feeders                                 & Implemented \\
+    R8  & Route financial proxies                              & Designed; Phase~2 \\
+    R9  & Standard-format export                               & Partial; rail-level only \\
+    R10 & Shareable analytical state                           & Implemented \\
+    R11 & School-aware demand theme                            & Implemented; top-schools bar, treemap, proximity map wired \\
+    R12 & Operator peer scorecard                              & Partial; on-schedule component deferred to Phase~2 (full GPS) \\
+    R13 & Promotion DiD lift                                   & Designed; Phase~2 (\texttt{promotion\_code} 99\% null; fare-class proxy identified) \\
+    R14 & Market-structure treemap + HHI                       & Partial; treemap wired in Network Health theme; HHI in Phase~2 \\
+    R15 & Fourteen-day ETS demand forecast                     & Deferred to Phase~2 \\
+    \multicolumn{3}{l}{\textit{Non-functional}} \\
+    N1  & Sub-50~ms warm render                                & Met for 9/11 endpoints at p99 $\leq$ 100~ms; median 31~ms \\
+    N2  & Single-process deployment                            & Implemented \\
+    N3  & Reproducible build                                   & Implemented; 41 checks \\
+    N4  & Disk size below 100~MB                               & Not met by development workspace; warehouse file alone meets target; Gold-only deploy in Phase~2 \\
+    N5  & Cross-platform portability                           & Partial; Phase~2 test \\
+    N6  & No passenger PII                                     & Implemented \\
     \hline
   \end{tabularx}
 \end{table}
 
-The table shows that the current artefacts of Phase~One cover the design
-in full and a portion of the data-pipeline scaffold. The principal
-Phase~One output is the specification itself (Chapters~\ref{chapter:related}
-through~\ref{chapter:solution}) together with the data preprocessing
-pipeline of Section~\ref{sec:impl:pipeline}; the corresponding software
-implementation of the analytical surface is scheduled in
-Chapter~\ref{chapter:future}.
+\subsection{Visual Compliance}
+\label{sec:impl:eval:invariants}
+
+Separately from the requirements, the chart-writing rules set out in
+Section~\ref{sec:solution:interaction} are checked against the running
+demo (Table~\ref{tab:impl:invariants}). All but one hold today,
+including the click-to-open detail panel
+(Figure~\ref{fig:impl:demo:constellation}). The one piece still left for
+Phase~Two is keeping a single selection highlighted across several
+charts at the same time.
+
+\begin{table}[!htbp]
+\centering
+\caption{The design's chart rules, and where the demo stands.}
+\label{tab:impl:invariants}
+\footnotesize
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{Xp{4cm}}
+\hline
+\textbf{Rule} & \textbf{Status} \\
+\hline
+The title states the finding, with a supporting line beneath.   & Done on every wired chart. \\
+Bars start at zero.                                              & Done. \\
+Bright colour is saved for the one thing the chart points at.   & Done. \\
+Each chart reads in a few seconds.                              & Holds on every wired chart checked. \\
+No two charts in a theme use the same chart type.               & Holds for the three wired themes. \\
+Click an item to open its detail panel.                         & Working. \\
+Keep one selection highlighted across several charts at once.   & Left for Phase~2. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Findings}
+\label{sec:impl:eval:findings}
+
+The action titles embedded in the wired charts are computed from the
+warehouse rather than hard-coded against the design-time
+illustrative claims. The most significant data-grounded findings, and
+the design-time claims they replace, are catalogued in
+Table~\ref{tab:impl:findings}. The illustrative claims were placed in
+the Phase~One spec to anchor scene structure before the warehouse
+was queryable; the running demo's caption strings have been brought
+into alignment with the measured values.
+
+\begin{table}[!htbp]
+\centering
+\caption{Findings measured against the warehouse versus design-time illustrative claims.}
+\label{tab:impl:findings}
+\footnotesize
+\renewcommand{\arraystretch}{1.15}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{2.25cm}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}X@{}}
+\hline
+\textbf{Locus} & \textbf{Design claim} & \textbf{Demo finding} \\
+\hline
+Hub routes & 163 routes & 128 distinct \texttt{route\_no} values \\
+Student share & 34\% & 36\% (HS--SV tickets) \\
+School-route edge & Route 152: 482K HCMUT students & Route 20 leads KHXH--NV, $\sim$16K over 90 days \\
+T\^et trough & Jan 28--Feb 12, $-67\%$ & Feb 14--22: $-57\%$ average; Feb 16 trough: $-84\%$ \\
+T\^et recovery & Feb 12 & Shock ends Feb 22; January baseline returns in early March \\
+Hot stops & Five hex cells = 20\% of boardings & Top-five stops = $\sim$7\%; hex-cell validation moves to Phase~2 \\
+\hline
+\end{tabularx}
+\end{table}
+
+The findings of Table~\ref{tab:impl:findings} are the principal
+external validation produced by Phase~One: they confirm that the
+analytical surface returns meaningful, non-trivial numbers against
+the operational data, and they correct the illustrative anchors that
+were placed in the design before the warehouse was queryable. The
+design-time claims remain in the body of Chapter~\ref{chapter:solution}
+as anchors for the structural argument; the running surface and the
+revised scene texts in Section~\ref{sec:solution:themes:stories}
+report the data-grounded figures.
+
+Read on these terms, the Phase~One artefacts cover the design in full
+and a substantively complete portion of the analytical surface: a
+hub, three themed cards with nine wired charts, one running Story.
+What they do not show is that the design is correct, that the
+requirements are well chosen, or that the eventual platform will be
+usable. Those questions are deferred to the Phase~Two evaluation
+(Chapter~\ref{chapter:future}).

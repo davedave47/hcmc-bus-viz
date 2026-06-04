@@ -1,0 +1,38 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="hN" value="ANALYTICAL NEED" style="text;html=1;fontColor=#5B6470;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;" vertex="1" parent="1"><mxGeometry x="30" y="36" width="300" height="20" as="geometry"/></mxCell>
+    <mxCell id="hG" value="GRAIN" style="text;html=1;fontColor=#5B6470;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;" vertex="1" parent="1"><mxGeometry x="470" y="36" width="300" height="20" as="geometry"/></mxCell>
+    <mxCell id="hT" value="SERVING TABLE (GOLD)" style="text;html=1;fontColor=#E07B2B;fontStyle=1;fontSize=12;fontFamily=Helvetica;align=left;" vertex="1" parent="1"><mxGeometry x="900" y="36" width="360" height="20" as="geometry"/></mxCell>
+
+    <mxCell id="n1" value="Distribution and crowding over the day" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2E75B6;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="64" width="380" height="56" as="geometry"/></mxCell>
+    <mxCell id="g1" value="route x hour x day-type;&#10;stop x hour" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=#C7D3E2;fontColor=#5B6470;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="470" y="64" width="340" height="56" as="geometry"/></mxCell>
+    <mxCell id="t1" value="agg_route_hour  /  agg_stop_hour" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FBECEA;strokeColor=#E07B2B;fontColor=#1F3A5F;fontStyle=1;fontSize=13;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="900" y="64" width="370" height="56" as="geometry"/></mxCell>
+
+    <mxCell id="n2" value="Rank entities on several attributes" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2E75B6;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="140" width="380" height="56" as="geometry"/></mxCell>
+    <mxCell id="g2" value="route x day x fare class;&#10;operator, corridor" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=#C7D3E2;fontColor=#5B6470;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="470" y="140" width="340" height="56" as="geometry"/></mxCell>
+    <mxCell id="t2" value="agg_route_day" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FBECEA;strokeColor=#E07B2B;fontColor=#1F3A5F;fontStyle=1;fontSize=13;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="900" y="140" width="370" height="56" as="geometry"/></mxCell>
+
+    <mxCell id="n3" value="Change over time with a shock" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2E75B6;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="216" width="380" height="56" as="geometry"/></mxCell>
+    <mxCell id="g3" value="calendar day with shock tags" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=#C7D3E2;fontColor=#5B6470;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="470" y="216" width="340" height="56" as="geometry"/></mxCell>
+    <mxCell id="t3" value="agg_network_day" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FBECEA;strokeColor=#E07B2B;fontColor=#1F3A5F;fontStyle=1;fontSize=13;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="900" y="216" width="370" height="56" as="geometry"/></mxCell>
+
+    <mxCell id="n4" value="Spatial coverage and reach" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#2E75B6;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="292" width="380" height="56" as="geometry"/></mxCell>
+    <mxCell id="g4" value="stop with coordinates;&#10;uniform-area bin" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=#C7D3E2;fontColor=#5B6470;fontSize=12;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="470" y="292" width="340" height="56" as="geometry"/></mxCell>
+    <mxCell id="t4" value="agg_stop_total" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FBECEA;strokeColor=#E07B2B;fontColor=#1F3A5F;fontStyle=1;fontSize=13;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="900" y="292" width="370" height="56" as="geometry"/></mxCell>
+
+    <mxCell id="e1" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;" edge="1" parent="1" source="n1" target="g1"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e1b" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2;" edge="1" parent="1" source="g1" target="t1"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e2" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;" edge="1" parent="1" source="n2" target="g2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e2b" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2;" edge="1" parent="1" source="g2" target="t2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e3" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;" edge="1" parent="1" source="n3" target="g3"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e3b" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2;" edge="1" parent="1" source="g3" target="t3"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e4" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2;" edge="1" parent="1" source="n4" target="g4"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e4b" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2;" edge="1" parent="1" source="g4" target="t4"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#E07B2B;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="30" y="372" width="6" height="48" as="geometry"/></mxCell>
+    <mxCell id="cap" value="Each analytical need fixes a grain, and each grain names the one pre-computed table that makes the view a single read; seven such tables close the catalogue." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="36" y="372" width="1234" height="48" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

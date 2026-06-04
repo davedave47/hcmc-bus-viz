@@ -1,0 +1,85 @@
+<mxfile host="65bd71144e">
+    <diagram id="system-context-block" name="System Context (block diagram)">
+        <mxGraphModel dx="870" dy="512" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="780" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="srcLabel" value="&lt;i&gt;External data sources&lt;/i&gt;" style="text;html=1;align=left;fontSize=11;fontStyle=0;fontColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="60" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="srcGps" value="GPS feed&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;50-day window&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="100" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="srcAfc" value="AFC feed&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;90-day window&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="200" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="srcStops" value="Stop master&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;4,710 stops&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="300" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="platformBox" value="&lt;i&gt;Bus Analytics Platform&lt;/i&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;dashed=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=10;fontSize=11;fontStyle=2;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="100" width="540" height="280" as="geometry"/>
+                </mxCell>
+                <mxCell id="compWh" value="Analytical warehouse&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;4 layers&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="370" y="180" width="210" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="compSurface" value="Analytical surface&lt;br&gt;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;themes · canvases · interaction&lt;br&gt;&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="180" width="210" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="whToSurface" value="reads L4" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;fontStyle=2;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;verticalAlign=bottom;" parent="1" source="compWh" target="compSurface" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="usersLabel" value="&lt;i&gt;User roles&lt;/i&gt;" style="text;html=1;align=left;fontSize=11;fontColor=#000000;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="60" width="220" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="actPass" value="Passenger" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="100" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actOp" value="Operating company" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="200" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="actAuth" value="Public-transport authority" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="960" y="300" width="220" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="srcGpsEdge" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.27;" parent="1" source="srcGps" target="compWh" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="srcAfcEdge" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="srcAfc" target="compWh" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="srcStopsEdge" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.73;" parent="1" source="srcStops" target="compWh" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="surfaceToPass" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.27;entryX=0;entryY=0.5;" parent="1" source="compSurface" target="actPass" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="surfaceToOp" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" parent="1" source="compSurface" target="actOp" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="surfaceToAuth" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.73;entryX=0;entryY=0.5;" parent="1" source="compSurface" target="actAuth" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="futureBox" value="&lt;i&gt;Future / out of Phase 1 scope&lt;/i&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;dashed=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=10;fontSize=11;fontStyle=2;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="460" width="1140" height="170" as="geometry"/>
+                </mxCell>
+                <mxCell id="futOsm" value="OSM road data&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;Phase 2.5+&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="510" width="280" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="futMetro" value="Metro timetable&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;planned&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="510" width="280" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="futSql" value="Text-to-SQL&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;external team&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="510" width="280" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="futOsmEdge" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;dashed=1;exitX=0.5;exitY=0;entryX=0.3;entryY=1;" parent="1" source="futOsm" target="compWh" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="futMetroEdge" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;dashed=1;exitX=0.5;exitY=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="futMetro" target="compWh" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="futSqlEdge" value="reads warehouse" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;dashed=1;exitX=0.5;exitY=0;entryX=0.75;entryY=1;fontSize=10;fontStyle=2;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;entryDx=0;entryDy=0;" parent="1" source="futSql" target="compWh" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

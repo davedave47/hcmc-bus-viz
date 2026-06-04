@@ -1,0 +1,77 @@
+%%{init: {'theme':'base','themeVariables':{'primaryColor':'#EBF3FB','primaryBorderColor':'#1F3A5F','primaryTextColor':'#1F3A5F','lineColor':'#2E75B6','fontFamily':'Helvetica','fontSize':'15px'}}}%%
+erDiagram
+    direction LR
+
+    TICKETS {
+        bigint  ticket_id      PK
+        varchar ticket_type
+        double  trip_id        FK
+        double  station_id     FK
+        double  user_id        FK
+        bigint  time_created
+    }
+    PAYMENTS {
+        bigint  ticket_id      FK
+        bigint  final_price
+        varchar payment_method
+    }
+    TRIPS {
+        bigint  trip_id        PK
+        bigint  route_id       FK
+        double  bus_id         FK
+        double  driver_license FK
+    }
+    ROUTES {
+        bigint  route_id       PK
+        varchar route_no
+        bigint  company_id     FK
+    }
+    ROUTE_STOPS {
+        bigint  route_id       FK
+        bigint  station_id     FK
+        bigint  stop_order
+    }
+    STATIONS {
+        bigint  station_id     PK
+        varchar station_name
+        double  lat
+        double  lng
+    }
+    COMPANIES {
+        bigint  company_id     PK
+        varchar company_name
+    }
+    BUSES {
+        bigint  bus_id         PK
+        varchar vehicle_number
+        bigint  capacity
+    }
+    DRIVERS {
+        varchar driver_license PK
+        varchar driver_name
+    }
+    USERS {
+        bigint  user_id        PK
+        bigint  student_id     FK
+    }
+    STUDENTS {
+        bigint  student_id     PK
+        bigint  school_id      FK
+    }
+    SCHOOLS {
+        bigint  school_id      PK
+        varchar school_name
+    }
+
+    PAYMENTS    ||--||  TICKETS   : "ticket_id"
+    TICKETS     }o--o|  TRIPS     : "trip_id"
+    TICKETS     }o--||  STATIONS  : "station_id"
+    TICKETS     }o--o|  USERS     : "user_id"
+    TRIPS       }o--||  ROUTES    : "route_id"
+    TRIPS       }o--||  BUSES     : "bus_id"
+    TRIPS       }o--||  DRIVERS   : "driver_license"
+    ROUTES      }o--||  COMPANIES : "company_id"
+    ROUTE_STOPS }o--||  ROUTES    : "route_id"
+    ROUTE_STOPS }o--||  STATIONS  : "station_id"
+    USERS       }o--||  STUDENTS  : "student_id"
+    STUDENTS    }o--||  SCHOOLS   : "school_id"

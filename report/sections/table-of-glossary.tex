@@ -1,4 +1,30 @@
 \chapter*{Glossary and Abbreviations}
 \addcontentsline{toc}{chapter}{Glossary and Abbreviations}
 
-\textit{Stub. Glossary is populated after all chapters are written, by collecting every abbreviation expanded at first use.}
+\begin{longtable}{@{}p{2.5cm}p{11cm}@{}}
+\textbf{AFC} & \textit{Automated Fare Collection.} On-board fare-device stream recording every boarding event with timestamp, route, vehicle, fare class, and payment channel. \\[0.2cm]
+\textbf{DiD} & \textit{Difference-in-Differences.} Quasi-experimental estimator used in the Financial and Operations theme to attribute ridership lift to a promotion against a synthetic control of same-archetype routes. \\[0.2cm]
+\textbf{DDL} & \textit{Data-Definition Language.} The SQL subset used to declare conformed dimensions, fact views, and aggregate tables of Appendix~A. \\[0.2cm]
+\textbf{GPS} & \textit{Global Positioning System.} Vehicle telemetry stream sampling position, speed, and door state every few seconds per active bus. \\[0.2cm]
+\textbf{H3} & Globally consistent hexagonal hierarchical geospatial indexing system; used by the spatial-density layer of the Spatial and Connectivity theme. \\[0.2cm]
+\textbf{HCMC} & Ho Chi Minh City. \\[0.2cm]
+\textbf{HCMUT} & Ho Chi Minh City University of Technology. \\[0.2cm]
+\textbf{HHI} & \textit{Herfindahl--Hirschman Index.} Concentration measure used in the operator market-structure callout. \\[0.2cm]
+\textbf{HS-SV} & \textit{Vietnamese: H\d{o}c sinh -- Sinh vi\^{e}n.} The student-fare ticket class on the HCMC bus network; empirical anchor of the School-Aware Demand theme. \\[0.2cm]
+\textbf{KPI} & \textit{Key Performance Indicator.} Headline scalar reported in the Network Health and Performance theme. \\[0.2cm]
+\textbf{MAPE} & \textit{Mean Absolute Percentage Error.} Accuracy measure reported for the 14-day demand forecast. \\[0.2cm]
+\textbf{MAUR} & \textit{Management Authority for Urban Railways.} Operator of HCMC Metro Line~1. \\[0.2cm]
+\textbf{MCPT} & \textit{Centre for Public Transport Management.} The HCMC public-transport authority that operates the bus network and publishes the source dataset. \\[0.2cm]
+\textbf{MCV} & \textit{Multiple Coordinated Views.} The interaction model adopted from Liu's thesis~\cite{liu2022}: a selection in one chart propagates to every sibling chart in the same theme. \\[0.2cm]
+\textbf{MoSCoW} & Prioritisation scheme (Must / Should / Could / Won't) applied to the 14 stakeholder questions. \\[0.2cm]
+\textbf{OSM} & OpenStreetMap; source of road-speed annotations required by the conditional bus-speed-versus-posted-limit canvas. \\[0.2cm]
+\textbf{PK} & \textit{Primary Key.} Uniqueness constraint enforced by validation gate~4 of the preprocessing pipeline. \\[0.2cm]
+\textbf{PNG / PDF / CSV} & Export formats supported by every chart and every entity-detail view (requirement R9). \\[0.2cm]
+\textbf{QoS-1 / QoS-2 / QoS-3} & The three Quality-of-Service indicators of Srisakaokul et al.~\cite{srisakaokul2023}: trip completion, on-path operation, on-schedule operation. \\[0.2cm]
+\textbf{SDVF} & \textit{Significance--Differentiation--Visibility--Feasibility.} Internal prioritisation framework used to rank analytical themes. \\[0.2cm]
+\textbf{SQL} & \textit{Structured Query Language.} \\[0.2cm]
+\textbf{UMAP} & \textit{Uniform Manifold Approximation and Projection}~\cite{umap}. Dimensionality-reduction algorithm used as the route-archetype clustering primitive in the Routes theme. \\[0.2cm]
+\textbf{URL} & \textit{Uniform Resource Locator.} Browser address that serialises analytical state for the bookmarkability requirement (R10). \\[0.2cm]
+\textbf{VNU-HCM} & Vietnam National University Ho Chi Minh City; parent institution of HCMUT. \\[0.2cm]
+\textbf{WGS-84} & \textit{World Geodetic System 1984.} Coordinate reference system of every latitude--longitude pair in the dataset. \\
+\end{longtable}

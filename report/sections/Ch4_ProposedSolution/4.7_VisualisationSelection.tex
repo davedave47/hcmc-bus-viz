@@ -1,4 +1,4 @@
-\section{Visualisation Technique Selection}
+\section{Visualisation Design}
 \label{sec:solution:viz}
 
 Each of the six themes catalogued in Section~\ref{sec:solution:themes}
@@ -20,9 +20,7 @@ Section~\ref{sec:solution:dataset} through a four-tier feasibility
 audit. The full per-chart defence specification (what each chart is,
 why each primitive was chosen against three obvious alternatives, how
 the chart serves each of the three personas, and two anticipated
-defence answers) is recorded in the design specification at
-\texttt{docs/superpowers/specs/2026-05-21-bus-analytics-chart-catalogue-v5-design.md}
-section~11. A closing subsection in the present chapter records the
+defence answers) is recorded in the project design specification, section~11. A closing subsection in the present chapter records the
 visualisation alternatives that were considered and rejected.
 
 Two charts in the catalogue carry visible data caveats. Chart 3.2
@@ -45,9 +43,11 @@ themes that answer it. The matrix surfaces both the coverage claim
 dependencies (several questions admit answers from more than one
 theme).
 
+The per-theme tables that follow use four column abbreviations: \textbf{S~O~A} = Student / Operator / Authority (persona breadth); \textbf{Data} = Phase-1 readiness (Ready / Effort / Ph2); and \textbf{Yi} categories abbreviated Sel (Select), Fil (Filter), Rec (Reconfigure), Enc (Encode), Abs (Abstract/Elaborate), Exp (Explore)~\cite{yi2007interaction}.
+
 \begin{table}[!htbp]
 \centering
-\caption{Requirements traceability matrix: 14 stakeholder questions $\times$ 6 themes. Ticks mark a theme that answers the question.}
+\caption{Stakeholder questions mapped to themes (tick = addressed).}
 \label{tab:viz:traceability}
 \footnotesize
 \renewcommand{\arraystretch}{1.2}
@@ -75,7 +75,7 @@ A-Q7 & 14-day demand forecast per route?                      &     & $\checkmar
 \end{tabularx}
 \end{table}
 
-\subsection{Demand and Crowding}
+\subsection{Demand Analysis}
 \label{sec:solution:viz:demand}
 
 The Demand and Crowding theme asks when and where ridership
@@ -95,7 +95,7 @@ order.
   \label{tab:viz:demand}
   \footnotesize
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c c}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
     \hline
     \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
     \hline
@@ -108,7 +108,7 @@ order.
 \end{table}
 
 The four primitives are distinct (heatmap, bubble scatter,
-streamgraph, bump chart), satisfying the A6 invariant; together they
+streamgraph, bump chart), satisfying the one-primitive-per-theme constraint; together they
 answer the theme's four sub-questions on different visual channels.
 The route-by-hour heatmap encodes magnitude through cell colour
 (gradient orange ramp) and exposes day-to-day variance through a
@@ -125,7 +125,7 @@ ranked bar, per-route headway distribution, and demand-variance
 quadrant were folded into the route constellation, which absorbs the
 volume, predictability, and peak-load dimensions into one canvas.
 
-\subsection{School-Aware Demand}
+\subsection{School Demand}
 \label{sec:solution:viz:school}
 
 The School-Aware Demand theme asks how the educational institutions of the
@@ -162,7 +162,7 @@ interface surfaces the verified-or-stubbed flag on every school view.
   \label{tab:viz:school}
   \footnotesize
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c c}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
     \hline
     \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
     \hline
@@ -188,8 +188,7 @@ readability test, while the constellation encodes the same four
 dimensions on a more readable primitive), and the top-schools ranked
 bar was replaced by the same constellation. The remaining four
 canvases each occupy a distinct visual primitive (bubble scatter,
-treemap, annotated point map, calendar heatmap), satisfying the A6
-invariant.
+treemap, annotated point map, calendar heatmap), satisfying the one-primitive-per-theme constraint.
 
 The school constellation is the theme's flagship primitive because it
 encodes four school attributes (total student boardings, morning-peak
@@ -206,7 +205,7 @@ when a school cell is clicked. The proximity map and the weekly
 fare-class heatmap complete the theme with spatial-equity and
 temporal-pattern lenses respectively.
 
-\subsection{Spatial and Connectivity}
+\subsection{Spatial Connectivity}
 \label{sec:solution:viz:spatial}
 
 The Spatial and Connectivity theme asks how the network covers the
@@ -228,7 +227,7 @@ standalone canvases.
   \label{tab:viz:spatial}
   \footnotesize
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c c}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
     \hline
     \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
     \hline
@@ -262,7 +261,7 @@ twenty, or thirty minutes); the Voronoi tessellation previously
 considered for this slot answered a stop-centric catchment question
 that the multi-layer canvas's per-stop demand layer already surfaces.
 
-\subsection{Financial and Operations}
+\subsection{Financial Operations}
 \label{sec:solution:viz:financial}
 
 The Financial and Operations theme asks about revenue, ridership
@@ -283,7 +282,7 @@ most charts.
   \label{tab:viz:financial}
   \footnotesize
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c c}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
     \hline
     \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
     \hline
@@ -318,7 +317,7 @@ proxy intervention event for the difference-in-differences design
 (\cite{abadie2005did}, with synthetic-control routes drawn from same-archetype
 peers per the methodology of Section~\ref{sec:foundations:methods:did}).
 
-\subsection{Network Health and Performance}
+\subsection{Network Health}
 \label{sec:solution:viz:network}
 
 The Network Health and Performance theme asks about network-wide
@@ -339,7 +338,7 @@ network pulse and is cut per the persona-breadth pruning.
   \label{tab:viz:network}
   \footnotesize
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c c}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
     \hline
     \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
     \hline
@@ -391,7 +390,7 @@ below.
   \label{tab:viz:routes}
   \footnotesize
   \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c c}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
     \hline
     \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
     \hline
@@ -430,101 +429,9 @@ constellation of the Demand and Crowding theme, replaced by the
 entity-detail panel, or cut on persona-breadth grounds; the design
 specification §11.6 records the disposition of each.
 
-\subsection{Rejected Visualisation Primitives}
-\label{sec:solution:viz:alt}
+Six visualisation primitives were considered and rejected; Table~\ref{tab:viz:rejected} in Appendix~E records each rejection with the applicable chart and the reason. Three worked comparisons on actual fare and route data accompany the table (Section~E.1).
 
-Six primitives were considered for one or more of the charts in the
-catalogue and rejected. Table~\ref{tab:viz:rejected} records each
-rejection with the chart where the primitive might have applied and the
-specific reason for rejecting it. The rejections follow the visualisation guidance of the storytelling
-literature~\cite{knaflic2015} where applicable and follow the
-question-fit reasoning of the per-theme paragraphs above where the
-guidance is not specific.
-
-\begin{table}[!htbp]
-  \centering
-  \caption{Primitives considered and rejected, with reasons}
-  \label{tab:viz:rejected}
-  \footnotesize
-  \renewcommand{\arraystretch}{1.25}
-  \begin{tabularx}{\linewidth}{p{3.0cm} X X}
-    \hline
-    \textbf{Primitive considered} & \textbf{Where it might have applied} & \textbf{Reason for rejection} \\
-    \hline
-    Pie chart & Any composition view (fare class, payment channel, company share) & Compares angles poorly and saturates above five slices; ranked bar conveys composition more directly \cite{knaflic2015}. \\
-    Three-dimensional bar chart & Any quantitative comparison & Three-dimensional effects distort length and area perception, leading to systematic misreading of magnitudes \cite{knaflic2015}. \\
-    Choropleth keyed to districts & Boarding density across the city & Districts vary substantially in area and confound population density with administrative geometry; replaced by hexagonal-bin map \cite{h3}. \\
-    Word cloud & Any categorical-label summary (route names, stop names) & Encodes magnitude through font size, which is a poor visual channel for quantitative comparison and offers no axis for inspection. \\
-    Dendrogram & Cross-route clustering on the Demand and Crowding theme & Forces a hierarchical reading on the routes that the underlying feature space does not support; replaced by the route constellation bubble scatter (chart 1.3), which encodes the same archetype structure without inventing a tree. \\
-    Radial axis (radar plot) & Per-route multi-metric summary & Each radar chart shows one route only, defeating cross-route comparison; the route constellation (chart 1.3) and the per-stop box plot (chart 6.4) carry the multi-metric reading more readably. \\
-    \hline
-  \end{tabularx}
-\end{table}
-
-\subsubsection*{Worked Rejection Examples}
-
-Three of the rejected primitives are illustrated on actual fare and route
-data from the present project, so that the rejection is grounded in the
-specific consequences rather than in a generic principle.
-
-\paragraph{Pie chart on fare-class composition.} The fare-class breakdown
-across the ninety-day AFC window contains five categories (student cash,
-student smartcard, regular cash, regular smartcard, free-fare). Rendered
-as a pie, the two smartcard slices are close in angular extent to two of
-the cash slices and cannot be visually ordered; the reader cannot tell
-which is larger without consulting the labels.
-Figure~\ref{fig:viz:reject_pie} shows the same data as a pie and as a
-ranked horizontal bar; the rank order is immediately readable in the bar
-form and ambiguous in the pie form.
-
-\begin{figure}[!htbp]
-\centering
-\includegraphics[width=0.92\linewidth]{images/diagrams/solution_reject_pie_vs_bar.png}
-\caption{Pie chart versus ranked horizontal bar on the same fare-class breakdown.}
-\label{fig:viz:reject_pie}
-\end{figure}
-
-\paragraph{Choropleth keyed to districts.} Ho Chi Minh City's twenty-four
-urban districts vary in area by more than an order of magnitude (Bình
-Chánh and Củ Chi are several times the area of District~1 or District~3).
-A choropleth that colours each district by total boardings therefore
-confounds two effects: actual boarding intensity and the district's
-physical area. A small district with high intensity looks visually
-similar to a large district with diffuse demand. Figure~\ref{fig:viz:reject_choropleth}
-contrasts a district choropleth with the hexagonal-bin equivalent at
-500-metre cells; the hexagonal grid is uniform in area and isolates
-intensity from administrative geometry.
-
-\begin{figure}[!htbp]
-\centering
-\imageplaceholder{Choropleth versus hexagonal bin}{Two maps of HCMC side by side, same source data (90-day boardings per spatial unit). Left: district choropleth, twenty-four districts colour-coded by total boardings; the largest-area districts (e.g.\ B\`inh Ch\'anh) dominate the visual weight even when their per-square-kilometre intensity is moderate. Right: hexagonal-bin map at 500-metre cells, same colour scale, showing the genuine intensity hotspots in District~1 around B\^en Th\`anh that are masked in the district view.}{Generate using pydeck plus matplotlib export, or via QGIS. Two side-by-side maps, same extent, same colour ramp. PNG at 300 dpi. Save as images/diagrams/solution\_reject\_choropleth\_vs\_hex.png.}
-\caption{District choropleth versus hexagonal-bin map.}
-\label{fig:viz:reject_choropleth}
-\end{figure}
-
-\paragraph{Dendrogram on route clustering.} A dendrogram imposes a strict
-hierarchy on the clustered entities: at each height, two clusters merge
-into one. The route feature space of the present project (peak hours,
-student share, weekend drop, length, company, others) does not exhibit
-such hierarchy; the natural structure is a set of overlapping clusters
-in a continuous low-dimensional space rather than a tree of nested
-groupings. A dendrogram forced onto this space would invent merge
-heights that have no operational meaning and would mislead the reader
-into reading hierarchy where none exists. The route constellation
-(chart 1.3 in the Demand and Crowding theme) carries the cross-route
-archetype reading on a bubble scatter that surfaces archetype
-membership through colour without imposing the artificial tree.
-
-The visualisation catalogue is not closed. The four-layer architecture of
-Section~\ref{sec:solution:architecture} accepts additional charts without
-any change to the warehouse, provided the new chart's data source is one
-of the eight aggregate tables. New charts whose grain is not already
-covered by an existing aggregate require a new aggregate table to be added
-to the layer-4 catalogue and the new aggregate to be wired into the build
-ordering; the architecture supports such additions without disturbing the
-existing aggregates or the existing charts.
-
-\subsection{Methodology Side-Panel and Data Caveats}
+\subsection{Method Caveats}
 \label{sec:solution:viz:methodology}
 
 A meta-view overlays every chart whose output depends on a model
@@ -569,36 +476,20 @@ free-fare day lift waterfall as a concrete instance of the pattern.
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.92\linewidth]{images/diagrams/viz_method_panel.png}
-\caption{Methodology Side-Panel mockup, instantiated for the free-fare student-day lift waterfall (chart 4.4) showing the data-caveat block at the bottom.}
+\caption{Methodology Side-Panel layout, instantiated for chart 4.4 (free-fare student-day lift waterfall).}
 \label{fig:viz:methodpanel}
 \end{figure}
 
-\subsection{Catalogue Summary}
-\label{sec:solution:viz_catalogue}
-
-The visualisation choices across all six analytical themes compose
-into the catalogue visualised in
-Figure~\ref{fig:solution:viz_catalogue_map}, which arranges the
-twenty chart canvases as a six-column map with each canvas rendered
-as a rectangle ordered top-to-bottom by persona breadth within its
-column, and shared-aggregate links drawn between columns.
+Figure~\ref{fig:solution:viz_catalogue_map} summarises the full
+catalogue as a six-column map, with each canvas ordered top-to-bottom
+by persona breadth within its theme column. Two canvases carry a
+visible caveat marker: chart~3.2 (indicative Metro schedule) and
+chart~4.4 (free-fare reframe).
 
 \begin{figure}[!htbp]
 \centering
-\imageplaceholder{Theme-catalogue map}{Visualisation catalogue map. Six vertical columns labelled Demand and Crowding, School-Aware Demand, Spatial and Connectivity, Financial and Operations, Network Health and Performance, Route Detail. Each column contains rectangles representing the chart canvases of that theme, ordered top-to-bottom by persona breadth (3-persona charts at top, specialist charts at bottom), sized roughly equally. Rectangles are labelled with a short chart name (e.g., Route-by-hour heatmap, Operator constellation). Each rectangle is colour-coded by the warehouse aggregate it reads from (eight colours total for the eight aggregate tables of Section~\ref{sec:solution:architecture}). Two rectangles carry a small icon flagging the data caveats: chart 3.2 Bus-Metro Sankey marked "indicative" and chart 4.4 marked "free-fare reframe". Thin connecting lines link rectangles across columns that share an aggregate table, surfacing the cross-theme data dependencies.}{Draw in draw.io. Six columns, twenty colour-coded rectangles, eight-colour legend for aggregate tables, two caveat icons. PNG at 300 dpi. Save as images/diagrams/solution\_catalogue\_map.png.}
-\caption{Visualisation catalogue map.}
+\includegraphics[width=0.98\linewidth]{images/diagrams/solution_catalogue_map.png}
+\caption{Catalogue map: twenty canvases across six themes (4+4+3+4+2+3), ordered by persona breadth within each theme.}
 \label{fig:solution:viz_catalogue_map}
 \end{figure}
-
-The per-chart attributes summarised in the tables of
-\S\ref{sec:solution:viz:demand} through
-\S\ref{sec:solution:viz:routes} (primitive, readability tier, persona
-breadth, data feasibility status, supported Yi 2007 interaction
-categories) are expanded into the full ten-field defence specification
-in the design specification §11. The expanded specification records,
-per chart: what the chart is, why the primitive was chosen against
-three obvious alternatives, how the chart serves each of the three
-personas (with filter defaults and click-action wiring), and two
-anticipated defence answers to committee questions on primitive
-choice and on multi-persona utility.
 

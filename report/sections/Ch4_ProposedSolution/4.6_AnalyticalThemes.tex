@@ -9,7 +9,7 @@ top-level organisational units of the analytical surface; the user
 navigates between themes from an overview index, and within each theme
 selects a single visualisation that addresses the question of interest.
 
-\subsection{Six Analytical Themes}
+\subsection{Theme Structure}
 \label{sec:solution:themes:six}
 
 Table~\ref{tab:themes:six} lists the six themes with the analytical
@@ -59,12 +59,12 @@ Ho Chi Minh City currently provides, and it is the theme that connects most
 directly to the dominant fare class observed in
 Section~\ref{sec:solution:dataset:eda}. The distinction is operational
 rather than methodological: the visualisation primitives that the theme
-uses (treemap, parallel coordinates, calendar heatmap, point map) are
+uses (bubble constellation, treemap, calendar heatmap, point map) are
 standard, but no existing tool has applied them to the AFC student-fare
 share in this network. Two evidential boundaries that bear on the
 theme's strength are stated up front rather than buried inside
 Section~\ref{sec:solution:viz:school}. \textit{First}, the headline
-finding that student fares carry approximately 34~percent of network
+finding that student fares carry approximately 36~percent of network
 boardings is a property of the AFC fare-class label and is supported
 directly by the data. \textit{Second}, the per-school attribution that
 the theme's visualisations rely on is hand-verified for the eight largest
@@ -81,7 +81,7 @@ detail respectively, so that every functional requirement in
 Section~\ref{sec:solution:problem:functional} is addressed by at least
 one theme.
 
-\subsection{Alternative Theme Organisations}
+\subsection{Theme Alternatives}
 \label{sec:solution:themes:alt}
 
 Two alternative organisations of the analytical content were considered and
@@ -121,7 +121,7 @@ subordinate to the question. The per-theme visualisation selection that
 follows in Section~\ref{sec:solution:viz} respects this subordination by
 selecting each visualisation to fit the question rather than the reverse.
 
-\subsection{Theme Prioritisation}
+\subsection{Prioritisation}
 \label{sec:solution:themes:prioritisation}
 
 Not all six themes carry equal weight in the phase 1 implementation. The
@@ -143,7 +143,7 @@ per-route reliability indicators reach full coverage only after the full
 both of which are recorded as Phase~2 prerequisites in
 Chapter~\ref{chapter:future}.
 
-\subsection{Stories as a Second Reading Mode}
+\subsection{Stories}
 \label{sec:solution:themes:stories}
 
 Four of the six themes are paired with a Story: a curated, scroll-locked
@@ -247,22 +247,23 @@ is traceable.
 \caption{Storytelling techniques layered onto every Story.}
 \label{tab:themes:techniques}
 \footnotesize
-\begin{tabularx}{\linewidth}{p{4.0cm}Xp{2.2cm}}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{p{3.8cm}Xp{2.4cm}}
 \hline
-\textbf{Technique} & \textbf{Application in our Stories} & \textbf{Source} \\
+\textbf{Technique} & \textbf{Application} & \textbf{Source} \\
 \hline
-Bing-Bang-Bongo spine & Every Story opens with a one-screen hero KPI (Bing), proceeds through chart-by-chart unfolding (Bang), and closes with a recap plus call to action (Bongo). & Storytelling tradition; adopted by Knaflic Ch.~7~\cite{knaflic2015} \\
-Action title with supporting subtitle & Every scene leads with a finding-sentence; the chart appears as the proof of the sentence. & Knaflic Ch.~1, 5, 7; invariant~A2 \\
-Statistical-sentence scene opener & Each Bang scene's heading is a complete sentence with a number, not a chart title. ``Five universities drive half of all student-fare rides'' precedes the chart. & \cite{vnexpress2025labour} \\
-Connecting prose between scenes & Between scenes, one or two sentences carry the narrative argument from the previous finding to the next, so the Story reads as a continuous argument rather than a slideshow. & \cite{vnexpress2025labour} \\
-In-chart date annotation & Named events (T\^et 2026, April 30 2025) are marked inline on temporal charts with a dated flag, not relegated to a caption. & \cite{vnexpress2025labour} \\
-Comparative framing & Closing Bongo scenes position the HCMC finding against a comparable external benchmark (Bangkok QoS scores~\cite{srisakaokul2023}, Singapore's intermodal coordination, Tokyo's holiday-window contingency plans) so the call to action is contextual rather than parochial. & \cite{vnexpress2025labour} \\
-Methodology footnote per Story & Every Story closes with a one-line link to the Methodology Side-Panel (Section~\ref{sec:solution:viz:methodology}) for the most algorithmic chart in the Story, so the reader can inspect the computation that produced the finding. & \cite{vnexpress2025labour}; algorithm-transparency principle~\cite{linzeng2014} \\
+Bing-Bang-Bongo spine         & Each Story opens with a hero-KPI Bing, proceeds through charted Bang scenes, and closes with a recap-and-CTA Bongo. & Knaflic Ch.~7~\cite{knaflic2015} \\
+Action title with subtitle    & Each scene leads with a finding-sentence; the chart follows as proof. & Knaflic Ch.~1, 5~\cite{knaflic2015} \\
+Statistical-sentence opener   & Each Bang scene heading is a full sentence with a number, not a chart label. & \cite{vnexpress2025labour} \\
+Connecting prose between scenes & One or two sentences carry the narrative from scene $n$ to scene $n+1$. & \cite{vnexpress2025labour} \\
+In-chart date annotation      & Named events (T\^et, April 30) are flagged inline on temporal charts. & \cite{vnexpress2025labour} \\
+Comparative framing           & The Bongo scene positions the HCMC finding against an external benchmark. & \cite{vnexpress2025labour} \\
+Methodology footnote per Story & Each Story closes with a link to the Methodology Side-Panel for its most algorithmic chart. & \cite{vnexpress2025labour,linzeng2014} \\
 \hline
 \end{tabularx}
 \end{table}
 
-\subsubsection*{Two-Tier Chart Sourcing Across the Tool-Story Boundary}
+\subsubsection*{Two-Tier Chart Sourcing}
 
 Story charts are drawn from two tiers
 (Table~\ref{tab:themes:chart_categories}). The first tier reuses a
@@ -287,7 +288,7 @@ narrative beat rather than reused from an analytical dashboard.
 \footnotesize
 \begin{tabularx}{\linewidth}{p{3.0cm}Xp{3.6cm}}
 \hline
-\textbf{Tier} & \textbf{Description} & \textbf{Examples in our Stories} \\
+\textbf{Tier} & \textbf{Description} & \textbf{Examples} \\
 \hline
 Tier 1: catalogue chart in story state    & A v5.5 catalogue chart frozen to a narrative beat (a particular filter, highlight, or annotation). Reuses the tool-mode component; the Story supplies only a state specification. & 5.1 network pulse with Tết window shaded; 4.2 operator constellation with the two dominant bubbles highlighted; 2.1 school constellation with the equity-gap bubbles flagged \\
 Tier 2: bespoke simple story chart        & A purpose-built simple chart that lives only in a Story, deliberately simpler than any tool-catalogue chart. & free-fare lift before/after slope (Story 3); resilience sparkline grid (Story 4) \\
@@ -298,133 +299,23 @@ Frame types (Bing / Bongo)                & Story-exclusive frames: the Bing her
 
 \subsubsection*{Per-Story Scene Inventory}
 
-Tables~\ref{tab:themes:story_school} through
-\ref{tab:themes:story_tet} catalogue the four Stories scene by scene
-under the sticky-graphic scrollytelling mechanic of
-Section~\ref{sec:solution:themes:stories}: each Story opens with a
-Bing hero, proceeds through one or two scroll sections that each pin
-one chart while step-cards scroll past and fire transitions on the
-pinned chart, and closes with a Bongo recap. Each table gives the
-narrative function (Bing, Bang step, Bongo), the action title, the
-pinned chart with its sourcing tier (Tier 1 catalogue chart in story
-state, or Tier 2 bespoke simple story chart), and the scroll-trigger
-transition. Figure~\ref{fig:themes:story_spine} shows the four Stories
-as parallel scroll-timelines.
-
-\textbf{Status of the action titles in Tables~\ref{tab:themes:story_school}--\ref{tab:themes:story_tet}.}
-The action titles are \textit{design-time scene specifications}, not
-validated findings. Two scene openers (the 34~percent student-fare
-share that opens Story~1 and the $-84$~percent Tết trough-day drop
-that motivates Story~4) are grounded in the executed exploratory
-analysis of Section~\ref{sec:solution:dataset:eda} (the measured Tết
-window runs 14--22~February with a $-57$~percent nine-day-average
-drop and the $-84$~percent single-day minimum on 16~February). The
-remaining numerical statements (``twelve routes in the bleeding
-quadrant'', ``one operator captures 31~percent of revenue while
-operating 18~percent of routes'', ``three schools sit beyond walking
-distance of any stop'') are illustrative figures that anchor the
-narrative structure; Phase~2 instantiates each Story against the
-warehouse and replaces the illustrative numbers with the measurements
-the corresponding aggregate table produces.
+Figure~\ref{fig:themes:story_spine} shows the four Stories as
+parallel scroll-timelines (Bing $\rightarrow$ Bang $\rightarrow$
+Bongo). The full per-scene specification, including the action title,
+the pinned chart with its sourcing tier, and the scroll-trigger
+transition for each of the twenty-six scenes, is catalogued in
+Appendix~D, Tables~\ref{tab:themes:story_school}--\ref{tab:themes:story_tet}. The action titles in those tables are
+design-time specifications, not validated findings; Phase~2
+instantiates each Story against the warehouse and replaces the
+illustrative numbers with the measurements the aggregate tables
+produce.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.98\linewidth]{images/diagrams/themes_story_spine.png}
-\caption{The four Stories laid out as parallel scroll-timelines (Bing $\rightarrow$ Bang $\rightarrow$ Bongo).}
+\caption{The four Stories as parallel scroll-timelines (Bing $\rightarrow$ Bang $\rightarrow$ Bongo).}
 \label{fig:themes:story_spine}
 \end{figure}
-
-The scene tables that follow abbreviate the act as \textit{Bi} (Bing
-opener), \textit{B1}\ldots\textit{B$n$} (Bang scenes), and \textit{Bo}
-(Bongo recap).
-
-\begin{table}[!htbp]
-\centering
-\caption{Story~1 scenes: \textit{The school commute, in numbers}.}
-\label{tab:themes:story_school}
-\footnotesize
-\begin{tabularx}{\linewidth}{p{0.8cm}Xp{2.7cm}p{1.6cm}}
-\hline
-\textbf{Scene} & \textbf{Action title (scene opener)} & \textbf{Pinned chart (tier)} & \textbf{Transition} \\
-\hline
-Bing  & Thirty-four percent of HCMC bus rides are paid with a student-fare card.       & Bing hero frame                     & (entry)    \\
-A1    & Thirty-four of every hundred rides are student fares.                         & 2.3 weekly fare-class heatmap (Tier~1) & Highlight  \\
-A2    & Students compress their week into four hours.                                 & 2.3 weekly fare-class heatmap (Tier~1) & Filter     \\
-A3    & Saturday looks nothing like Tuesday.                                          & 2.3 weekly fare-class heatmap (Tier~1) & Filter     \\
-B1    & A handful of universities anchor most student demand.                         & 2.1 school constellation (Tier~1)     & Highlight  \\
-B2    & Three schools sit beyond walking distance of any stop.                        & 2.1 school constellation (Tier~1)     & Annotation \\
-Bongo & Three schools without a stop, seven routes without a summer.                   & Bongo recap frame                   & (exit)     \\
-\hline
-\end{tabularx}
-\end{table}
-
-\begin{table}[!htbp]
-\centering
-\caption{Story~2 scenes: \textit{Where the city actually rides}.}
-\label{tab:themes:story_spatial}
-\footnotesize
-\begin{tabularx}{\linewidth}{p{0.8cm}Xp{2.7cm}p{1.6cm}}
-\hline
-\textbf{Scene} & \textbf{Action title (scene opener)} & \textbf{Pinned chart (tier)} & \textbf{Transition} \\
-\hline
-Bing  & Five central stops carry seven percent of all boardings.                       & Bing hero frame                          & (entry)    \\
-A1    & The boarding map, at five-hundred-metre resolution.                            & 3.1 multi-layer hex map (Tier~1)         & Highlight  \\
-A2    & Sized by ridership, not by area, the centre swells.                            & 3.1 multi-layer hex map (Tier~1)         & Filter     \\
-A3    & Five hex cells in the centre dominate.                                         & 3.1 multi-layer hex map (Tier~1)         & Annotation \\
-B1    & Nineteen feeder routes connect to Metro Line~1.                                & 3.2 bus-to-metro Sankey (Tier~1)         & Highlight  \\
-B2    & Only eight arrive within five minutes of a train.                             & 3.2 bus-to-metro Sankey (Tier~1)         & Filter     \\
-Bongo & The city you ride is not the city on the map.                                  & Bongo recap frame                        & (exit)     \\
-\hline
-\end{tabularx}
-\end{table}
-
-\begin{table}[!htbp]
-\centering
-\caption{Story~3 scenes: \textit{Who runs Saigon's buses}.}
-\label{tab:themes:story_money}
-\footnotesize
-\begin{tabularx}{\linewidth}{p{0.8cm}Xp{2.7cm}p{1.6cm}}
-\hline
-\textbf{Scene} & \textbf{Action title (scene opener)} & \textbf{Pinned chart (tier)} & \textbf{Transition} \\
-\hline
-Bing  & \textdong{}72~billion in 90~days; two operators take 60\% of it.                & Bing hero frame                          & (entry)    \\
-A1    & Two companies move sixty percent of the network.                              & 4.2 operator constellation (Tier~1)      & Highlight  \\
-A2    & Size is not quality.                                                          & 4.2 operator constellation (Tier~1)      & Encode     \\
-A3    & The biggest operator runs 18\% of routes for 31\% of revenue.                  & 4.2 operator constellation (Tier~1)      & Annotation \\
-B1    & Twelve routes sit in the bleeding quadrant.                                   & 4.1 P\&L quadrant (Tier~1)               & Highlight  \\
-C1    & Free-fare student days lift ridership 12\% on weekdays.                        & free-fare lift slope (Tier~2)            & (entry)    \\
-Bongo & Twelve bleeding routes; one slow digital transition; \textdong{}72B at stake. & Bongo recap frame                        & (exit)     \\
-\hline
-\end{tabularx}
-\end{table}
-
-\begin{table}[!htbp]
-\centering
-\caption{Story~4 scenes: \textit{Nine days without a network}.}
-\label{tab:themes:story_tet}
-\footnotesize
-\begin{tabularx}{\linewidth}{p{0.8cm}Xp{2.7cm}p{1.6cm}}
-\hline
-\textbf{Scene} & \textbf{Action title (scene opener)} & \textbf{Pinned chart (tier)} & \textbf{Transition} \\
-\hline
-Bing  & Minus eighty-four percent: ridership on the trough day of T\^et.                & Bing hero frame                          & (entry)    \\
-A1    & Ridership held steady through January.                                         & 5.1 network pulse (Tier~1)               & (entry)    \\
-A2    & Then T\^et arrived, 14 February 2026.                                          & 5.1 network pulse (Tier~1)               & Annotation \\
-A3    & Minus eighty-four percent on the trough day, 16 February.                      & 5.1 network pulse (Tier~1)               & Annotation \\
-A4    & Recovery completes by 23 February.                                             & 5.1 network pulse (Tier~1)               & Annotation \\
-B1    & Some routes flatlined; others barely moved.                                    & resilience sparkline grid (Tier~2)       & (entry)    \\
-Bongo & Nine days of flatline; nine routes need a contingency plan.                    & Bongo recap frame                        & (exit)     \\
-\hline
-\end{tabularx}
-\par\smallskip
-\footnotesize\textit{Note.} The percentages and dates in this table
-were corrected against the running warehouse during Phase~One
-implementation; an earlier draft placed the T\^et window at
-January~28--February~12 and reported a $-67\%$ average drop. The
-measured 2026 window runs February~14--22 with a $-57\%$
-nine-day-average drop and $-84\%$ on the deepest day (February~16);
-see Table~\ref{tab:impl:findings}.
-\end{table}
 
 The four Stories together compose twenty-six scenes across the
 four-theme subset (seven, seven, seven, and seven scenes including

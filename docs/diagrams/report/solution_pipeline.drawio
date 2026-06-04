@@ -1,0 +1,57 @@
+<mxfile host="65bd71144e">
+    <diagram id="pipeline-h" name="Preprocessing pipeline (horizontal)">
+        <mxGraphModel dx="1240" dy="500" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="380" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="boxRaw" value="&lt;b&gt;raw CSV&lt;/b&gt;&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;input&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="box1" value="1&#xa;ingest" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="190" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="box2" value="2&#xa;type-cast" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="340" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="box3" value="3&#xa;partition&#xa;by day" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="490" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="box4" value="4&#xa;rename labels" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="box5" value="5&#xa;tag Tết /&#xa;parade" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="box6" value="6&#xa;register&#xa;view layer" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="boxOut" value="&lt;b&gt;Bronze &lt;font color=&quot;#666666&quot;&gt;(L1)&lt;/font&gt;&lt;/b&gt;&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;raw views&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="1090" y="80" width="130" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="er1" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="boxRaw" target="box1"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="er2" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="box1" target="box2"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="er3" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="box2" target="box3"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="er4" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="box3" target="box4"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="er5" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="box4" target="box5"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="er6" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="box5" target="box6"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="er7" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" edge="1" parent="1" source="box6" target="boxOut"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="vBox" value="&lt;i&gt;Validation gates  ·  applied after each step;  any failure halts the pipeline before the Bronze layer refreshes&lt;/i&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;dashed=1;verticalAlign=top;align=left;spacingLeft=14;spacingTop=10;fontSize=11;fontStyle=2;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="220" width="1180" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="vg1" value="·  row-count regression&#xa;   (±10 % halt)" style="text;html=1;align=left;verticalAlign=top;fontSize=11;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="260" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="vg2" value="·  null-rate ceiling&#xa;   per column" style="text;html=1;align=left;verticalAlign=top;fontSize=11;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="260" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="vg3" value="·  referential integrity&#xa;   (FK resolves)" style="text;html=1;align=left;verticalAlign=top;fontSize=11;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="260" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="vg4" value="·  primary-key&#xa;   uniqueness" style="text;html=1;align=left;verticalAlign=top;fontSize=11;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="920" y="260" width="260" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="vEdge" value="&lt;i&gt;check&lt;/i&gt;" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;dashed=1;exitX=0.5;exitY=1;entryX=0.5;entryY=0;fontSize=10;fontStyle=2;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;" edge="1" parent="1" source="box3" target="vBox"><mxGeometry relative="1" as="geometry"/></mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

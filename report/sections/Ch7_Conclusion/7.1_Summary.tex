@@ -2,40 +2,116 @@
 \label{sec:conclusion:summary}
 
 This report develops the design of an analytical and visualisation
-platform for the Ho Chi Minh City public bus network.
+platform for the Ho Chi Minh City public bus network and records the
+state of the Phase~One implementation. The work responds to a concrete
+gap: the city's bus network produces approximately 17.8~million
+boarding events every quarter and approximately fifty days of vehicle
+telemetry per release window, yet no currently accessible tool turns
+either stream into operational insight for the three stakeholder
+roles the network serves.
+
+\medskip
+\noindent\textbf{What each chapter contributed.}
 Chapter~\ref{chapter:intro} motivates the work as the engineering
 response to the absence of any analytical surface over the network's
-two operational data streams, namely Automated Fare Collection (AFC)
-and Global Positioning System (GPS) telemetry.
-Chapter~\ref{chapter:related} surveys the four existing tools for the
-network (a public route directory and three passenger routing
-applications) and the peer-reviewed research that informs the design
-(the Bangkok Quality-of-Service framework~\cite{srisakaokul2023}, the
-bus-as-traffic-sensor construction~\cite{derevitskiy2016}, the
-time-distance trajectory predictor~\cite{linzeng2014}, the
-visualisation primitives of Liu~\cite{liu2022}, and the storytelling
-principles of Knaflic~\cite{knaflic2015}); the chapter identifies the
-gap that the present project addresses.
+two operational data streams (Automated Fare Collection (AFC) records
+and Global Positioning System (GPS) telemetry), states four Phase~One
+objectives, and bounds the scope to historical analysis over a
+ninety-day AFC window and a fifty-day GPS window.
+Chapter~\ref{chapter:related} surveys six existing tools for the
+network (one public route directory, four passenger routing
+applications, and one research demonstrator) and the peer-reviewed
+research that informs the design: the Quality-of-Service
+framework~\cite{srisakaokul2023}, the bus-as-traffic-sensor
+construction~\cite{derevitskiy2016}, the time-distance trajectory
+predictor~\cite{linzeng2014}, a catalogue of visualisation
+primitives~\cite{liu2022}, and a set of storytelling principles for
+analytical charts~\cite{knaflic2015}. The chapter identifies three specific
+open problems that the present project addresses: cross-source
+integration of GPS and AFC at an aggregate grain, stakeholder-aware
+analytical access for three user roles, and city-specific deployment
+on the Ho Chi Minh City dataset.
 
 Chapter~\ref{chapter:foundations} introduces the theoretical and
-technical foundations on which the proposed solution depends.
+technical foundations on which the proposed solution depends: a
+layered analytical architecture, the QoS-1/2/3 reliability
+decomposition, a Chart Selection Rubric grounded in a perception-channel
+ranking~\cite{cleveland1984} and an analytical-task
+typology~\cite{munzner2014}, the Multiple Coordinated Views (MCV)
+interaction pattern, the visual storytelling principles, and the
+software tools that realise the design.
 Chapter~\ref{chapter:solution} develops the proposed solution along
-eight axes: problem analysis, dataset and exploratory analysis,
-preprocessing, solution overview, data architecture, analytical
-themes, visualisation technique selection, and interaction model.
-Chapter~\ref{chapter:implementation} documents the Phase~One artefacts,
-namely Layer~1 of the warehouse, the user-interface design mockup, and
+eight axes: problem analysis (fourteen stakeholder questions, fifteen
+functional requirements R1--R15, six non-functional constraints
+N1--N6, four out-of-scope exclusions, and a requirement-to-design
+traceability table), dataset and exploratory analysis (twelve data
+invariants), preprocessing, solution overview, the Medallion data
+architecture (Bronze, Silver, Gold) with a dimensionally-organised
+Silver tier and a materialised Gold tier of seven pre-computed
+aggregate tables, the six analytical themes, the visualisation
+technique selection (twenty chart canvases), and the interaction model.
+Chapter~\ref{chapter:implementation} documents the Phase~One
+artefacts: the full Bronze, Silver, and Gold tiers of the warehouse
+running against the \(17{,}883{,}623\)-row AFC stream, a running
+FastAPI application surface with nine wired chart canvases across
+three of the six themes and one scrollytelling Story, a programmatic
+profiling pass that surfaced five additional data invariants, and
 the initial requirements evaluation.
-Chapter~\ref{chapter:future} sets out the Phase~Two roadmap of nine
-phases and approximately twenty-one working days, the deployment plan,
-the user-evaluation methodology, and three extensions that follow from
-the historical foundation.
+Chapter~\ref{chapter:future} sets out the Phase~Two roadmap of ten
+phases (P0 through P9) over fourteen weeks, the local
+deployment plan, the two-wave user-evaluation methodology, and three
+extensions that follow from the historical foundation (real-time
+arrival-time prediction, per-route anomaly detection, and bus
+telemetry as a city-wide traffic-sensing substrate).
 
-The proposed solution composes a four-layer warehouse, six analytical
+\medskip
+\noindent\textbf{The composed design.}
+The proposed system composes a Medallion warehouse, six analytical
 themes, a visualisation catalogue grounded in established primitives,
 and an interaction model that combines Multiple Coordinated Views,
 visual storytelling, and an entity-detail interaction pattern. Each
 design choice is defended against at least one rejected alternative.
-The composition responds to the analytical gap identified in
-Chapter~\ref{chapter:related} and forms the basis for the Phase~Two
-implementation.
+The data architecture is selected from three candidates (plain
+Medallion without a materialised Gold layer, a star schema over the
+raw views, and the chosen Medallion with materialised Gold and a
+dimensionally-organised Silver) against a measured benchmark on the
+warm re-render budget of requirement N1; the selected variant cuts
+total chart-catalogue serving cost by six times versus the Silver-only
+configuration. The thematic
+organisation is selected from three candidates (role-keyed,
+primitive-keyed, and the chosen question-keyed) against the criterion
+that cross-role questions must not be duplicated or arbitrarily
+assigned. The visualisation primitives are selected from a rubric of
+eighteen task-and-data-shape rows, with six alternative primitives
+explicitly rejected and three of the rejections illustrated on actual
+project data. The interaction model composes three established
+patterns into a single bounded surface.
+
+\medskip
+\noindent\textbf{What was demonstrated, what remains.}
+Phase~One demonstrates the design through this report, four executed
+exploratory notebooks, the programmatic profiling script, the
+a running prototype across
+all three Medallion tiers with nine wired chart canvases and one
+scrollytelling Story. The exploratory analysis grounds the design in
+concrete network behaviour: student fares account for approximately
+thirty-six percent of all boardings, cash dominates payments at
+approximately ninety-six percent, route demand is heavy-tailed, and
+the T\^et 2026 window produces a measured nine-day ridership trough
+(\(-57\%\) average against the pre-T\^et baseline, \(-84\%\) on the
+trough day of 16~February) that recovers by 23~February. These observations motivate the
+school-aware demand theme as the distinctive contribution of the
+proposed system, the financial-and-operations theme as a market-
+structure surface, and the network-health theme as a shock-and-
+recovery surface. The remaining warehouse layers, the analytical
+surface, and the user evaluation are the explicit subject of
+Chapter~\ref{chapter:future} and Appendix~\ref{appendix:schedule}.
+
+The composition is the principal contribution of Phase~One. The
+specification documented in Chapter~\ref{chapter:solution} is the
+design contract for Phase~Two, against which the implementation will
+be verified. The reader looking for the per-requirement status of
+the Phase~One artefacts is referred to
+Table~\ref{tab:impl:eval}; the reader looking for the Phase~Two
+critical path is referred to Section~\ref{sec:future:roadmap} and
+Appendix~\ref{appendix:schedule}.

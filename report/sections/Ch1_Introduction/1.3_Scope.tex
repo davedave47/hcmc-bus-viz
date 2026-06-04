@@ -1,17 +1,18 @@
-\section{Scope of the Phase-One Study}
+\section{Scope}
 \label{sec:intro:scope}
 
 The study covers two operational data streams of the Ho Chi Minh City
 bus network. The AFC stream covers the 90-day window from 1 January
 2026 to 31 March 2026 inclusive and contains approximately 17.9
 million boarding events with paired payment records. The GPS stream
-covers the 50-day window from 20 March 2025 to 10 May 2025; the
-present project loads a single-day sample (18 March 2025) of
-approximately 720,000 pings for Phase One, with the full 50-day window
-loaded in Phase Two. The static reference tables (4,710 stops, the
-operating companies, and the schedule and route master data) are
-loaded in full. The two operational streams do not share any calendar
-day; the implications of this mismatch are discussed in
+covers the 50-day window from 20 March 2025 to 10 May 2025; Phase~One
+loads a single-day sample (18 March 2025) of approximately 720,000
+pings, and Phase~Two loads the full 50-day window.
+
+The static reference tables (4,710 stops, the operating companies, and
+the schedule and route master data) are loaded in full. The two
+operational streams do not share any calendar day; the implications of
+this mismatch are discussed in
 Section~\ref{sec:solution:dataset:coverage}.
 
 Six classes of analytical question are in scope, organised into six
@@ -20,15 +21,18 @@ and crowding patterns; school-aware demand patterns specific to
 university and school commuting; spatial and connectivity questions
 including bus-to-metro feeders; financial and operational efficiency;
 network-wide health and reliability; and per-route deep analysis with
-cross-route comparison. The themes serve four user roles internally
-but are not exposed to the user through a role selector.
+cross-route comparison. The themes serve three user roles internally
+(passenger, operating company, public-transport authority) but are not
+exposed to the user through a role selector.
 
 Phase One produces the present report, four executed exploratory
 analysis notebooks documenting the dataset and grounding the design,
-a high-fidelity user-interface mockup that locks the visual
-specification of the proposed system, and a partial implementation of
-the data-preprocessing pipeline at Layer 1 of the proposed
-architecture.
+and a running prototype of the proposed system. The prototype is a
+single-process Python application that serves the analytical surface
+over the Bronze, Silver, and Gold tiers of the Medallion warehouse
+(Chapter~\ref{chapter:solution} specifies the architecture); the
+running surface covers the hub, three of the six analytical themes,
+and one of the four Stories.
 
 The following capabilities are explicitly out of scope and are not
 addressed by the proposed system.

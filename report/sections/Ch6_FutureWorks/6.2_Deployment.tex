@@ -1,4 +1,4 @@
-\section{Deployment Plan}
+\section{Deployment}
 \label{sec:future:deployment}
 
 The proposed system is designed for single-process deployment on commodity
@@ -9,7 +9,7 @@ that supports continued operational use after the study completes. Both
 deployment contexts run the same code base and read the same on-disk
 warehouse; only the surrounding process configuration differs.
 
-\subsection{Local deployment}
+\subsection{Local Deployment}
 \label{sec:future:deployment:local}
 
 The proposed system runs as a single application process. The data warehouse
@@ -22,7 +22,7 @@ file that names the warehouse path and the application port; no network
 access is required at run time. This deployment supports the user-evaluation
 study and ad-hoc demonstration use without any service-side infrastructure.
 
-\subsection{Server-side deployment}
+\subsection{Server Deployment}
 \label{sec:future:deployment:server}
 
 The same code base supports server-side deployment with multi-user access
@@ -34,7 +34,7 @@ cache layer. No source-code changes are required to move between local and
 server-side deployment, which keeps the demonstration build identical to the
 production build and removes a class of deployment regressions.
 
-\subsection{Operational refresh}
+\subsection{Refresh}
 \label{sec:future:deployment:refresh}
 
 The warehouse is refreshed offline. A scheduled task reruns the

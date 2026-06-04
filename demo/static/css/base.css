@@ -1,0 +1,134 @@
+/* Chrome shared across every page: topbar, breadcrumb, brand mark.
+   Card-specific chrome (rail, view controls, canvas) lives in card.css. */
+
+.tb {
+  height:54px;
+  background:var(--surface);
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 22px;
+  gap:12px;
+  flex-shrink:0;
+  position:sticky;
+  top:0;
+  z-index:100;
+}
+
+.tb-brand { display:flex; align-items:center; gap:9px; flex-shrink:0; }
+.tb-mark {
+  width:24px; height:24px;
+  background:var(--ink);
+  border-radius:5px;
+  display:flex; align-items:center; justify-content:center;
+  color:#fff;
+  font-family:var(--f-d);
+  font-weight:800;
+  font-size:14px;
+  letter-spacing:-.04em;
+}
+.tb-name {
+  font-family:var(--f-d);
+  font-weight:600;
+  font-size:14.5px;
+  color:var(--ink);
+  letter-spacing:-.02em;
+}
+.tb-div { width:1px; height:18px; background:var(--line-md); flex-shrink:0; }
+.tb-crumb { font-size:12.5px; color:var(--ink-3); display:flex; align-items:center; gap:6px; min-width:0; }
+.tb-crumb .sep { color:var(--ink-4); }
+.tb-crumb .cur { color:var(--ink); font-weight:500; white-space:nowrap; }
+.tb-space { flex:1; }
+.tb-date {
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--f-m);
+  font-size:11px; color:var(--ink-2);
+  background:var(--surface-2);
+  border:1px solid var(--line);
+  padding:6px 12px;
+  border-radius:var(--rad-full);
+  white-space:nowrap;
+  cursor:pointer;
+}
+.tb-ico {
+  width:32px; height:32px;
+  border-radius:var(--rad);
+  border:1px solid var(--line);
+  display:flex; align-items:center; justify-content:center;
+  font-size:13px;
+  color:var(--ink-2);
+  cursor:pointer;
+  background:var(--surface-2);
+  flex-shrink:0;
+}
+
+/* Card-index switcher used by every card interior (matches the Atlas pattern). */
+.tb-cards {
+  display:flex; align-items:center; gap:0;
+  border:1px solid var(--line);
+  border-radius:var(--rad);
+  overflow:hidden;
+  height:30px;
+}
+.tb-cards a {
+  padding:0 10px;
+  height:100%;
+  display:flex; align-items:center; gap:6px;
+  font-family:var(--f-m);
+  font-size:11px;
+  color:var(--ink-3);
+  border-right:1px solid var(--line);
+}
+.tb-cards a:last-child { border-right:none; }
+.tb-cards a.home { padding:0 12px; }
+.tb-cards a .dot { width:6px; height:6px; border-radius:50%; }
+.tb-cards a.on { font-weight:600; }
+.tb-cards a.on[data-c="1"] { color:var(--c1); background:#FFF6F1; }
+.tb-cards a.on[data-c="2"] { color:var(--c2); background:#FFFAEB; }
+.tb-cards a.on[data-c="3"] { color:var(--c3); background:#F0F8F3; }
+.tb-cards a.on[data-c="4"] { color:var(--c4); background:#FEF2F2; }
+.tb-cards a.on[data-c="5"] { color:var(--c5); background:#F4F1FB; }
+.tb-cards a.on[data-c="6"] { color:var(--c6); background:var(--surface-3); }
+
+.tb-title {
+  margin-left:14px;
+  font-family:var(--f-d);
+  font-size:15px;
+  font-weight:500;
+  color:var(--ink);
+}
+.tb-title .sep { color:#A5ABB5; margin:0 8px; }
+.tb-title .leaf { color:var(--ink-2); }
+
+/* Status bar (bottom of card pages) */
+.status {
+  height:32px;
+  background:var(--surface-3);
+  border-top:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 22px;
+  gap:18px;
+  flex-shrink:0;
+}
+.status .item {
+  font-family:var(--f-m);
+  font-size:9.5px;
+  color:var(--ink-3);
+  display:flex; align-items:center; gap:6px;
+  font-weight:500;
+}
+.status .item .dot {
+  width:6px; height:6px;
+  border-radius:50%;
+  background:var(--g);
+  box-shadow:0 0 0 3px rgba(47,138,79,.15);
+}
+
+/* Full-bleed app surface — the mockup's framed-card look is dropped for the running demo. */
+.page {
+  background:var(--surface);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}

@@ -1,0 +1,29 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="b1" value="Boarding" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="70" width="200" height="70" as="geometry"/></mxCell>
+    <mxCell id="t1" value="one tap, one stop, one fare class" style="text;html=1;fontColor=#5B6470;fontSize=11;fontStyle=2;fontFamily=Helvetica;align=center;" vertex="1" parent="1"><mxGeometry x="30" y="142" width="200" height="30" as="geometry"/></mxCell>
+
+    <mxCell id="b2" value="Trip" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="290" y="70" width="200" height="70" as="geometry"/></mxCell>
+    <mxCell id="t2" value="boardings on one bus run" style="text;html=1;fontColor=#5B6470;fontSize=11;fontStyle=2;fontFamily=Helvetica;align=center;" vertex="1" parent="1"><mxGeometry x="290" y="142" width="200" height="30" as="geometry"/></mxCell>
+
+    <mxCell id="b3" value="Route" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="550" y="70" width="200" height="70" as="geometry"/></mxCell>
+    <mxCell id="t3" value="per route, hour, day type" style="text;html=1;fontColor=#5B6470;fontSize=11;fontStyle=2;fontFamily=Helvetica;align=center;" vertex="1" parent="1"><mxGeometry x="550" y="142" width="200" height="30" as="geometry"/></mxCell>
+
+    <mxCell id="b4" value="Stops &amp; Districts" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="810" y="70" width="200" height="70" as="geometry"/></mxCell>
+    <mxCell id="t4" value="4,710 geocoded stops into zones" style="text;html=1;fontColor=#5B6470;fontSize=11;fontStyle=2;fontFamily=Helvetica;align=center;" vertex="1" parent="1"><mxGeometry x="810" y="142" width="200" height="30" as="geometry"/></mxCell>
+
+    <mxCell id="b5" value="Network" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E07B2B;strokeColor=#E07B2B;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="1070" y="70" width="200" height="70" as="geometry"/></mxCell>
+    <mxCell id="t5" value="the 90-day, 17.9 M picture" style="text;html=1;fontColor=#5B6470;fontSize=11;fontStyle=2;fontFamily=Helvetica;align=center;" vertex="1" parent="1"><mxGeometry x="1070" y="142" width="200" height="30" as="geometry"/></mxCell>
+
+    <mxCell id="e1" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2.5;" edge="1" parent="1" source="b1" target="b2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e2" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2.5;" edge="1" parent="1" source="b2" target="b3"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e3" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2.5;" edge="1" parent="1" source="b3" target="b4"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e4" style="endArrow=classic;html=1;strokeColor=#E07B2B;strokeWidth=2.5;" edge="1" parent="1" source="b4" target="b5"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="30" y="206" width="6" height="50" as="geometry"/></mxCell>
+    <mxCell id="cap" value="The atomic unit is the single boarding event; every analytical figure is an aggregate of that unit, reconciled across sources only at route by hour-of-day by day-type." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="36" y="206" width="1234" height="50" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

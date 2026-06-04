@@ -1,56 +1,129 @@
-\section{Prototype Interface}
+\section{Running Demo}
 \label{sec:impl:mockup}
 
-The visual language of the proposed system is locked in a high-fidelity
-design mockup produced in Phase~One. The mockup is not a runnable
-application; it is a pixel-accurate reference that Phase~Two implementation
-reproduces using the technology stack of
-Section~\ref{sec:foundations:tools}. The two figures below present the
-mockup at the two levels at which the interface is composed: the overview
-index, where the user enters the analytical surface, and the interior of
-one analytical theme, where the user reads one chart in depth.
+The Phase~One demo runs end-to-end against the warehouse and shows the
+visual contract of Section~\ref{sec:solution:interaction} at its three
+levels: the overview hub, the inside of a theme, and the scrolling
+story. Every figure below is a screen capture of the running
+application, taken from the live demo at a 1600-pixel browser width.
 
-\noindent\textbf{Overview index.} The overview index is the landing
-surface of the proposed system. It presents the six analytical themes
-catalogued in Section~\ref{sec:solution:themes} arranged in a vertical
-reading order, with each entry carrying a short descriptive label, a
-small visualisation preview thumbnail of the principal chart of the
-theme, and a one-sentence summary of the analytical question the theme
-answers. A persistent date-range control in the top bar scopes every
-theme, and a navigation menu supports cross-theme jumping without
-discarding the active date range.
+\noindent\textbf{Overview hub.} The hub is the landing page. It lays the
+six themes out as a long editorial scroll, alternating image-left and
+image-right, each with a one-line finding, three supporting numbers, and
+a link into the story where one exists. A strip of six headline numbers
+sits under the hero, read live from the warehouse on each request.
 
 \begin{figure}[!htbp]
 \centering
-\imageplaceholder{Screenshot}{Overview index of the proposed system. Six themed entries arranged in a vertical reading order, each with a short descriptive label, a small visualisation preview thumbnail, and a one-sentence summary of the analytical question the theme answers. Date-range control in the top bar.}{Open the design mockup in a browser at 1280-pixel width. Take a full-page screenshot of the overview index section. Save as images/screenshots/prototype\_overview.png.}
-\caption{Overview index of the proposed system}
-\label{fig:impl:overview}
+\includegraphics[width=\linewidth,height=0.46\textheight,keepaspectratio]{images/screenshots/demo_hub.png}
+\caption{The overview hub with live network KPIs.}
+\label{fig:impl:demo:hub}
 \end{figure}
 
-\noindent\textbf{Theme interior.} Inside a theme, the layout decouples
-chart selection from chart-specific filtering and from per-entity detail.
-A left rail lists the charts available for the theme; a top filter bar
-carries the chart-specific filter controls; the centre canvas holds the
-chart currently selected on the rail; and a side panel slides in from the
-right when the user clicks an entity in the chart, presenting a
-multi-chart detail view of that entity in one place.
+\noindent\textbf{Inside a theme.} A theme keeps the chart picker on a
+left rail, the finding and its supporting line in the chart header, the
+chart filling the centre, and a short source line beneath. The
+school-aware demand theme opens on a bubble chart of the universities,
+then a treemap of how their students split across routes.
 
 \begin{figure}[!htbp]
 \centering
-\imageplaceholder{Screenshot}{Interior of one analytical theme. Left rail lists the charts in the theme. Top filter bar carries the chart-specific filter controls. Centre canvas holds the chart currently selected on the rail. A side panel slides in from the right when the user clicks an entity in the chart, showing the multi-chart entity-detail view.}{Scroll to the theme-interior section of the design mockup; take a screenshot at the same width with one entity-detail panel open. Save as images/screenshots/prototype\_theme.png.}
-\caption{Interior layout of one analytical theme}
-\label{fig:impl:theme}
+\includegraphics[width=\linewidth]{images/screenshots/demo_card_school_constellation.png}
+\caption{School-aware demand theme: university constellation with entity panel open.}
+\label{fig:impl:demo:constellation}
 \end{figure}
 
-The theme interior implements the three interaction patterns of
-Section~\ref{sec:solution:interaction}. The Multiple Coordinated Views
-(MCV) model propagates a selection in any chart of the rail to the other
-charts of the same theme, so a clicked route or stop is highlighted
-consistently across every chart the user can see at that moment. The
-entity-detail interaction opens a dedicated side panel for any clicked
-entity, providing the multi-chart summary in a single panel without
-forcing the user to navigate away from the current chart. The visual
-storytelling principles of Section~\ref{sec:solution:interaction} govern
-the chart's title-plus-caption pair and the disciplined use of saturated
-colour, so that each chart presents both the descriptive title and the
-one-sentence finding the visualisation is intended to surface.
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_card_school_treemap.png}
+\caption{School-to-route treemap: student demand by route per university.}
+\label{fig:impl:demo:treemap}
+\end{figure}
+
+\noindent\textbf{Spatial and network-health themes.} The spatial theme
+opens on a boarding-density map and also carries a reach map from a
+chosen hub. The network-health theme opens on the reliability view and
+carries the daily pulse with the T\^et drop marked.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_card_health_pulse.png}
+\caption{Daily network pulse with the T\^et window shaded and trough day flagged.}
+\label{fig:impl:demo:pulse}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_card_spatial_isochrone.png}
+\caption{Network reach map: direct stops and one-transfer stops from a central hub.}
+\label{fig:impl:demo:isochrone}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_card_spatial_hex.png}
+\caption{Boarding density map with the five busiest stops labelled.}
+\label{fig:impl:demo:hex}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_card_health_qos.png}
+\caption{Route reliability scorecard, three QoS measures.}
+\label{fig:impl:demo:qos}
+\end{figure}
+
+\noindent\textbf{Clicking through.} A click is the one link between a
+chart and the rest of the screen: clicking any point, bubble, or stop
+slides in a panel on the right with that item's name, its headline
+number, a few supporting figures, and a short list of related routes,
+all read from the warehouse. Figure~\ref{fig:impl:demo:constellation}
+shows that panel open for a university, listing the routes that carry its
+students.
+
+\noindent\textbf{The story.} The T\^et story (``\textit{Nine days
+without a network}'') turns the shock into a guided read. The whole
+story is one full-screen dark stage that advances as the reader scrolls,
+like a slide deck: the writing moves up and out at the top while the
+chart underneath changes in place. It opens on a single headline number,
+walks through the drop day by day, and closes with a short recap.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_story_tet.png}
+\caption{T\^et story: opening hero frame.}
+\label{fig:impl:demo:story}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_story_tet_drop.png}
+\caption{T\^et story: drop step with shaded window.}
+\label{fig:impl:demo:story:drop}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_story_tet_fareclass.png}
+\caption{T\^et story: fare-class breakdown step.}
+\label{fig:impl:demo:story:fareclass}
+\end{figure}
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\linewidth]{images/screenshots/demo_story_tet_bongo.png}
+\caption{T\^et story: closing recap.}
+\label{fig:impl:demo:story:bongo}
+\end{figure}
+
+Together the figures show the three ways the tool is used: pick a chart
+on the rail and the centre and the page address both update without the
+rest of the page moving; click an item and its detail panel opens; or
+read a theme as a scrolling story. The writing rules from
+Section~\ref{sec:solution:interaction} hold across every chart: the
+title states the finding, the line under it gives the context, bars
+start at zero, bright colour is saved for the one thing the chart points
+at, and each chart reads in a few seconds. The detail panel works today;
+the one piece still left for Phase~Two is keeping a selection
+highlighted across several charts at once, noted in the self-check of
+Section~\ref{sec:impl:eval}.

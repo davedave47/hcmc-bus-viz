@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Network Health · HCMC Bus Analytics{% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{{ url_for('static', path='css/card.css') }}?v={{ range(1, 99999) | random }}">
+{% endblock %}
+
+{% block content %}
+<div class="card-shell c5">
+
+  <aside class="crail">
+    <div class="crail-hdr">
+      <div class="crail-num">N° 05</div>
+      <div class="crail-theme">Network<br>Health</div>
+    </div>
+    <div class="crail-section">2 Charts</div>
+    <nav class="crail-nav">
+      {% for slug, c in charts.items() %}
+      <a class="crn {% if slug == active_slug %}on{% endif %}"
+         href="/cards/health?c={{ slug }}"
+         data-slug="{{ slug }}"
+         hx-get="/cards/health/chart/{{ slug }}"
+         hx-target="#health-main-canvas"
+         hx-swap="outerHTML"
+         hx-push-url="/cards/health?c={{ slug }}">
+        <div class="crn-ic"><svg viewBox="0 0 26 26" fill="currentColor">{{ icon_svg(c.icon) | safe }}</svg></div>
+        <div class="crn-lbl">{% for line in c.label %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}</div>
+      </a>
+      {% endfor %}
+    </nav>
+
+    <div class="crail-foot" style="display:flex;flex-direction:column;gap:6px">
+      <a href="/cards/health/story/tet"
+         style="display:flex;align-items:center;justify-content:center;gap:5px;background:var(--ac-bg);color:var(--ac-deep);border:1px solid var(--ac-line);border-radius:var(--rad);padding:8px 4px;font-family:var(--f-m);font-size:9.5px;letter-spacing:.1em;font-weight:600;text-transform:uppercase">Read · Tết</a>
+      <button class="crail-btn">Export ↓</button>
+    </div>
+  </aside>
+
+  {% include "partials/health_canvas.html" %}
+</div>
+{% endblock %}

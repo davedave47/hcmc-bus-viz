@@ -1,14 +1,14 @@
 \section{Technology Stack}
 \label{sec:foundations:tools}
 
-This section introduces the named software tools that the proposed
-system draws on. Each tool is described in terms of what it is and
-which category in the analytical stack it occupies; the specific
-configuration of each tool in the proposed system is described in
-Chapter \ref{chapter:solution}.
+The proposed system draws on the software tools described below.
+Each tool's specific configuration in the implementation is recorded
+in Chapter~\ref{chapter:solution}, and Chapter~\ref{chapter:implementation}
+describes how the running Phase~One demo composes them end-to-end.
 
 \subsection{DuckDB}
 
+\noindent\begin{minipage}[c]{1.7cm}\includegraphics[width=1.6cm,keepaspectratio]{duckdb.png}\end{minipage}\hfill\begin{minipage}[c]{\dimexpr\linewidth-1.9cm\relax}
 DuckDB \cite{duckdb} is an in-process analytical database management
 system designed for analytical query workloads on columnar data. It is
 embedded in the application process rather than running as a separate
@@ -17,9 +17,11 @@ application that issues them, without the network round-trip and
 serialisation cost of a client-server database. DuckDB is suitable for
 the analytical layer of a single-process system that needs SQL
 capability over moderately large columnar datasets.
+\end{minipage}
 
 \subsection{Polars}
 
+\noindent\begin{minipage}[c]{1.7cm}\includegraphics[width=1.6cm,keepaspectratio]{polars.png}\end{minipage}\hfill\begin{minipage}[c]{\dimexpr\linewidth-1.9cm\relax}
 Polars \cite{polars} is a high-performance dataframe library
 implemented in Rust with bindings for Python and several other
 languages. Its execution model is lazy and parallel: a chain of
@@ -28,9 +30,11 @@ optimised before being executed across multiple central processing unit
 cores. Polars is suitable for tabular data processing in pipelines that
 combine relational operations such as joins and groupings with
 procedural operations expressed in the host language.
+\end{minipage}
 
-\subsection{Jupyter Notebook}
+\subsection{Jupyter}
 
+\noindent\begin{minipage}[c]{1.7cm}\includegraphics[width=1.6cm,keepaspectratio]{jupyter.png}\end{minipage}\hfill\begin{minipage}[c]{\dimexpr\linewidth-1.9cm\relax}
 Jupyter Notebook \cite{jupyter} is an interactive computational
 notebook environment that supports mixed prose, code, and rendered
 output in a single document. Code cells are executed individually and
@@ -38,38 +42,74 @@ the output of each cell, whether a numeric value, a table, or a
 rendered figure, is displayed inline beneath the cell that produced it.
 The environment is suitable for exploratory analysis where the result
 of each computation must be inspected before the next is composed.
+\end{minipage}
 
-\subsection{Streamlit}
+\subsection{FastAPI/Jinja2}
+\label{sec:foundations:tools:fastapi}
 
-Streamlit \cite{streamlit} is a Python framework for building
-interactive data applications in which user-interface elements are
-declared inline alongside the data processing code. The framework's
-execution model is whole-script re-run: each user interaction triggers
-a full server-side re-execution of the affected code path, with cached
-values reused where the framework can determine that the inputs to a
-computation have not changed.
+FastAPI \cite{fastapi} is a Python web framework built on the
+ASGI server interface; it composes ordinary Python functions into
+HyperText Transfer Protocol (HTTP) endpoints with type-checked
+parameters and pluggable middleware. Jinja2 \cite{jinja2} is a
+text-substitution template language for Python; templates inherit from
+one another and emit final HyperText Markup Language (HTML) once
+contextual variables are resolved at request time. The two libraries
+compose into a server-rendered architecture in which the analytical
+surface is delivered as ordinary HTML pages with embedded chart-data
+payloads, rather than as a single-page JavaScript application; this
+configuration was selected over the previously considered Streamlit
+shell because the design specified in
+Section~\ref{sec:solution:interaction} requires bespoke layout chrome
+(an editorial hub, per-card rails, a slide-in entity panel, and a
+scrollytelling story mode) that would have lived inside opaque
+\texttt{components.v1.html} iframes under Streamlit's whole-script
+re-run model.
+
+\subsection{HTMX}
+\label{sec:foundations:tools:htmx}
+
+HTMX \cite{htmx} is a JavaScript library that extends HTML with
+attributes that issue HTTP requests from arbitrary elements and swap
+the response into the page without a full reload. A request triggered
+by a click on an HTMX-attributed element is sent to the server, which
+returns an HTML fragment rather than a JSON payload; the fragment is
+inserted into a designated target in the live page, optionally with
+URL state pushed into the browser history. The library enables the
+multi-coordinated-view contract of
+Section~\ref{sec:solution:interaction} to be implemented in
+server-rendered fragments rather than client-side state, which keeps
+the chart-construction code in Python alongside the warehouse query
+layer.
 
 \subsection{Plotly}
 
+\noindent\begin{minipage}[c]{1.7cm}\includegraphics[width=1.6cm,keepaspectratio]{plotly.png}\end{minipage}\hfill\begin{minipage}[c]{\dimexpr\linewidth-1.9cm\relax}
 Plotly \cite{plotly} is a graphing library that produces interactive
 web-based visualisations. Bindings exist for several languages; the
 Python binding produces visualisations directly from dataframes and
 emits HyperText Markup Language (HTML) and JavaScript output that
 renders in the browser with built-in support for hover, zoom, and
 selection. Plotly covers the standard catalogue of statistical and
-analytical chart types.
+analytical chart types and, since version 2.34, includes the
+MapLibre-backed \texttt{Densitymap}, \texttt{Scattermap}, and
+\texttt{Choroplethmap} traces that the spatial theme uses; these
+operate against the CartoDB Positron basemap without requiring an
+access token.
+\end{minipage}
 
-\subsection{pydeck}
+\subsection{Scrollama}
+\label{sec:foundations:tools:scrollama}
 
-pydeck \cite{pydeck} is a Python binding for the deck.gl visualisation
-framework, which renders large geospatial layers using Web Graphics
-Library (WebGL) hardware acceleration. Geospatial data is expressed as
-a stack of layers, each of which has its own visual encoding, and the
-framework composes the layers into a single accelerated rendering. The
-binding supports the hexagonal-bin layer described in Section
-\ref{sec:foundations:primitives}.
+Scrollama \cite{scrollama} is a small JavaScript library that emits
+events when designated waypoint elements enter or leave the viewport
+during scrolling. It is the engine that drives the scroll-triggered
+state transitions of Section~\ref{sec:solution:themes:stories}: each
+narrative scene in a Story registers as a Scrollama step, and the
+on-enter event swaps the active chart on the sticky stage. The library
+is dependency-free and lightweight enough to load from a content
+delivery network at request time without bundling.
 
-\subsection{The H3 system}
+\subsection{H3}
 
 H3 \cite{h3} is a globally consistent hexagonal hierarchical geospatial
 indexing system that maps the Earth's surface to a multi-resolution
@@ -77,35 +117,48 @@ grid of hexagonal cells. Each cell carries a stable identifier that
 encodes both its resolution and its position, and cells at one
 resolution can be aggregated into their parent cells at a coarser
 resolution without recomputing the grid. The property enables
-consistent spatial aggregation across zoom levels.
+consistent spatial aggregation across zoom levels; the indexing system
+is used by the boarding-density layer of the spatial canvas
+(Section~\ref{sec:solution:viz:spatial}).
 
-\subsection{The UMAP library}
+\subsection{UMAP}
 
 The UMAP library \cite{umap} is a Python implementation of the Uniform
 Manifold Approximation and Projection algorithm for dimensionality
 reduction. The algorithm constructs a low-dimensional embedding that
 preserves the local neighbourhood structure of the high-dimensional
 input, and the library exposes it through an interface compatible with
-the conventions of the scikit-learn ecosystem.
+the conventions of the scikit-learn ecosystem. The Routes theme uses
+the embedding to lay out the route-archetype constellation chart.
 
-\subsection{Stack coherence}
+\subsection{Stack Integration}
 
-The tools listed in this section form a coherent stack that covers data
-storage (DuckDB), data processing (Polars), exploratory analysis
-(Jupyter Notebook), application shell (Streamlit), interactive
-visualisation (Plotly), and geospatial rendering (pydeck and H3). A
-classical forecasting library, statsforecast \cite{statsforecast}, is
-planned for the single demand-forecast chart in the Demand and Crowding
-theme and is mentioned here only for completeness; it does not occupy
-its own layer of the stack. The specific role each tool plays in the
-proposed system is described in Chapter \ref{chapter:solution}.
+The tools listed in this section form a coherent stack across four
+concerns. \emph{Storage and querying} is owned by DuckDB, which is
+opened read-only against the on-disk warehouse and accessed through
+Polars-typed result frames. \emph{Application shell} is owned by
+FastAPI, which routes each themed page through Jinja2 templates that
+inherit from a single base layout. \emph{Interactivity} is owned by
+HTMX, which swaps server-rendered HTML fragments into the live page in
+response to user events, and by Scrollama, which steps the scrolly
+story mode through its scene specification. \emph{Visualisation} is
+owned by Plotly, whose figure JSON is generated in Python alongside
+the aggregate-query code and serialised into the HTML response, and by
+MapLibre (used through Plotly's map-family traces) for the spatial
+canvas. A classical forecasting library, statsforecast
+\cite{statsforecast}, is planned for the single demand-forecast chart
+in the Demand and Crowding theme and is mentioned here only for
+completeness; it does not occupy its own layer of the stack.
+Figure~\ref{fig:foundations:stack} groups the tools into the
+storage, processing, application, interactivity, and presentation
+layers, and shows the data flow between them.
 
 \begin{figure}[!htbp]
 \centering
-\imageplaceholder{Conceptual diagram}{Block diagram showing how the tools compose. Bottom layer: storage (DuckDB and Polars side by side). Middle layer: processing (Jupyter Notebook for exploratory analysis on the left, statsforecast and UMAP libraries for modelling in the middle, H3 indexing on the right). Top layer: presentation (Streamlit as the application container, with Plotly and pydeck rendering visualisations within it). Arrows showing data flow from storage through processing to presentation.}{Draw in draw.io. PNG at 300 dpi. Save as images/diagrams/foundations\_tool\_stack.png.}
-\caption{Tool stack used by the proposed system}
+\includegraphics[width=0.78\linewidth]{images/diagrams/foundations_tool_stack.png}
+\caption{Four-tier tool stack adopted by the implementation (storage, application, interactivity, and presentation).}
 \label{fig:foundations:stack}
 \end{figure}
 
-Chapter~\ref{chapter:implementation} describes how the proposed system
-uses each tool in concrete operational terms.
+Chapter~\ref{chapter:implementation} describes how the running demo
+composes the tools in concrete operational terms.

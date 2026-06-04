@@ -1,0 +1,46 @@
+<mxfile host="65bd71144e">
+    <diagram id="arch-medallion" name="Medallion warehouse">
+        <mxGraphModel dx="1280" dy="520" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1320" pageHeight="380" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="bronze" value="&lt;b&gt;Bronze&lt;/b&gt;&lt;br/&gt;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;24 raw views&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontSize=11;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="60" width="250" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="bTickets" value="tickets&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;17.9 M rows&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="65" y="105" width="200" height="46" as="geometry"/>
+                </mxCell>
+                <mxCell id="bPayments" value="payments" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="65" y="161" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="bGps" value="GPS streams" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="65" y="211" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="bOther" value="+ 20 other raw views" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;fontStyle=2;align=center;verticalAlign=middle;fontFamily=Helvetica;fontColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="65" y="261" width="200" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="silver" value="&lt;b&gt;Silver&lt;/b&gt;&lt;br/&gt;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;12 dims + 3 fact views&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontSize=11;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="60" width="280" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="sDims" value="12 conformed dimensions&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;dim_date (Tết-tagged), dim_route (1:1),&#xa;dim_school_stop bridge, dim_trip (dedup), …&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="425" y="110" width="230" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="sFacts" value="3 fact views&#xa;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;boardings, gps_trips, stop_visits&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="425" y="225" width="230" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="gold" value="&lt;b&gt;Gold&lt;/b&gt;&lt;br/&gt;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;7 aggregate tables&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=4;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#000000;strokeWidth=1;dashed=1;verticalAlign=top;align=left;spacingLeft=12;spacingTop=8;fontSize=11;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="790" y="60" width="250" height="260" as="geometry"/>
+                </mxCell>
+                <mxCell id="gAgg" value="agg_network_day&#xa;agg_route_hour&#xa;agg_route_day&#xa;agg_stop_hour&#xa;agg_stop_total&#xa;agg_school_route&#xa;agg_hub_kpis" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#000000;strokeWidth=1;fontSize=11;align=left;verticalAlign=middle;fontFamily=Helvetica;spacingLeft=16;" parent="1" vertex="1">
+                    <mxGeometry x="815" y="105" width="200" height="196" as="geometry"/>
+                </mxCell>
+                <mxCell id="surface" value="&lt;b&gt;Analytical surface&lt;/b&gt;&lt;br/&gt;&lt;font color=&quot;#666666&quot;&gt;&lt;i&gt;FastAPI · Jinja2&#xa;HTMX · Plotly&lt;/i&gt;&lt;/font&gt;" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#ECECEC;strokeColor=#000000;strokeWidth=1.5;fontSize=12;align=center;verticalAlign=middle;fontFamily=Helvetica;" parent="1" vertex="1">
+                    <mxGeometry x="1140" y="130" width="150" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="e1" value="&lt;i&gt;register · 0 ms&lt;/i&gt;" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;fontStyle=2;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;" parent="1" source="bronze" target="silver" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e2" value="&lt;i&gt;build · 5.4 s · O(N)&lt;/i&gt;" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;fontStyle=2;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;" parent="1" source="silver" target="gold" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+                <mxCell id="e3" value="&lt;i&gt;one SELECT&#xa;per chart&lt;/i&gt;" style="endArrow=open;endFill=0;html=1;strokeColor=#000000;strokeWidth=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;fontStyle=2;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;" parent="1" source="gold" target="surface" edge="1"><mxGeometry relative="1" as="geometry"/></mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

@@ -1,0 +1,23 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="s1" value="A new day&#10;of data arrives" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="30" y="90" width="220" height="80" as="geometry"/></mxCell>
+
+    <mxCell id="s2" value="The idempotent pass&#10;re-runs end to end&#10;Bronze, Silver, Gold" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="330" y="90" width="240" height="80" as="geometry"/></mxCell>
+
+    <mxCell id="s3" value="Tables rebuild&#10;byte-identical;&#10;the window grows" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontStyle=1;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="650" y="90" width="240" height="80" as="geometry"/></mxCell>
+
+    <mxCell id="s4" value="Charts read the&#10;refreshed Gold,&#10;no schema change" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#E07B2B;strokeColor=#E07B2B;fontColor=#FFFFFF;fontStyle=1;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="970" y="90" width="240" height="80" as="geometry"/></mxCell>
+
+    <mxCell id="e1" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2.5;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e2" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2.5;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="e3" style="endArrow=classic;html=1;strokeColor=#2E75B6;strokeWidth=2.5;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="loop" value="re-run on every release; cost stays linear in input volume" style="endArrow=classic;startArrow=none;html=1;strokeColor=#5B6470;strokeWidth=1.5;dashed=1;fontColor=#5B6470;fontStyle=2;fontSize=12;fontFamily=Helvetica;labelBackgroundColor=#FFFFFF;rounded=1;" edge="1" parent="1" source="s4" target="s1"><mxGeometry relative="1" as="geometry"><mxPoint x="620" y="250" as="targetPoint"/><Array as="points"><mxPoint x="1090" y="230"/><mxPoint x="140" y="230"/></Array></mxGeometry></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#2E7D32;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="30" y="280" width="6" height="50" as="geometry"/></mxCell>
+    <mxCell id="cap" value="The data is dynamic, but the schema is not: a newly released window flows through the same deterministic pass, so the analytical surface refreshes without manual repair." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="36" y="280" width="1174" height="50" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

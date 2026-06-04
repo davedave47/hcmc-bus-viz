@@ -1,0 +1,31 @@
+%% UML sequence diagram of the shipped interaction model (Section 4.8).
+%% In-canvas interaction (1-4), Connect -> entity-detail (5-8), Close + restore (9-10).
+%% MCV-simultaneous brushing is retired; Connect collapses to a single click-to-panel
+%% handoff (Yi 2007). The other six Yi categories stay in the View Controls bar.
+%% Monochrome theme to match the academic block style for the rest of the report.
+%% Render via the render-mermaid.sh script in this directory.
+
+%%{init: {'theme':'base','themeVariables':{'background':'#FFFFFF','primaryColor':'#FFFFFF','primaryTextColor':'#000000','primaryBorderColor':'#000000','lineColor':'#000000','actorBkg':'#FFFFFF','actorBorder':'#000000','actorTextColor':'#000000','actorLineColor':'#000000','noteBkgColor':'#FFFFFF','noteBorderColor':'#000000','noteTextColor':'#000000','signalColor':'#000000','signalTextColor':'#000000','labelBoxBkgColor':'#FFFFFF','labelBoxBorderColor':'#000000','labelTextColor':'#000000','sequenceNumberColor':'#000000','fontFamily':'Helvetica'},'sequence':{'actorMargin':170,'width':190,'actorFontSize':15,'messageFontSize':14,'noteFontSize':14,'boxMargin':8,'mirrorActors':true}}}%%
+sequenceDiagram
+  autonumber
+  participant U  as User
+  participant V  as View Controls<br/>(date + filter bar)
+  participant C  as Active canvas<br/>(one chart)
+  participant SM as State manager
+  participant E  as Entity-detail panel
+
+  Note over U,SM: In-canvas interaction (Select / Reconfigure / Filter)
+  U  ->>  V  : adjust date or filter
+  V  ->>  SM : write view state
+  SM ->>  C  : re-render this canvas
+  C  -->> U  : updated chart
+
+  Note over U,E: Connect - one click opens entity-detail
+  U  ->>  C  : click entity (route / stop)
+  C  ->>  SM : open detail (entity id)
+  SM ->>  E  : render panel against view state
+  E  -->> U  : mini-charts about that entity
+
+  Note over U,E: Close and restore
+  U  ->>  E  : close panel
+  E  -->> U  : view state preserved, canvas restored

@@ -4,10 +4,10 @@
 The Ho Chi Minh City public bus network is a city-scale public-transit
 system. It operates approximately 150 routes served by more than 2,000
 vehicles and is managed by the Centre for Public Transport Management.
-The network produces two operational data streams continuously, namely
-Global Positioning System (GPS) vehicle telemetry and Automated Fare
-Collection (AFC) fare records, together with static reference tables
-for stops, routes, and operating companies.
+The network produces two operational data streams continuously: Global
+Positioning System (GPS) vehicle telemetry and Automated Fare Collection
+(AFC) fare records, together with static reference tables for stops,
+routes, and operating companies.
 
 Despite the volume of data the network produces, operational decisions
 are still made largely from manual inspection of static reports and
@@ -15,17 +15,31 @@ spreadsheet exports. Anomalies that are visible in the data, including
 chronically delayed stops, routes with a disproportionate share of
 near-empty trips, and buses that miss the connection window at metro
 interchange stations, go undetected until they escalate into service
-failures. The four user roles that depend on the network, namely the
-passenger, the driver, the operating company, and the public-transport
-authority, each have analytical questions that the existing tools
-cannot answer.
+failures. Three user roles depend on the network: the passenger, the
+operating company, and the public-transport authority. Each role brings
+analytical questions that the existing tools cannot answer.
 
-The public-facing tools that exist today serve only the passenger as a
-navigator. Three mobile applications support routing and trip
-planning, and one web directory lists the routes and their stops. None
-of the four artefacts provides any aggregate, comparative, temporal,
-or financial analysis of the network. The absence of an analytical
-surface is the gap that this project addresses.
+The project proposed in this report is built on a single design claim:
+the city's bus network produces approximately 17.8~million boarding
+events every quarter and approximately fifty days of vehicle telemetry
+per release window, but no \textit{publicly accessible, multi-stakeholder
+analytical surface} over this dataset has been built. The proposed
+system fills that gap through a coordinated catalogue of twenty
+charts answering fourteen analytical questions across the three user
+roles, with school-aware demand as its most distinctive contribution.
+
+The publicly accessible tools that exist today cover passenger
+navigation and ticketing rather than analytical inspection. Three mobile
+applications support journey planning, a fourth bundles multi-modal
+routing with the city's electronic-ticketing card, an operator-specific
+application covers the electric-bus subnetwork, and one web directory
+lists the routes and their stops. A single research demonstrator
+publishes one spatial-density view. None of these artefacts provides any
+aggregate, comparative, temporal, or financial analysis across the
+network. Internal control-room dashboards may exist inside the operating
+authority, but they are not exposed to operators, passengers, or
+researchers; the absence of an externally accessible analytical surface
+is the gap that this project addresses.
 
 The opening of Metro Line 1 in December 2024 has sharpened the gap by
 introducing an intermodal dependency. The metro's effectiveness
@@ -37,7 +51,8 @@ the metro timetable, a capability that the existing operational tools
 cannot provide.
 
 \begin{figure}[!htbp]
-\imageplaceholder{photo}{wide street-level shot of a Ho Chi Minh City public bus during peak hours, with passenger queue visible at a stop}{single photograph taken from the kerb opposite a busy stop in District 1 or District 5 during the 7~AM or 5~PM peak; landscape orientation; no identifiable faces}
-\caption{The Ho Chi Minh City public bus network.}
+\centering
+\includegraphics[width=0.98\linewidth]{images/screenshots/hcm_bus_network.jpg}
+\caption{Ho Chi Minh City public bus network. Source: \emph{Lao Động}.}
 \label{fig:intro:network}
 \end{figure}

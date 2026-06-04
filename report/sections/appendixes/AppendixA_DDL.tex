@@ -50,9 +50,9 @@ SELECT
     EXTRACT(week  FROM date)                      AS week,
     EXTRACT(dow   FROM date)                      AS dow,
     (EXTRACT(dow FROM date) IN (0, 6))            AS is_weekend,
-    (date BETWEEN '2026-01-28' AND '2026-02-05')  AS is_tet,
+    (date BETWEEN '2026-02-14' AND '2026-02-22')  AS is_tet,
     CASE
-        WHEN date BETWEEN '2026-01-28' AND '2026-02-05' THEN 'tet'
+        WHEN date BETWEEN '2026-02-14' AND '2026-02-22' THEN 'tet'
         WHEN EXTRACT(dow FROM date) IN (0, 6)           THEN 'weekend'
         ELSE                                                 'weekday'
     END                                           AS day_type
@@ -109,3 +109,128 @@ GROUP BY f.route_id, f.hour, d.day_type;
 \end{lstlisting}
 
 \noindent This aggregate is the data contract behind the hourly demand curve, the route-by-hour heatmap, and the student-share decomposition used in the demand and school-aware themes.
+
+\section*{A.5 Data Quality Observations}
+
+Eleven data-quality observations were identified through exploratory
+analysis and a systematic profiling pass over every raw table in the
+warehouse. They are referenced in
+Section~\ref{sec:solution:dataset:quality} of the main text.
+
+\begin{table}[!htbp]
+\centering
+\caption{Data quality observations and their downstream impact.}
+\label{tab:dataset:quality}
+\footnotesize
+\renewcommand{\arraystretch}{1.35}
+\begin{tabularx}{\linewidth}{p{5.6cm} X}
+\hline
+\textbf{Observation} & \textbf{Downstream impact} \\
+\hline
+\multicolumn{2}{l}{\textit{From initial exploratory analysis}} \\
+\hline
+Calendar-window mismatch between GPS and AFC streams                          & No event-level join; cross-source aggregation operates at route$\times$hour$\times$day-type \\
+No alighting events; AFC records boardings only                              & Live occupancy not computable; boardings and trip-proxy only \\
+AFC \texttt{user\_id} populated for 0.1\% of records (23{,}109 of 17.9~M)    & Individual-passenger features unsupported; aggregate analysis only \\
+$\approx$91{,}000 schedule rows carry \texttt{unknown} service-type           & Schedule-adherence rows must be classified or excluded before QoS-3 \\
+GPS positioning noise is higher in dense urban areas                          & QoS-2 requires coordinate rounding before trajectory matching \\
+AFC \texttt{cash} field includes some smartcard deductions                    & Preprocessing renames and isolates the smartcard subset \\
+\hline
+\multicolumn{2}{l}{\textit{From subsequent systematic profiling}} \\
+\hline
+GPS \texttt{speed} null in 49.74\% of local one-day pings (358{,}156 / 720{,}088) & Operating-regime features require an explicit null-handling rule \\
+GPS$\leftrightarrow$AFC driver overlap: 42 of 1{,}763 / 660 keys (2.4\% / 6.4\%) & No driver-level cross-source join; per-source analysis only \\
+\texttt{gps.schedules} contains $\approx$39\% full-row duplicates (109{,}620 / 283{,}134)   & Deduplication required at preprocessing; likely source-side snapshot union \\
+\texttt{route\_id} appears in 7 tables, disjoint key spaces (overlap 25.8\%/6.1\%) & Cross-source join uses \texttt{route\_no}; route dimension reconciles \\
+Local one-day GPS lacks 5 fields (heading, ignition, aircon, sos, working)    & Some analytics blocked; \texttt{working} flag identifies school buses \\
+\hline
+\end{tabularx}
+\end{table}
+
+\section*{A.6 Source-Stream Field Inventories}
+
+The remainder of this appendix records the column-level field
+inventories for the two raw event streams and the shared master tables.
+The listings are referenced from Section~\ref{sec:solution:fields} of
+the main text.
+
+\begin{table}[!htbp]
+\centering
+\caption{AFC ticket fields}
+\label{tab:fields:afc}
+\footnotesize
+\begin{tabularx}{\linewidth}{p{3.0cm} p{2.0cm} X}
+\hline
+\textbf{Field} & \textbf{Type} & \textbf{Meaning} \\
+\hline
+ticket\_id & BIGINT & Surrogate primary key for the boarding event. \\
+ticket\_uuid & VARCHAR & Globally unique UUID for the ticket. \\
+ticket\_code & VARCHAR & Human-readable ticket code printed on the receipt. \\
+ticket\_series & VARCHAR & Paper-ticket batch or series identifier (mostly null for e-tickets). \\
+ticket\_type & VARCHAR & Vietnamese fare-product label (e.g.\ \textit{Vé TM lượt HS-SV}, student cash single). \\
+trip\_id & DOUBLE & Foreign key to \texttt{ticket\_trips}, identifying the bus trip on which the boarding occurred. \\
+user\_id & VARCHAR & Registered passenger identifier; populated for approximately 0.1\% of tickets only. \\
+user\_id\_1 & VARCHAR & Secondary user identifier (legacy duplicate of \texttt{user\_id}). \\
+station\_id & DOUBLE & Foreign key to \texttt{ticket\_stations}, identifying the boarding stop. \\
+lat & DOUBLE & Latitude of the boarding event (decimal degrees, WGS-84). \\
+lng & DOUBLE & Longitude of the boarding event (decimal degrees, WGS-84). \\
+time\_created\_ticket & BIGINT & Unix epoch seconds when the ticket was issued (boarding timestamp). \\
+aggregation\_status & VARCHAR & Backend rollup status flag (\texttt{Th\`anh c\^ong} indicates successfully aggregated). \\
+updated\_at & BIGINT & Unix epoch seconds of the last record update. \\
+month & VARCHAR & Partition tag (e.g.\ \texttt{jan\_2026}) derived from the source folder name. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption{GPS ping fields}
+\label{tab:fields:gps}
+\footnotesize
+\begin{tabularx}{\linewidth}{p{2.6cm} p{2.0cm} X}
+\hline
+\textbf{Field} & \textbf{Type} & \textbf{Meaning} \\
+\hline
+datetime & TIMESTAMP & Timestamp of the GPS ping (server-side, second precision). \\
+date & DATE & Calendar date of the ping (denormalised partition key). \\
+vehicle & VARCHAR & Vehicle identifier (licence plate or anonymised hash). \\
+lng & DOUBLE & Longitude of the bus at ping time (WGS-84). \\
+lat & DOUBLE & Latitude of the bus at ping time (WGS-84). \\
+driver & VARCHAR & Driver licence or staff identifier on duty at ping time. \\
+speed & DOUBLE & Instantaneous speed reported by the on-board unit (km/h). \\
+door\_up & BOOLEAN & Boolean indicating front door open at ping time (used as boarding proxy). \\
+door\_down & BOOLEAN & Boolean indicating rear door open at ping time (used as alighting proxy). \\
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{table}[!htbp]
+\centering
+\caption{Master-table fields (stops and routes)}
+\label{tab:fields:masters}
+\footnotesize
+\begin{tabularx}{\linewidth}{p{2.4cm} p{2.6cm} p{1.7cm} X}
+\hline
+\textbf{Table} & \textbf{Field} & \textbf{Type} & \textbf{Meaning} \\
+\hline
+stops & stopId & BIGINT & Surrogate primary key for the stop (city-wide master list). \\
+stops & code & VARCHAR & Public-facing stop code displayed at the shelter. \\
+stops & stop\_name & VARCHAR & Human-readable stop name (Vietnamese, including diacritics). \\
+stops & type & VARCHAR & Stop type tag (e.g.\ \texttt{BusStop}, \texttt{Terminal}, \texttt{MetroFeeder}). \\
+stops & zone & VARCHAR & Administrative zone or district code. \\
+stops & ward & VARCHAR & Ward (\textit{phường}) name. \\
+stops & address & VARCHAR & Free-text address string. \\
+stops & street & VARCHAR & Street name on which the stop sits. \\
+stops & support\_disability & VARCHAR & Accessibility flag (1 if the stop is wheelchair-friendly). \\
+stops & status & VARCHAR & Operational status flag (\texttt{active}, \texttt{inactive}). \\
+stops & lng & DOUBLE & Longitude of the stop (WGS-84). \\
+stops & lat & DOUBLE & Latitude of the stop (WGS-84). \\
+stops & search & VARCHAR & Pre-computed lowercase search string for fuzzy matching. \\
+stops & routes & VARCHAR & Comma-separated list of \texttt{route\_no} values that serve the stop. \\
+ticket\_routes & route\_id & BIGINT & Surrogate primary key for the AFC route record. \\
+ticket\_routes & route\_no & VARCHAR & Public route number (e.g.\ \texttt{152}), the canonical join key with GPS. \\
+ticket\_routes & route\_name & VARCHAR & Origin to destination label shown to passengers. \\
+ticket\_routes & company\_id & BIGINT & Foreign key to \texttt{ticket\_companies}, identifying the operator running the route. \\
+\hline
+\end{tabularx}
+\end{table}

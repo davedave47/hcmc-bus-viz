@@ -1,0 +1,24 @@
+<mxGraphModel adaptiveColors="auto">
+  <root>
+    <mxCell id="0"/>
+    <mxCell id="1" parent="0"/>
+
+    <mxCell id="route" value="ONE SERVICE&#10;measured on three independent axes" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#1F3A5F;strokeColor=#1F3A5F;fontColor=#FFFFFF;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="470" y="40" width="400" height="50" as="geometry"/></mxCell>
+
+    <mxCell id="d1" style="endArrow=none;html=1;strokeColor=#C7D3E2;strokeWidth=2;" edge="1" parent="1" source="route" target="q1"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="d2" style="endArrow=none;html=1;strokeColor=#C7D3E2;strokeWidth=2;" edge="1" parent="1" source="route" target="q2"><mxGeometry relative="1" as="geometry"/></mxCell>
+    <mxCell id="d3" style="endArrow=none;html=1;strokeColor=#C7D3E2;strokeWidth=2;" edge="1" parent="1" source="route" target="q3"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+    <mxCell id="q1" value="Did the trip complete?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=none;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="40" y="150" width="400" height="46" as="geometry"/></mxCell>
+    <mxCell id="c1" value="&lt;b&gt;Completion&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;The service runs from the&#10;first stop through to the last,&#10;without being cut short.&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="1"><mxGeometry x="40" y="196" width="400" height="165" as="geometry"/></mxCell>
+
+    <mxCell id="q2" value="Did it stay on the line?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=none;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="470" y="150" width="400" height="46" as="geometry"/></mxCell>
+    <mxCell id="c2" value="&lt;b&gt;Path adherence&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;The vehicle follows the&#10;planned alignment rather than&#10;deviating from the corridor.&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#1F3A5F;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="1"><mxGeometry x="470" y="196" width="400" height="165" as="geometry"/></mxCell>
+
+    <mxCell id="q3" value="Did it arrive on time?" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#CADCFC;strokeColor=none;fontColor=#1F3A5F;fontStyle=1;fontSize=15;fontFamily=Helvetica;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="900" y="150" width="400" height="46" as="geometry"/></mxCell>
+    <mxCell id="c3" value="&lt;b&gt;Schedule adherence&lt;/b&gt;&lt;br&gt;&lt;br&gt;&lt;font color=&quot;#5B6470&quot;&gt;Arrivals land within the&#10;tolerance band around the&#10;published timetable.&lt;/font&gt;" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#E07B2B;strokeWidth=2;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;verticalAlign=middle;align=center;" vertex="1" parent="1"><mxGeometry x="900" y="196" width="400" height="165" as="geometry"/></mxCell>
+
+    <mxCell id="capbar" value="" style="rounded=0;fillColor=#E07B2B;strokeColor=none;" vertex="1" parent="1"><mxGeometry x="40" y="393" width="6" height="50" as="geometry"/></mxCell>
+    <mxCell id="cap" value="The three axes are independent: a service can complete reliably yet still run late, so each axis must be read on its own rather than collapsed into a single score." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#F2F6FB;strokeColor=none;fontColor=#1F3A5F;fontSize=14;fontFamily=Helvetica;align=left;spacingLeft=18;verticalAlign=middle;" vertex="1" parent="1"><mxGeometry x="46" y="393" width="1254" height="50" as="geometry"/></mxCell>
+  </root>
+</mxGraphModel>

@@ -1,15 +1,14 @@
-\section{Research on Bus Operational Analytics}
+\section{Operations}
 \label{sec:related:ops}
 
-Research on the analytical use of bus operational data spans three problem areas, namely
+Research on the analytical use of bus operational data spans three problem areas:
 deriving quality-of-service indicators from vehicle telemetry, treating bus telemetry as
 a city-wide traffic-sensing substrate, and short-horizon prediction of bus arrival times.
-One peer-reviewed study informs the present project in each of the three areas. The three
-studies are reviewed in turn; each subsection notes the specific construction that the
-study contributes and the section of the present report that develops the construction in
-technical detail.
+One peer-reviewed study informs the present project in each area; the
+constructions each study contributes are taken up in the design chapters
+that follow.
 
-\subsection{Quality-of-Service Indicators from Telemetry}
+\subsection{QoS Indicators}
 \label{sec:related:ops:qos}
 
 Srisakaokul and colleagues \cite{srisakaokul2023} study the Bangkok city bus network and
@@ -21,17 +20,28 @@ each scheduled passage at a stop occurs within an acceptable time band). The stu
 offline; the indicators are reported as descriptive statistics across the studied fleet
 rather than as inputs to a real-time alerting system.
 
-The principal methodological contribution of the study, from the point of view of the
-present project, is the decision to report the three axes separately rather than as a
-single composite score. A composite score collapses information; reporting the three
-axes side by side preserves the information and allows a reader to see which axis of
+Figure~\ref{fig:related:qos} illustrates the three indicators on a
+stylised route trajectory.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.96\linewidth]{images/diagrams/related_qos_panels.png}
+\caption{The three QoS indicators on a stylised route trajectory.}
+\label{fig:related:qos}
+\end{figure}
+
+The principal methodological contribution of the study, from the point
+of view of the present project, is the decision to report the three
+axes separately rather than as a single composite score. A composite
+score collapses information; reporting the three axes side by side
+preserves the information and allows a reader to see which axis of
 service quality a given route is weak on. Section \ref{sec:foundations:qos} of the
 present report develops the QoS framework in technical detail, with explicit definitions
 of each indicator and the geometric tolerances used to compute them. Section
 \ref{sec:solution:viz} adopts the framework as the data source for the reliability
 indicators of one of the analytical themes of the proposed system.
 
-\subsection{Bus Telemetry as a Sensing Substrate}
+\subsection{Telemetry Sensing}
 \label{sec:related:ops:sensing}
 
 Derevitskiy and colleagues \cite{derevitskiy2016} present an aggregate-based method that
@@ -51,7 +61,7 @@ construction is recorded in Chapter \ref{chapter:future} as a candidate extensio
 becomes feasible once the full GPS time window of the source dataset is available for
 processing.
 
-\subsection{Short-Horizon Arrival-Time Prediction}
+\subsection{Arrival Prediction}
 \label{sec:related:ops:arrival}
 
 Lin and Zeng \cite{linzeng2014} build a real-time predictor for bus arrival times at
