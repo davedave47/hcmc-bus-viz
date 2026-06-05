@@ -11,5 +11,15 @@ __pycache__/
 *.pyc
 .pytest_cache/
 
+# Node / frontend
+node_modules/
+frontend/dist/
+
+# Python build/caches
+*.egg-info/
+.ruff_cache/
+.mypy_cache/
+.uv/
+
 # OS cruft
 .DS_Store
