@@ -21,5 +21,18 @@ frontend/dist/
 .mypy_cache/
 .uv/
 
+# Secrets / cloud credentials — NEVER commit
+.env
+.env.*
+secrets/
+*-sa-key.json
+service-account*.json
+gcp-*key*.json
+
+# dbt
+target/
+dbt_packages/
+logs/
+
 # OS cruft
 .DS_Store

@@ -512,3 +512,41 @@ exists" — MCPT may have internal SCADA screens we can't see; those aren't our 
   + **React + Vite + TypeScript** SPA that builds charts client-side (react-plotly.js + MapLibre
   + Scrollama). Full-semester runway. Re-architecture spec to be written (S1); report slim-down
   to 50–70pp (S2) + diagram convention → excalidraw/draw.io (S3) follow. *(design in progress)*
+- **P0 scaffold merged** (2026-06-05) — monorepo `pipeline/` + `backend/` + `frontend/` on `main`:
+  uv/ruff/mypy/pytest · Vite/React19/TS/Tailwind4/vitest · docker-compose · GitHub Actions CI.
+  Backend boots `/api/healthz`; frontend builds; `demo/` untouched until parity (P4).
+- **Pipeline tooling: dbt + Dagster adopted** (2026-06-05) — Phase-2 data layer = **dbt-duckdb**
+  transforms (Silver star + Gold as dbt models; integrity as dbt tests + a singular lossless
+  test `boardings == 17,883,623`) orchestrated by **Dagster** (dagster-dbt software-defined
+  assets, DuckDB resource, asset checks, schedule-ready). **Supersedes** the report's §4.3.1
+  rejection of dbt + §4.5 hand-built Medallion (report rewrite tracked in S2). P1 split: **P1a** =
+  dbt warehouse + Dagster; **P1b** = preprocess Dagster asset + §4.3.1 gate as asset checks.
+  The old SQL-in-Python P1a plan was replaced.
+- **Engine strategy: portable, cloud-scale (DuckDB dev / BigQuery prod)** (2026-06-05) — the real
+  production target is **millions of trips/tickets per day**, so the engine must scale past one
+  node. Design **separates storage from compute** with dbt as the portability seam: parquet on
+  **object storage** · dbt models written DuckDB-first, **dialect-specific SQL macro-ized**
+  (`dbt_utils`) · compute = a dbt **target** (`dev`=DuckDB, `prod`=**BigQuery** serverless) ·
+  **Dagster** orchestration. Phase 2 **builds+runs locally on DuckDB and PROVES the BigQuery swap
+  on a sample** (`dbt compile --target prod`) — no paid cloud operated. **Deferred (not over-
+  engineered):** Iceberg/Delta, Spark/Databricks, Kafka streaming, live cloud infra — each a
+  documented scale-up path. Chosen via explicit trade-off analysis (BigQuery = lowest-ops path to
+  real scale; ClickHouse = best event-perf but more ops; Spark = overkill for SQL at this scale).
+- **Engine orientation flipped to BigQuery-primary** (2026-06-06) — per the user (the standard
+  *develop-on-the-production-engine* pattern): **BigQuery is the real engine for dev AND prod**
+  (`bq_dev` sampled dataset · `bq_prod` full, same engine); source parquet staged to **GCS**,
+  Bronze = BigQuery **external tables**; **DuckDB demoted to an optional `local` sampling target**
+  (not the source of truth — correctness + CI run on BigQuery). dbt models written
+  **BigQuery-dialect first** (DuckDB local via `dbt_utils` macros). Free tier covers capstone
+  scale (~$0). GCP setup + env contract: `docs/specs/bigquery-deployment.md`. The BigQuery-primary
+  **P1a plan rewrite is pending the user's GCP project/bucket/service-account details**.
+- **Dynamic-data reframe + core-only platform scope** (2026-06-06) — the 17.9 M rows are the
+  **current dev sample**, NOT a fixed total; production ingests **dynamic, continuously-growing**
+  data (far larger). Consequences baked into the design: (1) the lossless invariant is **relative**
+  — `Gold boardings == Bronze ticket count` (computed), never `== 17,883,623`; (2) BigQuery
+  fact/Gold tables **partitioned by `day` + clustered by `route_no`/`fare_class`**; (3) production
+  path is **incremental** dbt models (full-refresh on the sample now, incremental documented).
+  **Platform scope = CORE ONLY**: dbt + Dagster + BigQuery + dbt tests + Dagster checks. **Deferred
+  until the pipeline + app work end-to-end:** Terraform/IaC, dlt ingestion, dbt contracts,
+  Elementary observability, Dagster schedules/alerts (all evaluated, right-sized — not over-built
+  now). GCP provisioned **manually** (checklist) for now; Terraform-ize later.

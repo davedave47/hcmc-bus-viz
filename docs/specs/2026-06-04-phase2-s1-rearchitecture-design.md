@@ -48,16 +48,24 @@ catalogue), and the warehouse contract described in [demo/README.md](../../demo/
 
 ```
 busanalytics/
-├── pipeline/                       # DATA — builds db/bus.duckdb from raw inputs
+├── pipeline/                       # DATA — dbt (transforms) + Dagster (orchestration) over DuckDB
+│   ├── dbt/                        # dbt-duckdb project: the warehouse transforms + data tests
+│   │   ├── dbt_project.yml
+│   │   ├── profiles.yml            # duckdb target → db/bus.duckdb
+│   │   └── models/
+│   │       ├── bronze/sources.yml  # raw parquet as dbt sources (report §4.3 step 6)
+│   │       ├── silver/             # dim_*.sql + fact_*.sql — the Kimball star (L2/L3 = dims tables, fact views)
+│   │       ├── gold/               # agg_*.sql — chart-serving aggregates (L4)
+│   │       └── schema.yml          # dbt tests: unique · not_null · relationships · accepted_values
 │   ├── src/busanalytics_pipeline/
-│   │   ├── ingest/                 # Bronze: register 24 raw views   (was src/duckdb_loader.py)
-│   │   ├── warehouse/              # Silver+Gold: dims, facts, build, validate (was demo/warehouse/)
-│   │   ├── profiling/              # programmatic EDA, importable     (was notebooks/05_programmatic_eda.py)
-│   │   ├── figures/                # report-figure generation         (was notebooks/06,07_*.py)
-│   │   └── cli.py                  # `busanalytics-pipeline build|validate`
+│   │   ├── config.py               # paths (env-overridable)
+│   │   ├── definitions.py          # Dagster Definitions: dbt assets, DuckDB resource, asset checks, schedule
+│   │   ├── assets.py               # @dbt_assets (the star+gold) + the lossless asset check + (P1b) preprocess asset
+│   │   ├── preprocess/             # report §4.3: raw CSV → parquet (six steps)            (P1b)
+│   │   └── validate/               # lossless + §4.3.1 gate, surfaced as Dagster asset checks
 │   ├── notebooks/                  # 01–04 .ipynb — exploratory record, import from src (no copy-paste)
-│   ├── tests/                      # pytest: warehouse integrity (41 checks) + lossless assert
-│   └── pyproject.toml
+│   ├── tests/                      # pytest: dbt build + asset-check + lossless integration
+│   └── pyproject.toml              # + dbt-duckdb · dagster · dagster-dbt · dagster-duckdb
 ├── backend/                        # API — FastAPI JSON data API, read-only over the warehouse
 │   ├── src/busanalytics_api/
 │   │   ├── main.py                 # app factory + lifespan, wiring only
@@ -134,6 +142,34 @@ inversion · DRY · small, focused files (one clear responsibility each) · type
 end-to-end. The P2 and P3 plans create exactly these layers and are reviewed against these
 principles.
 
+## 3.2 · Data engine strategy (portable, cloud-scale)
+
+The production target is **millions of trips/tickets per day**, so the engine must scale beyond
+a single node while staying free to run + demonstrate locally. The design **separates storage
+from compute, with dbt as the portability seam**:
+
+- **Storage:** source parquet staged to **GCS** (the bucket is the data home); Bronze = BigQuery
+  **external tables** over that parquet (query-in-place, no load step). A local parquet copy backs
+  the optional DuckDB sampling target.
+- **Transform:** **dbt** models (one definition of the Silver star + Gold), written
+  **BigQuery-dialect first**, with `dbt_utils` / cross-db macros where the optional DuckDB local
+  target needs them. BigQuery is authoritative.
+- **Compute (primary = BigQuery):** BigQuery is the real engine for **both dev and prod** — the
+  standard *develop-on-the-production-engine* pattern, promoted by dbt **target/dataset**
+  (`bq_dev` = sampled dataset · `bq_prod` = full dataset). What you test is what you ship; the
+  free tier covers capstone scale.
+- **Local sampling (optional):** a **DuckDB** `local` target over local parquet for fast, offline
+  scratch iteration — convenience only, **not the source of truth** (correctness + CI run on
+  BigQuery).
+- **Orchestration:** **Dagster** (engine-agnostic — assets, checks, schedules, cloud-deployable).
+
+**Operated now:** a GCP project + GCS bucket + BigQuery `dev`/`prod` datasets, all within the
+free tier. **Deliberately deferred (clean scale-up paths, not over-engineered now):**
+Iceberg/Delta table format (multi-engine ACID / time-travel — adds a catalog); Spark/Databricks
+(for 100s-of-TB / heavy ML); Kafka streaming ingest (no live source yet — design stays
+streaming-ready, §11); paid BigQuery slots / dedicated clusters (free on-demand pricing suffices).
+GCP setup + env contract: `docs/specs/bigquery-deployment.md`.
+
 ## 4 · The data-API contract
 
 The backend returns **domain data** plus the computed action title; the frontend constructs
@@ -165,6 +201,7 @@ GET /api/charts/schools/2.1
 | --- | --- |
 | Python deps/build | uv + `pyproject.toml` per package |
 | Python quality | ruff (lint+format) · mypy · pytest |
+| Data engineering | **dbt** (Silver/Gold transforms + tests) on **BigQuery** (`bq_dev` sampled / `bq_prod` full — primary), optional **dbt-duckdb** `local` sampling target · **Dagster** + dagster-dbt (orchestration, lineage, checks, schedules) · source parquet on **GCS**, Bronze = BigQuery external tables |
 | JS deps | pnpm |
 | Frontend | Vite · React · TypeScript · Tailwind · shadcn/ui |
 | Charts/maps/story | react-plotly.js · react-map-gl (MapLibre) · react-scrollama |
@@ -178,10 +215,28 @@ GET /api/charts/schools/2.1
 1. **Scaffold** the three packages + tooling + root README + `docker-compose.yml` + CI.
    *Verify:* CI green on the empty skeleton; `docker compose up` serves a backend health
    endpoint and the Vite dev server.
-2. **Pipeline port.** Move the Bronze loader + Silver/Gold build into `pipeline/`; expose a
-   `build` / `validate` CLI; port the 41-check validation harness into pytest.
-   *Verify:* `busanalytics-pipeline build` produces `db/bus.duckdb`; the lossless assert
-   (`agg_hub_kpis.boardings == 17_883_623`) and all integrity tests pass.
+2. **Pipeline (dbt + Dagster).** Split into two sub-phases:
+   - **P1a — dbt warehouse + Dagster (BigQuery-primary):** GCP setup (project + GCS bucket +
+     `bq_dev`/`bq_prod` datasets + service account, per `docs/specs/bigquery-deployment.md`);
+     stage source parquet to GCS and define Bronze as **BigQuery external tables**; translate the
+     Silver star (`dim_*`/`fact_*`) + Gold (`agg_*`) into **BigQuery-dialect dbt models** (optional
+     DuckDB `local` sampling target via `dbt_utils` macros), **partitioned by `day` + clustered by
+     `route_no`/`fare_class`** (BigQuery scale/cost), full-refresh on the sample (incremental is
+     the documented production pattern); integrity as dbt tests (unique · not_null · relationships ·
+     accepted_values) + a singular **relative lossless** test (`Gold boardings == Bronze ticket
+     count`, computed — **not** a fixed number, since data is dynamic); wrap as Dagster assets
+     (dagster-dbt) + a lossless asset check. *Verify:* `dbt build --target bq_dev` builds the star +
+     Gold in BigQuery with all tests green; the relative lossless check passes; a pytest integration
+     asserts `Gold boardings == Bronze count` against BigQuery. **Unblocks P2.**
+
+   Data is **dynamic / continuously-growing**; the 17.9 M-row figure is the current dev sample,
+   not a fixed total. All counts/invariants are relative, and `bq_dev` builds against a sampled
+   subset while `bq_prod` builds the full (growing) dataset.
+   - **P1b — preprocess + gate:** port `preprocess` (CSV → parquet, report §4.3 six steps) as an
+     upstream Dagster asset, and implement the §4.3.1 gate (row-count regression · null-rate
+     ceiling · referential · PK uniqueness) as Dagster **asset checks** that block the dbt build.
+     *Verify:* the preprocess asset reproduces `data/parquet`; the gate check fails on a seeded
+     violation and blocks the downstream assets.
 3. **Backend port.** Lift the warehouse queries from `demo/aggregates/` into `backend/queries/`,
    wrap them in Pydantic-typed data endpoints, drop all Plotly figure construction.
    *Verify:* httpx contract tests pass for the 9 chart endpoints + kpis + healthz; returned
@@ -224,7 +279,9 @@ GET /api/charts/schools/2.1
 ## 10 · Follow-ons (out of scope for S1)
 
 - **S1.x:** wire the remaining 11 catalogue charts (Ridership, Financial, Routes).
-- **S2:** report slim-down to 50–70 pp (move material to appendices), realign to the deck.
+- **S2:** report slim-down to 50–70 pp (move material to appendices), realign to the deck, and
+  **rewrite §4.3.1 + §4.5** to describe the adopted dbt + Dagster architecture (the current text
+  rejects dbt and describes a hand-built Medallion).
 - **S3:** diagram migration to draw.io + the render/export pipeline.
 - **Data:** full 50-day GPS pull, school geocoding.
 
@@ -236,7 +293,7 @@ rewrite. **None of these are built in S1** — the goal is only to not preclude 
 | Future capability | Fit | What evolves (and where) |
 | --- | --- | --- |
 | CI/CD | already in baseline | CD = the same `.github/workflows` pushing Docker images. |
-| Orchestrator (Dagster/Prefect/Airflow) | clean | wraps `pipeline/` tasks as a DAG; needs granular task functions (see below). |
+| Orchestrator | **adopted in S1 (Dagster)** | dbt models are already orchestrated as software-defined assets with checks; scheduled refresh / new sources = new assets + schedules. |
 | Cloud migration | designed for it | containers + 12-factor config deploy anywhere; `db/bus.duckdb` (local file) moves to object storage or a cloud warehouse — swap localised to `backend/db.py` + `queries/`. |
 | AI models for analysis | two homes | batch ML in `pipeline/` writes results to Gold; heavy/real-time inference becomes a 4th package (`ml/`/`inference/`) behind the same API. |
 | Streaming + streaming analysis | fits, real addition | streaming ingest in `pipeline/` + a broker (Kafka/Redpanda); backend gains WebSocket/SSE push; a hot store (ClickHouse/Timescale/Materialize) joins DuckDB. **No data source today** (data is batch/historical per CLAUDE.md invariants #1, #5) — speculative until then. |
