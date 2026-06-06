@@ -1,0 +1,6 @@
+# pnpm 11 settings (moved here from the package.json "pnpm" field).
+# Skip the pre-run install check (deps are managed via install / --frozen-lockfile)
+# and skip es5-ext's postinstall (a harmless funding notice).
+verifyDepsBeforeRun: false
+allowBuilds:
+  es5-ext: false
