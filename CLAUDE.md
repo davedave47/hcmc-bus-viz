@@ -261,14 +261,22 @@ The design **separates storage from compute** with **dbt** as the portability se
   **partitioned by `day` + clustered by `route_no`/`fare_class`**; production path is **incremental**.
 - **Compute** — BigQuery for both **`bq_dev`** (sampled dataset) and **`bq_prod`** (full); a DuckDB
   **`local`** target is an offline sampling convenience, not the source of truth.
+- **Ingestion (micro-batch)** — new data lands in batches (daily/hourly exports) to GCS;
+  **Dagster sensors** trigger an **incremental** dbt run that appends new `day` partitions.
+  Dashboard freshness is hours, not seconds.
 - **Orchestration** — **Dagster** (dagster-dbt software-defined assets, DuckDB resource, asset
-  checks, schedule-ready).
+  checks, freshness sensors).
+- **Serving cube** — the filter-bar charts read a pre-aggregated **Gold cube** (date × route ×
+  day-type × fare-class × hour), **not** the raw fact, so per-request BigQuery cost/latency stays
+  bounded as the fact grows.
 - **Integrity** — dbt tests (unique · not_null · relationships · accepted_values) + a singular
   **relative lossless** test (`Gold boardings == Bronze ticket count`).
-- **Scope = CORE ONLY** (dbt + Dagster + BigQuery + tests). Deferred clean scale-ups (not built):
-  Terraform/IaC, dlt ingestion, dbt contracts, Elementary observability, schedules/alerts,
-  Iceberg/Delta, Spark/Databricks, Kafka streaming. GCP setup + env contract:
-  `docs/specs/bigquery-deployment.md`.
+- **No streaming-analytics engine** (Flink / Spark Streaming / Materialize): the product is
+  **batch aggregate analytics over a growing record**, and the invariants (no alighting,
+  cumulative boardings) preclude real-time occupancy. The stack scales to dynamic data via
+  micro-batch ingestion + incremental partitioned models — no new paradigm. Deferred scale-ups
+  (not built now): streaming ingest (Pub/Sub), dlt, Terraform/IaC, dbt contracts, Elementary,
+  Iceberg/Delta, Spark/Databricks. GCP setup + env contract: `docs/specs/bigquery-deployment.md`.
 
 **Silver star** (Kimball-dimensional): `dim_date` (tags `is_tet_2026` Feb 14–22 + trough + pre-Tết
 baseline + Apr-30) · `dim_hour` · `dim_route` (1:1 on `route_no`) · `dim_stop` · `dim_school` +
@@ -368,11 +376,14 @@ analytical* dashboard for HCMC bus exists" — MCPT may have internal SCADA we c
 ## 11 · Future plan / roadmap
 
 **Pipeline (the data source of truth).** Build the dbt + Dagster warehouse on BigQuery — translate
-the Silver star + Gold into dbt models, integrity as dbt tests + the relative lossless test, wrapped
-as Dagster assets; then the preprocess (CSV→parquet→GCS) asset + the validation gate (row-count
-regression · null-rate ceiling · referential · PK uniqueness) as asset checks. **Pending the user's
-GCP project / bucket / service-account env vars** (`docs/specs/bigquery-deployment.md`). Add a
-contract test that the warehouse schema matches what the backend reads.
+the Silver star + Gold into **incremental, partitioned** dbt models, integrity as dbt tests + the
+relative lossless test, wrapped as Dagster assets; the preprocess (exports → parquet → GCS) asset +
+the validation gate (row-count regression · null-rate ceiling · referential · PK uniqueness) as
+asset checks; a **Dagster sensor** that triggers the incremental run on new GCS partitions; and the
+**filterable Gold cube** (date × route × day-type × fare-class × hour) the filter-bar endpoints read.
+**Pending the user's GCP project / bucket / service-account env vars**
+(`docs/specs/bigquery-deployment.md`). Add a contract test that the warehouse schema matches what the
+backend reads.
 
 **Frontend.** Build the 8 remaining charts (TS Plotly builders + components), the hub, theme cards +
 routing, the A3 entity panel, the filter-bar UI, and the Tết story; add an **error boundary** and
