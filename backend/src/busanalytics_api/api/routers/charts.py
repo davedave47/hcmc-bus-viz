@@ -22,6 +22,13 @@ _kpis_cache: TTLCache[dict[str, Any]] = TTLCache(maxsize=1, ttl=300)
 _filters_cache: TTLCache[dict[str, Any]] = TTLCache(maxsize=1, ttl=300)
 
 
+def clear_caches() -> None:
+    """Drop all cached payloads (used by tests + after a warehouse rebuild)."""
+    _chart_cache.clear()
+    _kpis_cache.clear()
+    _filters_cache.clear()
+
+
 @router.get("/charts/{theme}/{slug}", response_model=ChartResponse)
 def chart(
     theme: Theme,
