@@ -2,6 +2,7 @@
 repository data. Framework-agnostic (no FastAPI, no Plotly)."""
 from __future__ import annotations
 
+from collections.abc import Mapping
 from typing import Any
 
 from ...db import Warehouse
@@ -31,7 +32,7 @@ def _drop_metrics(rows: list[dict[str, Any]], window: dict[str, Any]) -> dict[st
     }
 
 
-def pulse(wh: Warehouse) -> ChartResponse:
+def pulse(wh: Warehouse, filters: Mapping[str, str]) -> ChartResponse:
     """5.1 — Network pulse with the Tết anomaly band."""
     rows = repo.daily_volume(wh)
     window = repo.tet_window(wh)
@@ -60,7 +61,7 @@ def pulse(wh: Warehouse) -> ChartResponse:
     )
 
 
-def qos(wh: Warehouse) -> ChartResponse:
+def qos(wh: Warehouse, filters: Mapping[str, str]) -> ChartResponse:
     """5.2 — QoS small-multiples (three proxy dimensions per route)."""
     rows = repo.qos_small_multiples(wh, 60)
     return ChartResponse(
