@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
+from ...db import Warehouse
 from ...repositories import health as repo
 from ...schemas import ChartResponse
 
@@ -30,10 +31,10 @@ def _drop_metrics(rows: list[dict[str, Any]], window: dict[str, Any]) -> dict[st
     }
 
 
-def pulse() -> ChartResponse:
+def pulse(wh: Warehouse) -> ChartResponse:
     """5.1 — Network pulse with the Tết anomaly band."""
-    rows = repo.daily_volume()
-    window = repo.tet_window()
+    rows = repo.daily_volume(wh)
+    window = repo.tet_window(wh)
     m = _drop_metrics(rows, window)
     word = "collapses" if m["drop_pct"] >= 50 else "dips" if m["drop_pct"] >= 20 else "holds steady"
     title = f"Ridership {word} across the Tết window, then recovers."
@@ -59,9 +60,9 @@ def pulse() -> ChartResponse:
     )
 
 
-def qos() -> ChartResponse:
+def qos(wh: Warehouse) -> ChartResponse:
     """5.2 — QoS small-multiples (three proxy dimensions per route)."""
-    rows = repo.qos_small_multiples(60)
+    rows = repo.qos_small_multiples(wh, 60)
     return ChartResponse(
         theme="health",
         slug="5.2",

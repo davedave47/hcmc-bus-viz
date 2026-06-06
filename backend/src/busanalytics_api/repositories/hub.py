@@ -4,11 +4,11 @@ from __future__ import annotations
 import decimal
 from typing import Any
 
-from .. import db
+from ..db import Warehouse
 
 
-def hub_kpis() -> dict[str, Any]:
-    row = db.query_one("SELECT * FROM agg_hub_kpis")
+def hub_kpis(wh: Warehouse) -> dict[str, Any]:
+    row = wh.query_one("SELECT * FROM agg_hub_kpis")
     if row is None:
         return {}
     return {k: (float(v) if isinstance(v, decimal.Decimal) else v) for k, v in row.items()}

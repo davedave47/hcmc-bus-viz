@@ -3,11 +3,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from .. import db
+from ..db import Warehouse
 
 
-def daily_volume() -> list[dict[str, Any]]:
-    rows = db.query(
+def daily_volume(wh: Warehouse) -> list[dict[str, Any]]:
+    rows = wh.query(
         """
         SELECT day, SUM(boardings) AS boardings
         FROM agg_network_day
@@ -18,9 +18,9 @@ def daily_volume() -> list[dict[str, Any]]:
     return [{"day": str(r["day"]), "boardings": int(r["boardings"])} for r in rows]
 
 
-def tet_window() -> dict[str, Any]:
+def tet_window(wh: Warehouse) -> dict[str, Any]:
     """The locked Tết window, read from dim_date (source of truth, not hard-coded)."""
-    row = db.query_one(
+    row = wh.query_one(
         """
         SELECT
           MIN(CASE WHEN is_tet_2026         THEN day END) AS tet_start,
@@ -36,9 +36,9 @@ def tet_window() -> dict[str, Any]:
     return {k: (str(v) if v is not None else None) for k, v in row.items()}
 
 
-def qos_small_multiples(top_n: int = 60) -> list[dict[str, Any]]:
+def qos_small_multiples(wh: Warehouse, top_n: int = 60) -> list[dict[str, Any]]:
     """Three QoS proxy scores per route (Phase-1 fare-event proxies), scaled 0..100."""
-    rows = db.query(
+    rows = wh.query(
         f"""
         WITH per_slot AS (
           SELECT route_no, dow, hour, SUM(boardings) AS n
