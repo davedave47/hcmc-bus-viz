@@ -6,8 +6,8 @@ data arrives — and turns it into clear, operational insight for the people the
 passengers, operators, and the city's transport authority. Schools and students are the analytical
 focus, and the Tết 2026 network shock is the worked case study.
 
-The platform surfaces patterns from the accumulated record rather than live positions, and is built
-for data that keeps arriving rather than a one-off snapshot.
+It surfaces patterns from the accumulated record (not live tracking) and is built for data that
+keeps arriving.
 
 ## What it answers
 

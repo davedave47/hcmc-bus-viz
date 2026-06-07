@@ -1,73 +1,59 @@
-# React + TypeScript + Vite
+# frontend — web app
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The single-page app. It fetches **domain data** from the backend and builds every chart and map in
+the browser; the backend never sends figures. Built for a dynamic dataset, so titles and captions
+are abstract and the visuals carry the specifics.
 
-Currently, two official plugins are available:
+**Status: foundation + first chart.** The typed client, the server-state hooks, the chart-builder
+pattern, and the shell are in place; the network-pulse chart (5.1) and the KPI strip render live
+through the Vite `/api` proxy. The remaining charts, the hub, the theme cards, the entity panel, the
+filter bar, the maps, and the stories are still to build.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack and tooling
 
-## React Compiler
+- **React** + **Vite** + **TypeScript** · **Tailwind** for styling.
+- **TanStack Query** for server state · **react-plotly.js** (slim Plotly bundle) for charts ·
+  **react-router** for navigation. Maps (MapLibre via react-map-gl) and stories (Scrollama) are planned.
+- **pnpm** for dependencies · **eslint** · **vitest** (unit) · Playwright (e2e, planned).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Design principles
 
-## Expanding the ESLint configuration
+Feature-based with unidirectional layering — UI state stays local, server state stays in hooks, and
+figure construction is pure functions, so each piece is testable on its own.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **`api/`** — the single source of truth for types (generated from the backend's OpenAPI) plus the
+  fetch client. Types are never hand-duplicated.
+- **`hooks/`** — all server state lives here (TanStack Query: `useChart`, `useKpis`, `useFilters`).
+  **Components never fetch directly.**
+- **`charts/`** — presentational chart components; the figure itself is built by **pure functions in
+  `lib/`** (testable without React). A registry maps `chartId → component` (open/closed).
+- **`components/`** — reusable presentational UI (the shell, `ChartCard`, the entity panel, the
+  filter bar, theme cards). **`features/`** compose them into pages (hub, theme, story).
+- **`maps/`** — MapLibre map components. **`stories/`** — Scrollama scrollytelling.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Directory
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+frontend/src/
+├── api/           # typed client + contract types (client.ts, types.ts)
+├── hooks/         # TanStack Query hooks (useChart, useKpis)
+├── charts/        # chart components + pure builders (e.g. health/NetworkPulse + pulse.ts)
+├── components/    # shell, ChartCard, EntityPanel, FilterBar, ThemeCard
+├── features/      # hub · theme · story  (planned)
+├── maps/          # MapLibre  (planned)
+├── stories/       # Scrollama  (planned)
+├── lib/           # pure helpers (formatting, figure builders)
+└── types/         # ambient types
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Run, test, lint
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+pnpm install
+pnpm dev            # http://localhost:5173 (proxies /api -> :8000)
+pnpm test           # vitest
+pnpm lint
+pnpm build          # tsc -b && vite build
 ```
+
+The backend must be running (or reachable via `VITE_API_BASE`) for live charts.

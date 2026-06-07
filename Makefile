@@ -1,49 +1,67 @@
-# HCMC Bus Analytics — how to run the dashboard
+# HCMC Bus Analytics — dev tasks. Run `make help` for the list.
 #
-# Quick start (you only need these two):
-#   make install     # one time: install the Python packages
-#   make run         # start the dashboard, then open http://localhost:8000
-#
-# Other targets:
-#   make stop        # stop the dashboard (frees the port)
-#   make build       # rebuild the warehouse db/bus.duckdb from raw inputs
-#   make help        # list targets
+# Phase-2 stack lives in three packages:
+#   backend/  (uv)   data API     ->  http://localhost:8000
+#   frontend/ (pnpm) web app      ->  http://localhost:5173
+#   pipeline/ (uv)   warehouse    (scaffold; build pending)
 
-PORT := 8000
-PY   := .venv/bin/python
-PIP  := .venv/bin/pip
+PORT_API := 8000
+PORT_WEB := 5173
+PY       := .venv/bin/python   # legacy demo / warehouse builder
 
-.PHONY: help install build run serve stop
+.PHONY: help backend frontend up down test lint warehouse demo install-demo stop
 
 help:
-	@echo "make install  - install the Python packages into .venv"
-	@echo "make run      - start the dashboard at http://localhost:$(PORT)"
-	@echo "make stop     - stop the dashboard"
-	@echo "make build    - rebuild the warehouse (db/bus.duckdb)"
+	@echo "Phase-2 stack:"
+	@echo "  make backend    - data API (uvicorn, reload) on :$(PORT_API)"
+	@echo "  make frontend   - web app (vite) on :$(PORT_WEB)"
+	@echo "  make up / down  - run / stop backend + frontend in Docker"
+	@echo "  make test       - backend + frontend + pipeline tests"
+	@echo "  make lint       - ruff + mypy (backend), eslint (frontend)"
+	@echo "Data + legacy:"
+	@echo "  make warehouse  - (re)build db/bus.duckdb from raw inputs"
+	@echo "  make demo       - run the legacy Phase-1 prototype on :$(PORT_API)"
+	@echo "  make stop       - free ports $(PORT_API) and $(PORT_WEB)"
 
-# create the virtualenv if it does not exist yet
+# ---- Phase-2 stack ----
+backend:
+	cd backend && uv run uvicorn busanalytics_api.main:app --reload --port $(PORT_API)
+
+frontend:
+	cd frontend && pnpm dev
+
+up:
+	docker compose up --build
+
+down:
+	docker compose down
+
+test:
+	cd backend  && uv run pytest -q
+	cd frontend && pnpm test
+	cd pipeline && uv run pytest -q
+
+lint:
+	cd backend  && uv run ruff check . && uv run mypy src
+	cd frontend && pnpm lint
+
+# ---- data warehouse (db/bus.duckdb is read by the backend until the pipeline lands) ----
 .venv:
 	python3 -m venv .venv
+	$(PY) -m pip install -U pip
+	$(PY) -m pip install -r demo/requirements.txt
 
-install: .venv
-	$(PIP) install -U pip
-	$(PIP) install -r demo/requirements.txt
+install-demo: .venv
 
-# (re)build the analytical warehouse from the raw inputs
-build:
+warehouse: .venv
 	$(PY) -m demo.warehouse.build
 
-# start the web app — leave this running, open the URL in a browser
-run:
-	@echo ""
-	@echo "  Dashboard  ->  http://localhost:$(PORT)"
-	@echo "  Press Ctrl-C in this terminal to stop."
-	@echo ""
-	$(PY) -m uvicorn demo.main:app --reload --port $(PORT)
+# ---- legacy Phase-1 prototype ----
+demo: .venv
+	@echo "  legacy prototype -> http://localhost:$(PORT_API)  (Ctrl-C to stop)"
+	$(PY) -m uvicorn demo.main:app --reload --port $(PORT_API)
 
-serve: run
-
-# stop a running dashboard (free the port)
 stop:
-	-@fuser -k $(PORT)/tcp 2>/dev/null || true
-	@echo "dashboard stopped"
+	-@fuser -k $(PORT_API)/tcp 2>/dev/null || true
+	-@fuser -k $(PORT_WEB)/tcp 2>/dev/null || true
+	@echo "ports $(PORT_API) and $(PORT_WEB) freed"

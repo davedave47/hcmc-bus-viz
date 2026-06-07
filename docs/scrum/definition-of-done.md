@@ -27,13 +27,15 @@ A sprint is not Done on code alone. **Every sprint delivers across all four trac
 that sprint's focus (a design sprint is doc/report/deck-heavy; a build sprint is code-heavy), but
 none is ever zero:
 
-| Track | What ships each sprint | Serves |
-|---|---|---|
-| **Code / tools** | the implementation or tool setup advanced this sprint | Câu 1 (delivered results) |
-| **Documents** | design notes / decision records in `docs/` (e.g. a tool-selection matrix) | Câu 3 · Part II |
-| **Report** | the LaTeX report sections updated for the sprint's work | Câu 5/6 |
-| **Deck** | a short **weekly progress deck for the supervisor** check-in | reporting + council Câu 5 |
+| Track                  | What ships each sprint                                                      | Serves                     |
+| ---------------------- | --------------------------------------------------------------------------- | -------------------------- |
+| **Code / tools** | the implementation or tool setup advanced this sprint                       | Câu 1 (delivered results) |
+| **Documents**    | design notes / decision records in `docs/` (e.g. a tool-selection matrix) | Câu 3 · Part II          |
+| **Report**       | the LaTeX report sections updated for the sprint's work                     | Câu 5/6                   |
+| **Deck**         | a short**weekly progress deck for the supervisor** check-in           | reporting + council Câu 5 |
 
 **Deck cadence.** The weekly deck reports progress to the **supervisor**. The decks accumulate and
 are distilled into the **final defense deck for the council and reviewer** (council Câu 5/6/7,
 reviewer Câu 7/8/9). Keep weekly decks short (a few slides: done · in-progress · next · blockers).
+
+**The deck, report and final product are used for grading at the end.**

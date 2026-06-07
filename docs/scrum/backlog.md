@@ -33,7 +33,7 @@ those decks distill into the **final defense deck for the council and reviewer**
 | E1-3 | E1 | Build the dbt + Dagster pipeline (Bronze → Silver star → Gold) on BigQuery (DuckDB local) | M | Câu 1 |
 | E1-4 | E1 | Filterable Gold cube + serving contract the API reads | M | Câu 1 |
 | E1-5 | E1 | Deploy the stack (cloud) end-to-end | S | Câu 1 |
-| E2-1 | E2 | Re-validate the 20-chart catalogue step by step against the data + the 14 questions | M | Câu 3 |
+| E2-1 | E2 | Rewrite the chart docs fresh as two clean files — `chart-catalogue.md` (the catalogue) + `chart-rationale.md` (justified choice per chart by impact × effort) — re-validated step by step against the data + the 14 questions; drop the old flagship/change-log/Phase-1 framing | M | Câu 3 |
 | E2-2 | E2 | Build the remaining 11 backend chart services | M | Câu 1 |
 | E2-3 | E2 | Build the remaining frontend chart builders + components | M | Câu 1 |
 | E2-4 | E2 | Hub + theme cards + entity-detail panel + filter-bar UI | M | Câu 1 |

@@ -296,7 +296,7 @@ rewrite. **None of these are built in S1** — the goal is only to not preclude 
 | Orchestrator | **adopted in S1 (Dagster)** | dbt models are already orchestrated as software-defined assets with checks; scheduled refresh / new sources = new assets + schedules. |
 | Cloud migration | designed for it | containers + 12-factor config deploy anywhere; `db/bus.duckdb` (local file) moves to object storage or a cloud warehouse — swap localised to `backend/db.py` + `queries/`. |
 | AI models for analysis | two homes | batch ML in `pipeline/` writes results to Gold; heavy/real-time inference becomes a 4th package (`ml/`/`inference/`) behind the same API. |
-| Streaming + streaming analysis | fits, real addition | streaming ingest in `pipeline/` + a broker (Kafka/Redpanda); backend gains WebSocket/SSE push; a hot store (ClickHouse/Timescale/Materialize) joins DuckDB. **No data source today** (data is batch/historical per CLAUDE.md invariants #1, #5) — speculative until then. |
+| Streaming + streaming analysis | fits, real addition | streaming ingest in `pipeline/` + a broker (Kafka/Redpanda); backend gains WebSocket/SSE push; a hot store (ClickHouse/Timescale/Materialize) joins DuckDB. **No live streaming source today**; the design stays streaming-ready (CLAUDE.md invariants #1, #5). |
 
 **Cheap-now refinements that keep these doors open (done in S1 because they are good practice anyway):**
 

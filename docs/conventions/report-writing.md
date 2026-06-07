@@ -17,7 +17,11 @@ The following are forbidden in the body of the report:
 4. Internal acronyms. The acronyms "SDVF", "A1", "A2", "A3" never appear. The underlying concepts are renamed: prioritization among proposed modules is presented as a comparison table; the three interaction-design choices are presented under their academic names (Multiple Coordinated Views, visual storytelling, entity-detail interaction pattern).
 5. File paths. The strings `src/duckdb_loader.py`, `docs/design/app-layouts.html`, `notebooks/01_*.ipynb`, and any other source-tree path do not appear in the body. They are confined to Appendix A.
 6. Citations of internal documents. The bibliography entries `rubric`, `capstoneDescription`, and `thoai2025` are deleted. No section refers to the grading rubric in any form. The capstone topic is restated in the student's own words once in Chapter 1; the document is not cited.
-7. Conversational phrasing. The phrases "wired into", "anchored to data narratives", "the differentiator", "table-stakes", "deliverables", "feature bundle" are removed. Replace with formal alternatives: "implemented as", "organized around", "the principal contribution", "essential capabilities", "outputs".
+7. Conversational phrasing. The phrases "wired into", "anchored to data narratives", "the differentiator", "table-stakes", "deliverables", "feature bundle" are removed. Replace with formal alternatives: "implemented as", "organized around", "the principal contribution", "essential capabilities", "outputs". No phrasal verbs.
+8. Never dump your thoughts like "the data is **dynamic / continuously-growing**, neve"historical/static". The ~17.9 M AFC rows are the **current dev sample**, not a fixed or headline number — all counts are relative and recomputed each run (invariant #14). See memory `feedback_dynamic_data_framing`.". This is AI thoughts narrative and should never be written.
+9. Phrasing like ""Column widths and spacing (the anti-"stupid-table" rules)" is banned because the reader does not care about additional names that is only mentioned once like "(the anti-"stupid-table" rules)". Do not write things if it adds no impact or meaningful value
+10. No defensive over-explaining like non-choice defense if it has no impact to stop raising questions, just explain why you choose something and non-choice only appears in numbered evaluation and metrics.
+11. Be as low context as possible, the audience are council with zero context of our discussion nor transit knowledge, don't mention Phase 1 or our internal discussions.
 
 ### 1.2 Typographic conventions
 
@@ -31,28 +35,28 @@ The following are forbidden in the body of the report:
 
 ### 1.3 Figure and table policy
 
-1. **Every figure must be viewable.** A figure is a real image, rendered to PNG (draw.io) or produced by the analysis code, embedded with `\includegraphics` and confirmed to display by opening the compiled PDF. The report carries **no `\imageplaceholder` boxes and no broken or missing image references**; a figure that cannot be shown is not included until its asset exists.
-2. Large dump-style tables (the previous data-quality table, the 31-row chart catalog) are split into smaller, page-friendly tables. No single table spans more than half a page. Long tables that genuinely need to be long are converted to `longtable` and labeled appropriately.
+1. **Every figure must be viewable.** A figure is a real image, rendered to PNG (draw.io) or produced by the analysis code, embedded with `\includegraphics` and confirmed to display by opening the compiled PDF. The report can carry **`\imageplaceholder` boxes** with desccription and capture guide for displaying a figure that is planned but not yet existing.
+2. Large dump-style tables (the previous data-quality table, the 31-row chart catalog) are split into smaller, page-friendly tables. No single table spans more than half a page.
 3. Every figure and table is introduced in the paragraph immediately before it, and the discussion that follows refers to it by `\ref{...}`. No floating tables without prose anchor.
 
 ### 1.4 Forbidden vocabulary
 
-| Word or phrase | Replacement |
-|---|---|
-| BusLens | the proposed system; the proposed analytical platform; the system |
-| card (as a UI element) | thematic view; analytical view; theme |
-| lens | analytical view; theme |
-| hub | overview index; home page (if a UI noun is required) |
-| Atlas-style | reference-style (or drop the analogy) |
-| editorial scroll | vertical reading order |
-| flagship | principal; central |
-| SDVF | (concept dropped; replace with a justification paragraph or a comparison table) |
-| A1 / A2 / A3 | (concept kept; replace with named academic principles) |
-| linked brushing invariant | Multiple Coordinated Views (MCV) interaction model |
-| story-subtitled charts | annotated charts following visual storytelling principles |
-| universal entity detail panel | entity-detail interaction pattern |
-| sprint, deliverable, ship | phase, output, complete |
-| advisor specification | (cite removed; restate the requirement in plain words) |
+| Word or phrase                | Replacement                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------- |
+| BusLens                       | the proposed system; the proposed analytical platform; the system               |
+| card (as a UI element)        | thematic view; analytical view; theme                                           |
+| lens                          | analytical view; theme                                                          |
+| hub                           | overview index; home page (if a UI noun is required)                            |
+| Atlas-style                   | reference-style (or drop the analogy)                                           |
+| editorial scroll              | vertical reading order                                                          |
+| flagship                      | principal; central                                                              |
+| SDVF                          | (concept dropped; replace with a justification paragraph or a comparison table) |
+| A1 / A2 / A3                  | (concept kept; replace with named academic principles)                          |
+| linked brushing invariant     | Multiple Coordinated Views (MCV) interaction model                              |
+| story-subtitled charts        | annotated charts following visual storytelling principles                       |
+| universal entity detail panel | entity-detail interaction pattern                                               |
+| sprint, deliverable, ship     | phase, output, complete                                                         |
+| advisor specification         | (cite removed; restate the requirement in plain words)                          |
 
 ### 1.5 Writing quality
 
@@ -60,7 +64,7 @@ The following are forbidden in the body of the report:
 2. No throat-clearing openers. A paragraph or section opens with its claim or finding, not "In this section we discuss…".
 3. Vary paragraph and sentence length. Avoid uniform four-to-five-sentence paragraphs; mix short and long.
 4. Every claim is cited or supported by the project's own measured data. No unsupported assertion.
-5. **No marketing or hype wording.** The report describes and evaluates; it does not sell. Banned adjectives: "powerful", "seamless", "robust", "comprehensive", "cutting-edge", "state-of-the-art", "world-class", "best-in-class", "next-generation", "revolutionary", "game-changing", "innovative", "advanced", "sophisticated", "intuitive", "effortless", "unparalleled", "industry-leading", "enterprise-grade", "holistic". Banned verbs: "leverage", "unlock", "empower", "streamline", "harness", "supercharge", "elevate", "revolutionize". State the concrete property instead: not "a powerful, scalable engine" but "serves each chart from one pre-aggregated table".
+5. **No marketing or hype wording or narrative.** The report describes and evaluates; it does not sell. Banned adjectives: "powerful", "seamless", "robust", "comprehensive", "cutting-edge", "state-of-the-art", "world-class", "best-in-class", "next-generation", "revolutionary", "game-changing", "innovative", "advanced", "sophisticated", "intuitive", "effortless", "unparalleled", "industry-leading", "enterprise-grade", "holistic". Banned verbs: "leverage", "unlock", "empower", "streamline", "harness", "supercharge", "elevate", "revolutionize". State the concrete property instead: not "a powerful, scalable engine" but "serves each chart from one pre-aggregated table".
 6. **Say it once (DRY).** Each definition, fact, or argument lives in exactly one place, the section that owns it, and is reached from elsewhere by `\ref`, never restated or paraphrased. A value measured once is not re-derived later in prose. When content moves to an appendix, the body keeps a one-line pointer, not a second copy. Two paragraphs that make the same point are a sign one of them is redundant.
 7. **Claim strength (hedging).** Match every claim to its evidence. Use strong verbs (shows, demonstrates, establishes) only for the project's directly measured facts; moderate verbs (suggests, indicates, points to) for patterns inferred across the aggregate route-by-hour grain; weak hedges (may, might, could) for anything resting on the partial sample, the non-overlapping GPS and AFC windows, or a proxy measure. Do not hedge a measured number ("the student-fare share is 36%", not "appears to be about 36%"). Reserve causal verbs (causes, drives) for the difference-in-differences design; elsewhere write "is associated with".
 8. **One term per concept.** Pick one word for each concept and repeat it; do not cycle synonyms to look varied. A chart is not also a visualization, a graphic, and a view in the same passage. Where the project gives words distinct meanings, hold them: a primitive is a chart type, a canvas is the slot it occupies, a chart is the instance. Consistent terminology is clarity, not monotony.
@@ -69,10 +73,10 @@ The following are forbidden in the body of the report:
 ### 1.6 Mechanics: spelling, numbers, citations, tense
 
 1. **Spelling.** American throughout: `-ize` / `-ization` (organize, visualization, prioritize, analyze), "behavior", "color", "modeling", "center", "meter", "catalog", "labeled". Never the British `-ise` / `-isation` / `-our` / `-re`.
-2. **Phase framing.** Always "Phase 1" and "Phase 2", with a capital P, an Arabic digit, and a normal space. Never "Phase One", "phase 1", or "Phase~2".
+2. **Phase framing.** Always "Phase 2", with a capital P, an Arabic digit, and a normal space. Never "Phase Two", "phase 2", or "Phase~2".
 3. **Numbers.** Tables carry exact figures with thousands separators (17,883,623; ₫72,041,500,000). Prose rounds for readability ("approximately 17.9 million boardings", "about ₫72 billion", "a 36% student-fare share"). Spell out a quantity that opens a sentence, or rewrite so it does not. A measured value appears once as an exact figure; later mentions round.
 4. **Citations.** Numeric biblatex style: `\cite{key}` renders as `[n]`. Place the marker at the end of the clause it supports, before the punctuation. Merge multiple keys into one marker (`[3, 5]`), never `[3][5]`. Every claim that is not the project's own measured data carries a citation.
-5. **Tense.** Present tense for the system's design and the data's standing properties ("the warehouse materializes seven aggregates"; "the AFC stream records boardings only"). Past tense for completed Phase-1 work and one-off procedures ("the prototype was built on DuckDB"; "the eight universities were hand-verified").
+5. **Tense.** Present tense for the system's design and the data's standing properties ("the warehouse materializes seven aggregates"; "the AFC stream records boardings only").
 
 ### 1.7 Choosing the content form: prose, list, table, figure
 
@@ -97,10 +101,10 @@ A chapter that is mostly tables, or mostly unbroken prose, is a smell: vary the 
 
 ### 2.1 · Which tool? (decision rule)
 
-| Content | Tool | Output |
-|---|---|---|
-| **All diagrams** (flows, ERDs, star schema, architecture, swim-lanes, wireframes, sequence/UML, pictograms) | **draw.io** (`.drawio`) | PNG via `drawio -x -f png -e` |
-| **Tabular / matrix data** (comparisons, traceability, coverage, requirements, field lists) | **LaTeX table** (`tabularx`) | inline |
+| Content                                                                                                           | Tool                                 | Output                          |
+| ----------------------------------------------------------------------------------------------------------------- | ------------------------------------ | ------------------------------- |
+| **All diagrams** (flows, ERDs, star schema, architecture, swim-lanes, wireframes, sequence/UML, pictograms) | **draw.io** (`.drawio`)      | PNG via `drawio -x -f png -e` |
+| **Tabular / matrix data** (comparisons, traceability, coverage, requirements, field lists)                  | **LaTeX table** (`tabularx`) | inline                          |
 
 Rule of thumb: if the content is a *grid of values or ✓/✗ cells*, it is a **table**, not a figure. Don't draw a matrix as boxes.
 
@@ -111,19 +115,19 @@ Diagram **sources** live in `docs/diagrams/{report,deck}/`; rendered `.png` go i
 
 ### 2.2 · Visual house style (draw.io)
 
-| Element | Value |
-|---|---|
-| Font | Helvetica / Arial (sans-serif) |
-| Font sizes | 12–13 pt node titles · 11 pt body/attributes · 10 pt edge labels & legends |
-| Fills | **White** by default. An accent fill is spent only to encode a layer/category (e.g. Bronze/Silver/Gold tiers) or to mark the focal node; flat and pale, never saturated |
-| Strokes | Thin black (`#000000`, ~1 px), **uniform weight** (hierarchy comes from nesting, not line weight) |
-| Corners | **Slightly rounded** (`rounded=1`, arcSize 6–10). Never sharp, never bubbly |
-| Color | **Limited functional palette**: grayscale base plus at most three accent hues, each encoding meaning (focal element, or a layer/category). The same category keeps the same hue across figures. Never decorative, no per-node rainbow, no gradients |
-| Secondary text | Italic, mid-gray (`#666666`) for date ranges, sizes, §-refs, qualifiers |
-| Containers / groups | Thin **dashed** black rectangle, no fill, italic label at **top-left** |
-| Arrows | Open arrowhead (`endArrow=open;endFill=0`), thin black; dashed for events/returns/secondary flows |
-| Edge labels | Italic, 10 pt, white background (`labelBackgroundColor=#FFFFFF`) to avoid line collisions |
-| Legend | One short italic-gray strip at the bottom, only if a convention isn't obvious |
+| Element             | Value                                                                                                                                                                                                                                                     |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Font                | Helvetica / Arial (sans-serif)                                                                                                                                                                                                                            |
+| Font sizes          | 12–13 pt node titles · 11 pt body/attributes · 10 pt edge labels & legends                                                                                                                                                                             |
+| Fills               | **White** by default. An accent fill is spent only to encode a layer/category (e.g. Bronze/Silver/Gold tiers) or to mark the focal node; flat and pale, never saturated                                                                             |
+| Strokes             | Thin black (`#000000`, ~1 px), **uniform weight** (hierarchy comes from nesting, not line weight)                                                                                                                                                 |
+| Corners             | **Slightly rounded** (`rounded=1`, arcSize 6–10). Never sharp, never bubbly                                                                                                                                                                      |
+| Color               | **Limited functional palette**: grayscale base plus at most three accent hues, each encoding meaning (focal element, or a layer/category). The same category keeps the same hue across figures. Never decorative, no per-node rainbow, no gradients |
+| Secondary text      | Italic, mid-gray (`#666666`) for date ranges, sizes, §-refs, qualifiers                                                                                                                                                                                |
+| Containers / groups | Thin**dashed** black rectangle, no fill, italic label at **top-left**                                                                                                                                                                         |
+| Arrows              | Open arrowhead (`endArrow=open;endFill=0`), thin black; dashed for events/returns/secondary flows                                                                                                                                                       |
+| Edge labels         | Italic, 10 pt, white background (`labelBackgroundColor=#FFFFFF`) to avoid line collisions                                                                                                                                                               |
+| Legend              | One short italic-gray strip at the bottom, only if a convention isn't obvious                                                                                                                                                                             |
 
 **Forbidden:** decorative or saturated color, per-node rainbow, gradients, drop shadows, 3-D, icons/clip-art, UML notation in non-UML diagrams (crow's-feet, lifelines, `«component»` stereotypes belong only inside actual UML).
 
@@ -149,7 +153,7 @@ Diagram **sources** live in `docs/diagrams/{report,deck}/`; rendered `.png` go i
 6. **`\includegraphics[width=0.7–0.95\linewidth]`** centered. Wider figures use a larger fraction; never exceed `\linewidth`.
 7. **Labels match the diagram's abstraction level, consistently.** Pick one level of detail and hold every node to it. A context diagram may say "Serving API" and "Warehouse"; a component diagram names the concrete artifacts (`agg_route_hour`, `Dagster sensor`). What is banned is a *placeholder* that carries no information at the chosen level (a box called only "Process", "Data", or "Module" when the diagram is about something more specific), and mixing one vague box in among otherwise concrete ones.
 8. **One reading direction.** The eye follows a single dominant flow, left-to-right or top-to-bottom. No hub-and-spoke layout where everything radiates from a center box; no hairball where most nodes connect to most others. If the relationships are genuinely that dense, the figure does too much; split it.
-9. **No decoration (anti-AI-diagram rule).** Nothing on the canvas is ornamental: no clip-art or skeuomorphic icons (a drawn database-can, a gear, a cloud picture), no emoji, no logos, no background art, no duplicate "summary" boxes. A plain geometric cylinder used as the datastore *shape* per §2.2 is fine; a picture of a database is not. This extends the §2.2 color rule (color encodes, never decorates). Test: remove a mark; if the diagram loses no information, it should not have been there.
+9. **No decoration.** Nothing on the canvas is ornamental: no clip-art or skeuomorphic icons (a drawn database-can, a gear, a cloud picture), no emoji, no logos, no background art, no duplicate "summary" boxes. A plain geometric cylinder used as the datastore *shape* per §2.2 is fine; a picture of a database is not. This extends the §2.2 color rule (color encodes, never decorates). Test: remove a mark; if the diagram loses no information, it should not have been there.
 
 ---
 
@@ -162,10 +166,11 @@ Diagram **sources** live in `docs/diagrams/{report,deck}/`; rendered `.png` go i
 5. **No duplicate data:** a value lives in exactly one table. If two tables share a column, drop it from the secondary one and cross-reference.
 6. **Emphasis:** bold the selected/winning row; never use color to highlight.
 7. **Merge over split:** prefer one table with a `\multicolumn` sub-header (e.g. *Functional* / *Non-functional*) over two near-identical tables.
-8. **No decorative cells (anti-AI-table rule).** No emoji, no status-light dots (🟢/🟡/🔴), no checkmark spam. A tick (✓) appears only in a genuine coverage or traceability matrix, at the same weight in every cell. Header names are specific ("Records", "Window", "Reason for rejection"), never catch-alls like "Details", "Notes", "Information", "Other".
+8. **No decorative cells.** No emoji, no status-light dots (🟢/🟡/🔴), no checkmark spam. A tick (✓) appears only in a genuine coverage or traceability matrix, at the same weight in every cell. Header names are specific ("Records", "Window", "Reason for rejection"), never catch-alls like "Details", "Notes", "Information", "Other".
 9. **No filler or hype in cells.** A cell states one concrete value. It does not dodge with "Various", "Multiple", "N/A", or "TBD", and it carries no marketing adjectives. If one value repeats down every row, the column is removed and the fact is stated once in the prose (this is §1.5.6 applied to tables).
+10. If a table gets too dense, normalize it into paragraph and smaller tables, never put a long and dense.
 
-#### Column widths and spacing (the anti-"stupid-table" rules)
+#### Column widths and spacing
 
 The common failure is a `tabularx` where a short column eats the slack and a prose column is starved to one word per line. Width is allocated, not left to chance:
 
@@ -189,16 +194,22 @@ Define the reusable column types once in the preamble (`tabularx` already loads 
 
 ### 2.5 · Captions
 
-| | Figures | Tables |
-|---|---|---|
-| Position | **Below** the figure | **Above** the table |
-| Length | **One sentence.** State what it shows, not how it's drawn | One sentence |
-| Content | **Names the object, not the finding** ("Boardings per fare class", not "Student fares dominate the morning peak") | Same |
-| Forbidden | Step-by-step narration, line-style legends ("solid arrows are…"), color keys (put those *inside* the figure or in body text) | Same |
-| Cross-ref | Every figure/table is referenced by `\ref` in the prose before it appears | Same |
+|           | Figures                                                                                                                        | Tables                    |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------- |
+| Position  | **Below** the figure                                                                                                     | **Above** the table |
+| Length    | **One sentence.** State what it shows, not how it's drawn                                                                | One sentence              |
+| Content   | **Names the object, not the finding** ("Boardings per fare class", not "Student fares dominate the morning peak")        | Same                      |
+| Forbidden | Step-by-step narration, line-style legends ("solid arrows are…"), color keys (put those*inside* the figure or in body text) | Same                      |
+| Cross-ref | Every figure/table is referenced by `\ref` in the prose before it appears                                                    | Same                      |
 
 Good: *"Source-schema relationships across the AFC family, the GPS family, and the shared masters."*
 Bad: *"…Solid arrows are foreign keys; the red dashed link is the canonical cross-source join on route\_no; thin dashed lines join the two families…"* (move to the diagram legend / body).
+
+**Captions, chart titles, and hero text are abstract — no data specifics.** State the capability,
+object, or question (e.g. "Boardings per fare class over the window"), never a data finding or a
+concrete value (no route numbers, dates, or counts). The data is dynamic and continuously growing:
+a caption that describes the data goes stale the moment the data changes, and rewriting captions
+dynamically is high-effort, low-impact. The visual carries the specifics; the caption stays general.
 
 ---
 
