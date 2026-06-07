@@ -50,8 +50,8 @@ questions the surveyed existing tools (Chapter~\ref{chapter:related})
 do not answer; and inspection of comparable transit-analytics literature
 for stakeholder-question patterns transferrable to the Ho Chi Minh City
 context. The questions are presented as the Phase~1 specification; Phase~2
-user evaluation (Section~\ref{sec:future:eval}) will validate or revise
-the list against direct stakeholder input. The catalogue
+user evaluation (Chapter~\ref{chapter:evaluation}) will validate or revise
+the list against direct stakeholder input. The catalog
 (Section~\ref{sec:solution:viz}) maps every chart to one or more of
 these fourteen questions. Each question is tagged with its persona, with a Must-or-Should
 priority following the MoSCoW scheme, and with the strategic or tactical
@@ -85,13 +85,13 @@ character of the decision it informs.
   \end{tabularx}
 \end{table}
 
-Each question is materialised through a six-field requirements record that
+Each question is materialized through a six-field requirements record that
 specifies the input aggregate tables, the computation, the output chart
 shape, the priority tier, the decision type, and a single time-bounded
 success criterion. The success criteria are testable usability targets: for
 example, P-Q3 is considered answered when a student can identify a confident
 route from their school within twenty seconds of opening the system. The
-detailed records are recorded in the project log and summarised in
+detailed records are recorded in the project log and summarized in
 Section~\ref{sec:solution:viz} where each question is paired with its chart.
 
 \subsection{Functional Requirements}
@@ -104,16 +104,16 @@ The proposed system must provide the following functional capabilities.
   \item[\textbf{R2.}] The system shall present comparisons of ridership across days, weeks, and seasonal windows, including pre-Tết, Tết, and post-Tết periods.
   \item[\textbf{R3.}] The system shall identify stops whose boarding volumes are disproportionately large relative to their position in the network.
   \item[\textbf{R4.}] The system shall compute and display reliability indicators per route, following the Quality of Service (QoS) decomposition into trip completion, on-path driving, and on-schedule operation.
-  \item[\textbf{R5.}] The system shall maintain consistent route identifiers between the operational data stream and the demand data stream, so that visualisations referring to the same route refer to the same underlying entity.
-  \item[\textbf{R6.}] The system shall visualise demand density across the urban area through a spatial aggregation that is uniform in area.
-  \item[\textbf{R7.}] The system shall identify the bus routes that act as feeders to the metro system and characterise their connectivity in time and space.
+  \item[\textbf{R5.}] The system shall maintain consistent route identifiers between the operational data stream and the demand data stream, so that visualizations referring to the same route refer to the same underlying entity.
+  \item[\textbf{R6.}] The system shall visualize demand density across the urban area through a spatial aggregation that is uniform in area.
+  \item[\textbf{R7.}] The system shall identify the bus routes that act as feeders to the metro system and characterize their connectivity in time and space.
   \item[\textbf{R8.}] The system shall report financial efficiency per route through measurable proxies, including revenue per trip and the share of trips with no recorded boarding.
   \item[\textbf{R9.}] The system shall export every chart and every entity-detail view in standard image and tabular formats (Portable Network Graphics, Portable Document Format, and comma-separated values).
   \item[\textbf{R10.}] The system shall persist analytical state, comprising the active thematic view, the active chart, the active filters, and the active selection, in a form that is bookmarkable and shareable across sessions.
   \item[\textbf{R11.}] The system shall surface school-aware demand as a distinct analytical theme, including the attribution of student-fare boardings to serving universities, the classification of routes by school-routeness, and the identification of schools that lie beyond walking distance of any served stop.
   \item[\textbf{R12.}] The system shall rank operating companies against peers on shared corridors using demand per trip, revenue per trip, and on-schedule operation as comparison metrics. On-schedule operation depends on the full GPS window and is reported in reduced form in Phase~1 (over the locally available one-day sample) and at full coverage in Phase~2.
   \item[\textbf{R13.}] The system shall estimate the ridership lift attributable to a promotion using a difference-in-differences design \cite{abadie2005did} with synthetic controls drawn from same-archetype routes (Section~\ref{sec:foundations:methods:did}).
-  \item[\textbf{R14.}] The system shall summarise market structure through a treemap of operator-route-trip volume accompanied by the Herfindahl-Hirschman concentration index \cite{rhoades1993herfindahl} at the network and per-corridor level (Section~\ref{sec:foundations:methods:hhi}).
+  \item[\textbf{R14.}] The system shall summarize market structure through a treemap of operator-route-trip volume accompanied by the Herfindahl-Hirschman concentration index \cite{rhoades1993herfindahl} at the network and per-corridor level (Section~\ref{sec:foundations:methods:hhi}).
   \item[\textbf{R15.}] The system shall produce a fourteen-day demand forecast per route, with eighty- and ninety-five-percent prediction intervals, and shall expose the underlying model, its inputs, and its accuracy on a methodology side-panel. The fourteen-day horizon covers two complete weekly cycles, which is the shortest horizon at which the weekly seasonality of bus demand is observable in the forecast; the 80- and 95-percent intervals follow the convention of the \texttt{statsforecast} \cite{statsforecast} \texttt{AutoETS} model, where the 80-percent band carries the typical-range reading and the 95-percent band carries the outlier-envelope reading.
 \end{enumerate}
 
@@ -122,10 +122,10 @@ The proposed system must provide the following functional capabilities.
 
 Beyond the functional obligations, the proposed system must satisfy six
 non-functional constraints. These constraints shape the architectural
-decisions discussed in Section~\ref{sec:solution:architecture}.
+decisions discussed in Section~\ref{sec:arch:medallion}.
 
 \begin{enumerate}
-  \item[\textbf{N1.}] Interactive latency shall be bounded by two budgets. Cold-load latency, defined as the time from a user opening a thematic view to the first chart fully rendered, shall be under three seconds. Warm chart re-render latency, defined as the time from a filter-change event to the affected chart's repaint, shall be under fifty milliseconds in the design budget, with a relaxed acceptance ceiling of one hundred milliseconds (the perceived-instantaneous threshold of Nielsen~\cite{nielsen1993usability}). The fifty-millisecond figure is the design target rather than a published synchrony threshold: cross-chart brushing under Multiple Coordinated Views feels synchronous when the affected chart repaints within a single browser paint cycle (16--30~milliseconds at 60~Hz refresh), and fifty milliseconds leaves headroom of one paint cycle for serialisation and re-layout. The architecture comparison of Section~\ref{sec:solution:architecture} adopts fifty milliseconds as the pass-or-fail gate; readers who treat one hundred milliseconds as the more defensible bound should still find that the selected Medallion architecture passes by a wide margin and that the alternatives fail by an even wider one.
+  \item[\textbf{N1.}] Interactive latency shall be bounded by two budgets. Cold-load latency, defined as the time from a user opening a thematic view to the first chart fully rendered, shall be under three seconds. Warm chart re-render latency, defined as the time from a filter-change event to the affected chart's repaint, shall be under fifty milliseconds in the design budget, with a relaxed acceptance ceiling of one hundred milliseconds (the perceived-instantaneous threshold of Nielsen~\cite{nielsen1993usability}). The fifty-millisecond figure is the design target rather than a published synchrony threshold: cross-chart brushing under Multiple Coordinated Views feels synchronous when the affected chart repaints within a single browser paint cycle (16--30~milliseconds at 60~Hz refresh), and fifty milliseconds leaves headroom of one paint cycle for serialization and re-layout. The architecture comparison of Section~\ref{sec:arch:medallion} adopts fifty milliseconds as the pass-or-fail gate; readers who treat one hundred milliseconds as the more defensible bound should still find that the selected Medallion architecture passes by a wide margin and that the alternatives fail by an even wider one.
   \item[\textbf{N2.}] The system shall be deployable as a single Python process on commodity hardware, with the analytical engine and the HTTP server embedded in the same process rather than running as separate services.
   \item[\textbf{N3.}] The warehouse build shall be deterministic and reproducible: re-running the build on the same raw input shall produce byte-identical aggregate tables.
   \item[\textbf{N4.}] Preprocessed data shall persist on disk under approximately one hundred megabytes for the calendar window covered in the present phase.
@@ -145,7 +145,7 @@ operator performance (subsidy-served corridors, school-only routes that
 serve a social mandate). The interface labels every operator comparison
 as ``high waste relative to corridor peers'' rather than as ``losing
 money'' or ``failing''; the language preserves the analytical reading
-while avoiding implications about operator viability or labour
+while avoiding implications about operator viability or labor
 performance that the data does not support. The Methodology Side-Panel
 (Section~\ref{sec:solution:viz:methodology}) for each operator chart
 exposes this convention so that a reader who exports a chart for
@@ -162,7 +162,7 @@ parallel team.
 \begin{itemize}
   \item Real-time arrival prediction. The data is historical; live telemetry feeds are not available to the project.
   \item Per-passenger journey reconstruction. The user identifier field in the AFC stream is populated for only about 0.1\% of fare records (23{,}109 of 17{,}883{,}623), so individual-level features such as loyalty, churn, and journey patterns cannot be supported.
-  \item Exact financial modelling. No cost data is available, so the system reports financial efficiency through measurable proxies (revenue per trip, ghost-run share) rather than through profit and loss.
+  \item Exact financial modeling. No cost data is available, so the system reports financial efficiency through measurable proxies (revenue per trip, ghost-run share) rather than through profit and loss.
   \item Natural-language query over the data. A separate team is developing a text-to-Structured-Query-Language (SQL) capability, which will eventually be integrated alongside the analytical surface defined in this chapter.
 \end{itemize}
 
@@ -191,7 +191,7 @@ identifier.
     R5 & Cross-source route identity & Conformed route dimension reconciles GPS and AFC keyspaces. \\
     R6--R7 & Spatial demand and metro connection & H3 demand-density map and bus-to-metro Sankey. \\
     R8, R13--R14 & Financial and policy analytics & Revenue/ghost-run quadrant, promotion-lift waterfall, and HHI operator treemap. \\
-    R9--R10 & Export and reproducible state & Per-chart PNG/PDF/CSV export and URL-serialised app state. \\
+    R9--R10 & Export and reproducible state & Per-chart PNG/PDF/CSV export and URL-serialized app state. \\
     R11 & School-aware demand & School constellation, schools-to-routes treemap, and proximity map. \\
     R15 & Demand forecasting & Per-route ETS forecast with 80/95\% bands and methodology side-panel. \\
     \hline

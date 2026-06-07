@@ -1,0 +1,21 @@
+% Chapter 7 — Implementation (Phase 2). SCAFFOLD: write the prose into each section.
+% Depth cap: section -> subsection only.
+
+\section{Data Pipeline}
+\label{sec:impl:pipeline}
+% Write: the dbt project (models, tests), the Dagster assets + asset checks, and the validation
+% gate (row-count regression, null-rate ceiling, referential integrity, primary-key uniqueness).
+
+\section{Backend Data API}
+\label{sec:impl:backend}
+% Write: the layered FastAPI service. The Warehouse Protocol (dependency-inversion seam) and
+% dependency injection via Depends; repositories -> services -> schemas (Pydantic DTOs) ->
+% routers; the chart registry (open/closed). Responses carry domain data plus the computed action
+% title, not Plotly figures. Caching, structured logging, global exception handlers. Contract
+% tests that run in CI against a synthetic fixture warehouse.
+
+\section{Frontend Application}
+\label{sec:impl:frontend}
+% Write: the React + Vite + TypeScript single-page application. api/ (typed client) -> hooks/
+% (TanStack Query) -> charts/ (pure Plotly figure builders + components) -> components/.
+% react-plotly.js, MapLibre, Scrollama. The chart-builder pattern (ChartResponse -> figure in TS).

@@ -4,7 +4,7 @@
 \label{appendix:ddl}
 \addcontentsline{toc}{chapter}{Appendix A: Data Warehouse Definitions}
 
-This appendix documents the data-definition language (DDL) for four key tables of the proposed warehouse. The excerpts are the design-time specifications; the complete warehouse build is Phase Two work scheduled in Chapter~\ref{chapter:future}.
+This appendix documents the data-definition language (DDL) for four key tables of the proposed warehouse. The excerpts are the design-time specifications; the complete warehouse build is Phase Two work scheduled in Chapter~\ref{chapter:conclusion}.
 
 \section*{A.1 Route Dimension Table}
 
@@ -192,11 +192,11 @@ month & VARCHAR & Partition tag (e.g.\ \texttt{jan\_2026}) derived from the sour
 \textbf{Field} & \textbf{Type} & \textbf{Meaning} \\
 \hline
 datetime & TIMESTAMP & Timestamp of the GPS ping (server-side, second precision). \\
-date & DATE & Calendar date of the ping (denormalised partition key). \\
-vehicle & VARCHAR & Vehicle identifier (licence plate or anonymised hash). \\
+date & DATE & Calendar date of the ping (denormalized partition key). \\
+vehicle & VARCHAR & Vehicle identifier (license plate or anonymized hash). \\
 lng & DOUBLE & Longitude of the bus at ping time (WGS-84). \\
 lat & DOUBLE & Latitude of the bus at ping time (WGS-84). \\
-driver & VARCHAR & Driver licence or staff identifier on duty at ping time. \\
+driver & VARCHAR & Driver license or staff identifier on duty at ping time. \\
 speed & DOUBLE & Instantaneous speed reported by the on-board unit (km/h). \\
 door\_up & BOOLEAN & Boolean indicating front door open at ping time (used as boarding proxy). \\
 door\_down & BOOLEAN & Boolean indicating rear door open at ping time (used as alighting proxy). \\
@@ -234,3 +234,104 @@ ticket\_routes & company\_id & BIGINT & Foreign key to \texttt{ticket\_companies
 \hline
 \end{tabularx}
 \end{table}
+
+\section*{A.7 Exploratory Findings in Detail}
+\label{appendix:eda}
+
+This appendix expands the five exploratory views of the 90-day AFC
+window whose headline numbers are summarized in
+Section~\ref{sec:solution:dataset:eda}.
+
+\noindent\textbf{Daily ridership over the 90-day window.} The daily
+boarding total traces the overall demand trajectory across the AFC
+window. A mid-February trough is visible that aligns with the
+Tết public holiday, when much of the city's working and student
+population leaves for family travel and the bus network's regular commuter
+load drops correspondingly.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{eda_daily_boardings.png}
+\caption{Daily AFC boardings, 1 January to 31 March 2026}
+\label{fig:eda:daily}
+\end{figure}
+
+Daily counts oscillate around a weekly cycle for the first three weeks
+of January at a median of approximately 228{,}000 boardings per day, then
+decline ahead of the Tết public holiday and reach a single-day
+minimum on 16 February at 33{,}176 boardings (an 84 percent drop from
+the January baseline). Ridership recovers progressively through the
+second half of February and returns to the January baseline by the
+first week of March.
+
+\noindent\textbf{Hourly demand by day type.} Disaggregating the daily
+totals by hour and day type reveals the commuter signature of the
+network's weekday demand and the contrasting flatter shape of weekend
+demand.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{eda_hourly_by_daytype.png}
+\caption{Average hourly boardings, weekday vs weekend}
+\label{fig:eda:hourly}
+\end{figure}
+
+Weekday demand has two roughly equal peaks (about 22{,}000 events per hour
+at approximately 6 AM and 4 to 5 PM); weekend demand is flatter, lower in
+absolute magnitude, and shifted to later in the day with no comparable
+morning peak.
+
+\noindent\textbf{Fare-class composition by hour.} Decomposing the hourly
+totals by fare class shows which sub-population drives each part of the
+day.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.85\linewidth]{eda_fareclass_by_hour.png}
+\caption{Hourly boarding composition by fare-class group}
+\label{fig:eda:fareclass}
+\end{figure}
+
+Across the day, regular cash tickets dominate by volume
+(approximately 43 percent of all boardings) but the student fare group
+(approximately 36 percent, the HS-SV discounted class) drives a
+disproportionate share of the morning peak. Free or subsidized tickets
+contribute approximately 16 percent and are roughly flat across the
+day; the small remainder is split between paper and other ticket types
+(approximately 6 percent combined).
+
+\noindent\textbf{Route volume distribution.} The boarding count per route
+is heavy-tailed, with a small number of routes carrying a disproportionate
+share of the total. Figure~\ref{fig:eda:pareto} ranks the top 50 routes
+and overlays the cumulative share.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{eda_route_pareto.png}
+\caption{Top 50 routes by boarding volume, with cumulative share}
+\label{fig:eda:pareto}
+\end{figure}
+
+The boarding distribution is heavy-tailed. Cumulative share reaches 80
+percent at the 55th-ranked route of 128 active routes; the top 10 routes
+account for roughly 32 percent of all boardings. The pattern motivates the
+top-$k$ ranked-bar visualizations chosen in
+Section~\ref{sec:solution:viz} and the operator-scorecard view in the
+Financial and Operations theme.
+
+\noindent\textbf{Payment-channel trend.} Stacking the daily volume by
+payment channel reveals whether the cash dominance reported in earlier
+statistics is uniform across the window or whether it shifts over time.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.95\linewidth]{eda_payment_trend.png}
+\caption{Daily boardings stacked by payment channel}
+\label{fig:eda:payment}
+\end{figure}
+
+Cash payment dominates throughout the window (approximately 96.2 percent
+of daily volume), with a small and roughly constant non-cash band
+underneath. The Tết-period dip is visible on both channels in
+proportion, confirming that the dip is a network-wide phenomenon rather
+than a channel-specific effect.

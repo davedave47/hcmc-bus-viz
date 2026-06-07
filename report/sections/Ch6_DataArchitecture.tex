@@ -1,0 +1,27 @@
+% Chapter 6 — Data Architecture (Phase 2). SCAFFOLD: write the prose into each section.
+% Depth cap: section -> subsection only (no subsubsection).
+
+\section{Architecture Overview}
+\label{sec:arch:overview}
+% Write: the production data architecture — dbt (transforms) + Dagster (orchestration) over
+% BigQuery, with DuckDB for local sampling. Storage/compute separation, with dbt as the
+% portability seam. Include one architecture diagram (draw.io).
+
+\section{Medallion Warehouse}
+\label{sec:arch:medallion}
+% Write: Bronze sources (parquet on GCS, read as BigQuery external tables) -> Silver Kimball star
+% (dim_* tables + fact_* views) -> Gold aggregates. Incremental, partitioned by day, clustered by
+% route_no / fare_class. The three Silver integrity fixes. Integrity as dbt tests plus the
+% relative lossless test (Gold boardings == Bronze ticket count).
+
+\section{Ingestion and Orchestration}
+\label{sec:arch:ingestion}
+% Write: micro-batch ingestion (daily/hourly exports -> GCS) -> Dagster sensor -> incremental
+% dbt run. The filterable Gold cube (date x route x day-type x fare-class x hour) the filter-bar
+% endpoints read. No streaming-analytics engine: the product is batch aggregate analytics.
+
+\section{Engine Portability and Scale}
+\label{sec:arch:scale}
+% Write: BigQuery (bq_dev sampled / bq_prod full) as the primary engine; DuckDB as a local
+% sampling target. Dynamic, continuously-growing data; relative invariants. The scale rationale
+% (millions of trips/tickets per day).

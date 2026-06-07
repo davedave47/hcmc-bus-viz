@@ -1,21 +1,21 @@
 \section{Analytical Themes}
 \label{sec:solution:themes}
 
-The proposed system organises its analytical content into six thematic
+The proposed system organizes its analytical content into six thematic
 views. Each theme corresponds to one class of analytical question and is
 supported by one cluster of aggregate tables produced by layer 4 of the data
-architecture (Section~\ref{sec:solution:architecture}). The themes are the
-top-level organisational units of the analytical surface; the user
+architecture (Section~\ref{sec:arch:medallion}). The themes are the
+top-level organizational units of the analytical surface; the user
 navigates between themes from an overview index, and within each theme
-selects a single visualisation that addresses the question of interest.
+selects a single visualization that addresses the question of interest.
 
 \subsection{Theme Structure}
 \label{sec:solution:themes:six}
 
 Table~\ref{tab:themes:six} lists the six themes with the analytical
-question each one answers, the visualisation primitive that anchors the
+question each one answers, the visualization primitive that anchors the
 theme, and the cross-theme dependencies that link it to the rest of the
-catalogue. The primary user role column is an internal design grounding;
+catalog. The primary user role column is an internal design grounding;
 the user interface exposes no role labels.
 
 The 14 stakeholder questions cluster into 6 themes under two
@@ -26,7 +26,7 @@ the theme) and their dominant analytical primitive (so the
 Section~\ref{sec:solution:interaction:storytelling} is satisfiable
 without re-introducing duplicated lenses). Questions that satisfy
 neither criterion remain separate themes; the resulting 6-theme
-catalogue is one of several defensible clusterings.
+catalog is one of several defensible clusterings.
 
 \begin{table}[!htbp]
   \centering
@@ -49,7 +49,7 @@ catalogue is one of several defensible clusterings.
 \end{table}
 
 Inter-theme data dependencies (which themes share aggregate tables) are
-catalogued in Table~\ref{tab:arch:aggcatalogue}. Internal anchoring to
+cataloged among the Gold aggregate tables (Chapter~\ref{chapter:architecture}). Internal anchoring to
 a primary user role is recorded for design tracking only; the
 interface exposes no role labels.
 
@@ -58,7 +58,7 @@ proposed system; it is the theme that no publicly accessible tool for
 Ho Chi Minh City currently provides, and it is the theme that connects most
 directly to the dominant fare class observed in
 Section~\ref{sec:solution:dataset:eda}. The distinction is operational
-rather than methodological: the visualisation primitives that the theme
+rather than methodological: the visualization primitives that the theme
 uses (bubble constellation, treemap, calendar heatmap, point map) are
 standard, but no existing tool has applied them to the AFC student-fare
 share in this network. Two evidential boundaries that bear on the
@@ -67,7 +67,7 @@ Section~\ref{sec:solution:viz:school}. \textit{First}, the headline
 finding that student fares carry approximately 36~percent of network
 boardings is a property of the AFC fare-class label and is supported
 directly by the data. \textit{Second}, the per-school attribution that
-the theme's visualisations rely on is hand-verified for the eight largest
+the theme's visualizations rely on is hand-verified for the eight largest
 universities only; the remaining schools are geocoded at district
 granularity and student tickets whose boarding stop falls outside
 walking distance of any geocoded school are reported under an
@@ -81,48 +81,16 @@ detail respectively, so that every functional requirement in
 Section~\ref{sec:solution:problem:functional} is addressed by at least
 one theme.
 
-\subsection{Theme Alternatives}
-\label{sec:solution:themes:alt}
+Two alternative organizations of the content were considered and
+rejected: one theme per user role, and one theme per visualization
+primitive. The role-keyed scheme duplicates cross-role questions such
+as school-aware demand; the primitive-keyed scheme inverts the natural
+exploration order by forcing the user to recognize a chart type before
+reaching the question. The question-keyed catalog avoids both.
+Appendix~E records the comparison in full.
 
-Two alternative organisations of the analytical content were considered and
-rejected.
-
-The first alternative groups content by user role rather than by analytical
-question: one theme each for passenger, operating company, and public-transport
-authority. The alternative was rejected because the most
-important analytical questions cross role boundaries. The school-aware
-demand question, for example, is asked by both passengers (which route
-serves my school?) and by the authority (which corridors carry the largest
-student loads?); a role-keyed organisation would either duplicate the
-content across two themes or assign it arbitrarily to one of them, with the
-other role losing access to the question. A question-keyed organisation
-sidesteps the duplication by anchoring each theme to a single question that
-all roles can ask.
-
-The second alternative groups content by visualisation primitive: one
-theme for maps, one for time series, one for ranked bar charts, and so on.
-The alternative was rejected because end users do not formulate questions
-about chart types. A primitive-keyed catalogue would force the user to
-recognise the chart type that answers their question before they could
-locate the relevant theme, which inverts the natural exploration order. A
-question-keyed catalogue lets the user start from the question and reach
-the chart afterwards.
-
-In summary, the three organisations considered are:
-\begin{itemize}
-\item \textbf{One theme per user role} (rejected): cross-role questions would be duplicated or arbitrarily assigned.
-\item \textbf{One theme per visualisation primitive} (rejected): inverts the natural exploration order, since the user would need to recognise the chart type before reaching the question.
-\item \textbf{Six themes, one per analytical question} (selected): each theme starts from a question end users naturally ask.
-\end{itemize}
-
-The chosen six-theme catalogue elevates the analytical question to the
-top-level organisational unit and treats the supporting visualisations as
-subordinate to the question. The per-theme visualisation selection that
-follows in Section~\ref{sec:solution:viz} respects this subordination by
-selecting each visualisation to fit the question rather than the reverse.
-
-\subsection{Prioritisation}
-\label{sec:solution:themes:prioritisation}
+\subsection{Prioritization}
+\label{sec:solution:themes:prioritization}
 
 Not all six themes carry equal weight in the phase 1 implementation. The
 themes are ordered (without changing the themes themselves) along two
@@ -132,7 +100,7 @@ relative to the existing tools surveyed in
 Chapter~\ref{chapter:related}. The school-aware theme is the most
 distinctive deliverable of Phase~2 because no surveyed tool addresses
 the educational-institution dimension of demand; the Phase~2 roadmap
-(Section~\ref{sec:future:roadmap}) accordingly sequences it after the
+(Section~\ref{sec:concl:future}) accordingly sequences it after the
 Demand and Crowding theme (which establishes the warehouse-to-surface
 plumbing) and before the Spatial, Financial, and Network-Health themes. The demand-and-crowding,
 spatial-and-connectivity, and financial-and-operations themes follow;
@@ -141,7 +109,7 @@ tables, both of which are complete. The network-health theme and the
 per-route reliability indicators reach full coverage only after the full
 50-day GPS window is loaded and the schedule rows have been cleaned,
 both of which are recorded as Phase~2 prerequisites in
-Chapter~\ref{chapter:future}.
+Chapter~\ref{chapter:conclusion}.
 
 \subsection{Stories}
 \label{sec:solution:themes:stories}
@@ -172,7 +140,7 @@ exploration without leaving the theme.
 
 The Story mode is implemented as sticky-graphic scrollytelling rather
 than as a click-through carousel, following the pattern of the
-VnExpress 2025 labour-market data-journalism
+VnExpress 2025 labor-market data-journalism
 piece~\cite{vnexpress2025labour}. A Story is divided into scroll
 sections; within a section the chart is pinned to the viewport with
 sticky positioning so that it stays in place while narrative
@@ -182,7 +150,7 @@ the pinned chart changes \emph{state} in response: a highlight overlay
 annotation overlay (a label or reference line appears with a
 connecting prose sentence), a filter change (the chart re-renders
 against a different subset, for example a different fare class), or an
-encode change (a visual channel such as bubble colour switches to a
+encode change (a visual channel such as bubble color switches to a
 different metric). A change of chart type, when a Story needs one,
 happens at a section boundary rather than mid-scroll: each section
 pins one chart, and the reader moves to the next pinned chart by
@@ -193,21 +161,19 @@ attention between paragraph and figure as a conventional report does.
 
 Story scenes draw on the two-tier chart sourcing of
 Table~\ref{tab:themes:chart_categories}. Most scroll-section scenes
-pin a tool-mode catalogue chart in a frozen story state: a route-by-hour
+pin a tool-mode catalog chart in a frozen story state: a route-by-hour
 heatmap with a single column highlighted, a constellation with one
 quadrant brought forward, a network pulse with the Tết window shaded.
 These are derived states of an existing canvas and require no new
 chart module. A small number of scenes pin a bespoke simple story
 chart that exists only inside a Story (the free-fare lift slope and
 the resilience sparkline grid), which is the second sourcing tier; such
-a chart is deliberately simpler than any tool-catalogue chart because a
-narrative beat needs none of the interaction the tool catalogue
+a chart is deliberately simpler than any tool-catalog chart because a
+narrative beat needs none of the interaction the tool catalog
 requires.
 
-\subsubsection*{Scroll-Trigger State Transitions}
-
-Four transition types operate on the chart pinned within a section;
-they are catalogued in Table~\ref{tab:themes:transitions}. Each row
+\noindent\textbf{Scroll-trigger state transitions.} Four transition types operate on the chart pinned within a section;
+they are cataloged in Table~\ref{tab:themes:transitions}. Each row
 records the visual operation and the typical narrative purpose. A fifth
 operation, a change of chart type, is not a within-section scroll
 trigger but a section boundary: the reader scrolls from one pinned
@@ -224,21 +190,19 @@ reader mid-scroll.
 \hline
 \textbf{Transition} & \textbf{Visual operation} & \textbf{Narrative purpose} \\
 \hline
-Highlight overlay   & Focal element accent; remainder fade to grey       & Direct attention to a single element \\
+Highlight overlay   & Focal element accent; remainder fade to gray       & Direct attention to a single element \\
 Annotation overlay  & Label, reference line, or callout appears          & Mark a date, threshold, or comparison \\
 Filter change       & Chart re-renders against a different data subset   & Show the same chart on a contrasting slice \\
-Encode change       & A visual channel (such as bubble colour) switches to a different metric & Re-read the same marks through a second variable \\
+Encode change       & A visual channel (such as bubble color) switches to a different metric & Re-read the same marks through a second variable \\
 \hline
 \end{tabularx}
 \end{table}
 
-\subsubsection*{Storytelling Techniques}
-
-Each Story applies a fixed set of techniques layered onto the
+\noindent\textbf{Storytelling techniques.} Each Story applies a fixed set of techniques layered onto the
 three-act spine of Section~\ref{sec:foundations:storytelling}. The
 techniques are listed in Table~\ref{tab:themes:techniques} together
 with the rationale that motivates their inclusion. Several are adopted
-from the VnExpress 2025 labour-market data-journalism piece~\cite{vnexpress2025labour} reviewed in
+from the VnExpress 2025 labor-market data-journalism piece~\cite{vnexpress2025labour} reviewed in
 the design process; the source is recorded for each so the rationale
 is traceable.
 
@@ -263,21 +227,19 @@ Methodology footnote per Story & Each Story closes with a link to the Methodolog
 \end{tabularx}
 \end{table}
 
-\subsubsection*{Two-Tier Chart Sourcing}
-
-Story charts are drawn from two tiers
+\noindent\textbf{Two-tier chart sourcing.} Story charts are drawn from two tiers
 (Table~\ref{tab:themes:chart_categories}). The first tier reuses a
-tool-mode catalogue chart in a frozen \emph{story state} (a particular
+tool-mode catalog chart in a frozen \emph{story state} (a particular
 filter, highlight, or annotation). The second tier introduces a
 \emph{bespoke simple story chart} that exists only inside a Story and
-never in the tool catalogue. The second tier is the design's
+never in the tool catalog. The second tier is the design's
 deliberate departure from the earlier assumption that Story mode
-consumes only the tool catalogue: a narrative beat needs none of the
-Select-Filter-Abstract interaction that the tool catalogue requires of
+consumes only the tool catalog: a narrative beat needs none of the
+Select-Filter-Abstract interaction that the tool catalog requires of
 every chart, so a dead-simple narrative chart (a unit-dot array, a
 single annotated line, a before-and-after slope, a small sparkline
 grid) is the correct tool for a Story beat even though it would fail
-the tool-catalogue inclusion criteria. The pattern follows the
+the tool-catalog inclusion criteria. The pattern follows the
 VnExpress data-journalism piece, whose story charts are bespoke per
 narrative beat rather than reused from an analytical dashboard.
 
@@ -290,20 +252,18 @@ narrative beat rather than reused from an analytical dashboard.
 \hline
 \textbf{Tier} & \textbf{Description} & \textbf{Examples} \\
 \hline
-Tier 1: catalogue chart in story state    & A v5.5 catalogue chart frozen to a narrative beat (a particular filter, highlight, or annotation). Reuses the tool-mode component; the Story supplies only a state specification. & 5.1 network pulse with Tết window shaded; 4.2 operator constellation with the two dominant bubbles highlighted; 2.1 school constellation with the equity-gap bubbles flagged \\
-Tier 2: bespoke simple story chart        & A purpose-built simple chart that lives only in a Story, deliberately simpler than any tool-catalogue chart. & free-fare lift before/after slope (Story 3); resilience sparkline grid (Story 4) \\
+Tier 1: catalog chart in story state    & A v5.5 catalog chart frozen to a narrative beat (a particular filter, highlight, or annotation). Reuses the tool-mode component; the Story supplies only a state specification. & 5.1 network pulse with Tết window shaded; 4.2 operator constellation with the two dominant bubbles highlighted; 2.1 school constellation with the equity-gap bubbles flagged \\
+Tier 2: bespoke simple story chart        & A purpose-built simple chart that lives only in a Story, deliberately simpler than any tool-catalog chart. & free-fare lift before/after slope (Story 3); resilience sparkline grid (Story 4) \\
 Frame types (Bing / Bongo)                & Story-exclusive frames: the Bing hero (single big number plus dramatic question) and the Bongo recap (closing finding plus call to action). & opens and closes every Story \\
 \hline
 \end{tabularx}
 \end{table}
 
-\subsubsection*{Per-Story Scene Inventory}
-
-Figure~\ref{fig:themes:story_spine} shows the four Stories as
+\noindent\textbf{Per-story scene inventory.} Figure~\ref{fig:themes:story_spine} shows the four Stories as
 parallel scroll-timelines (Bing $\rightarrow$ Bang $\rightarrow$
 Bongo). The full per-scene specification, including the action title,
 the pinned chart with its sourcing tier, and the scroll-trigger
-transition for each of the twenty-six scenes, is catalogued in
+transition for each of the twenty-six scenes, is cataloged in
 Appendix~D, Tables~\ref{tab:themes:story_school}--\ref{tab:themes:story_tet}. The action titles in those tables are
 design-time specifications, not validated findings; Phase~2
 instantiates each Story against the warehouse and replaces the
@@ -320,11 +280,11 @@ produce.
 The four Stories together compose twenty-six scenes across the
 four-theme subset (seven, seven, seven, and seven scenes including
 their Bing and Bongo frames). Most scroll-section scenes pin a
-catalogue chart in a story state (Tier~1); two scenes introduce a
+catalog chart in a story state (Tier~1); two scenes introduce a
 bespoke simple story chart (Tier~2): the free-fare lift slope in
 Story~3 and the resilience sparkline grid in Story~4. The Bing and
 Bongo scenes use the story-exclusive hero and recap frames. The
-story-mode layer therefore reuses the tool-mode catalogue for most
+story-mode layer therefore reuses the tool-mode catalog for most
 scenes while permitting a small number of narrative-simple charts that
-do not enter the tool catalogue, in keeping with the two-tier sourcing
+do not enter the tool catalog, in keeping with the two-tier sourcing
 rule of Table~\ref{tab:themes:chart_categories}.

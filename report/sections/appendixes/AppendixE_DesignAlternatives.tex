@@ -1,17 +1,17 @@
-\chapter*{Appendix E: Design Alternatives}
+\chapter*{Appendix E: Visualization and Interaction Design Detail}
 \label{appendix:design_alternatives}
-\addcontentsline{toc}{chapter}{Appendix E: Design Alternatives}
+\addcontentsline{toc}{chapter}{Appendix E: Visualization and Interaction Design Detail}
 
-\section*{E.1 Rejected Visualisation Primitives}
+\section*{E.1 Rejected Visualization Primitives}
 \label{sec:solution:viz:alt}
 
-Six visualisation primitives were considered for one or more charts in
-the catalogue and rejected. Table~\ref{tab:viz:rejected} records each
+Six visualization primitives were considered for one or more charts in
+the catalog and rejected. Table~\ref{tab:viz:rejected} records each
 rejection with the applicable chart and the specific reason.
 
 \begin{table}[!htbp]
   \centering
-  \caption{Visualisation primitives considered and rejected.}
+  \caption{Visualization primitives considered and rejected.}
   \label{tab:viz:rejected}
   \footnotesize
   \renewcommand{\arraystretch}{1.25}
@@ -46,7 +46,7 @@ Ho Chi Minh City's twenty-four urban districts vary in area by more
 than an order of magnitude; a choropleth confounds boarding intensity
 with administrative area. Figure~\ref{fig:viz:reject_choropleth}
 contrasts a district choropleth with the hexagonal-bin equivalent at
-500-metre cells, which is uniform in area.
+500-meter cells, which is uniform in area.
 
 \begin{figure}[!htbp]
 \centering
@@ -64,14 +64,14 @@ scatter without inventing merge heights.
 \section*{E.2 Rejected Interaction Patterns}
 \label{sec:solution:interaction:rejected}
 
-Four interaction patterns were considered and rejected in favour of
+Four interaction patterns were considered and rejected in favor of
 the click-to-entity-detail panel composition described in
 Section~\ref{sec:solution:interaction}.
 
 \noindent\textbf{Multiple Coordinated Views with simultaneous cross-chart brushing.}
 The original direction inherited from the literature
 survey~\cite{liu2022,heer2012interactive}. Rejected after the user
-interface shell was finalised: the shell renders one chart per canvas
+interface shell was finalized: the shell renders one chart per canvas
 at any time, so simultaneous re-renders across sibling charts would be
 invisible to the reader. Implementing propagation against invisible
 state expends complexity with no perceptible analytical gain.
@@ -93,4 +93,457 @@ at reduced opacity.
 A selection in any chart propagates to every chart in every theme.
 Rejected for the same reason as MCV-simultaneous (no visible target
 charts) and additionally because it grows the implementation surface
-superlinearly in the catalogue size.
+superlinearly in the catalog size.
+
+\section*{E.3 Theme-Organization Alternatives}
+\label{sec:solution:themes:alt}
+
+Two alternative organizations of the analytical content were considered and
+rejected.
+
+The first alternative groups content by user role rather than by analytical
+question: one theme each for passenger, operating company, and public-transport
+authority. The alternative was rejected because the most
+important analytical questions cross role boundaries. The school-aware
+demand question, for example, is asked by both passengers (which route
+serves my school?) and by the authority (which corridors carry the largest
+student loads?); a role-keyed organization would either duplicate the
+content across two themes or assign it arbitrarily to one of them, with the
+other role losing access to the question. A question-keyed organization
+sidesteps the duplication by anchoring each theme to a single question that
+all roles can ask.
+
+The second alternative groups content by visualization primitive: one
+theme for maps, one for time series, one for ranked bar charts, and so on.
+The alternative was rejected because end users do not formulate questions
+about chart types. A primitive-keyed catalog would force the user to
+recognize the chart type that answers their question before they could
+locate the relevant theme, which inverts the natural exploration order. A
+question-keyed catalog lets the user start from the question and reach
+the chart afterwards.
+
+In summary, the three organizations considered are:
+\begin{itemize}
+\item \textbf{One theme per user role} (rejected): cross-role questions would be duplicated or arbitrarily assigned.
+\item \textbf{One theme per visualization primitive} (rejected): inverts the natural exploration order, since the user would need to recognize the chart type before reaching the question.
+\item \textbf{Six themes, one per analytical question} (selected): each theme starts from a question end users naturally ask.
+\end{itemize}
+
+The chosen six-theme catalog makes the analytical question the
+top-level organizational unit and treats the supporting visualizations as
+subordinate to it. The per-theme visualization selection of
+Section~E.4 below respects this subordination by selecting each
+visualization to fit the question rather than the reverse.
+
+\section*{E.4 Per-Theme Visualization Selection}
+\label{sec:solution:viz:pertheme}
+
+The per-theme tables that follow use four column abbreviations: \textbf{S~O~A} = Student / Operator / Authority (persona breadth); \textbf{Data} = Phase-1 readiness (Ready / Effort / Ph2); and \textbf{Yi} categories abbreviated Sel (Select), Fil (Filter), Rec (Reconfigure), Enc (Encode), Abs (Abstract/Elaborate), Exp (Explore)~\cite{yi2007interaction}.
+
+\subsection*{Demand Analysis}
+\label{sec:solution:viz:demand}
+
+The Demand and Crowding theme asks when and where ridership
+concentrates. The four canvases are ordered by persona breadth
+(Table~\ref{tab:viz:demand}): the route-by-hour heatmap is the
+front-door chart because it serves all three personas (student
+crowding planning, operator fleet matching, authority supply
+diagnosis) with a single primitive; the route constellation follows
+as the second front-door chart, encoding four route attributes in one
+bubble scatter; the demand streamgraph and the bump chart serve
+operator and authority dwell-time analysis and sit lower in the
+order.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Demand and Crowding visualizations (ordered by persona breadth)}
+  \label{tab:viz:demand}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
+    \hline
+    \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
+    \hline
+    1.2 & Route $\times$ hour heatmap (hover $\rightarrow$ cell sparkline) & B (T4 + tooltip)  & S O A & Ready          & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs \\
+    1.3 & Route constellation (mean $\times$ variance $\times$ peak $\times$ archetype)  & A (T6 bubble)     & S O A & Effort         & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs\textperiodcentered Exp \\
+    1.1 & Demand streamgraph (fare class $\times$ 90 days)                  & A (T3 stacked)    & O A   & Ready          & Sel\textperiodcentered Fil\textperiodcentered Abs \\
+    1.4 & Bump chart, top-20 routes' rank over 12 weeks                    & B (T-bump)        & O A   & Ready          & Sel\textperiodcentered Fil\textperiodcentered Abs \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The four primitives are distinct (heatmap, bubble scatter,
+streamgraph, bump chart), satisfying the one-primitive-per-theme constraint; together they
+answer the theme's four sub-questions on different visual channels.
+The route-by-hour heatmap encodes magnitude through cell color
+(gradient orange ramp) and exposes day-to-day variance through a
+hover-revealed sparkline, so the chart carries two analytical signals
+on one canvas without crowding the visual. The route constellation
+upgrades a previously-considered ranked bar into a four-channel
+bubble scatter (position $\times$ position $\times$ size $\times$
+color); the upgrade is the project's reference example of the
+"multi-encoding bias" design rule. The demand streamgraph exposes the
+Tết shock as an organic narrowing of the river; the bump chart
+exposes ordinal rank changes (which routes are climbing or falling in
+importance) over twelve-week windows. The earlier-considered top-routes
+ranked bar, per-route headway distribution, and demand-variance
+quadrant were folded into the route constellation, which absorbs the
+volume, predictability, and peak-load dimensions into one canvas.
+
+\subsection*{School Demand}
+\label{sec:solution:viz:school}
+
+The School-Aware Demand theme asks how the educational institutions of the
+city shape network demand. The dominant view is the school-to-route
+assignment, which is naturally expressed as a treemap, with the school as
+the outer rectangle and the routes serving it as the inner rectangles. A
+parallel coordinates plot supports the classification of routes as
+school-bearing or non-school-bearing along multiple dimensions
+simultaneously.
+
+Attribution of fare events to specific schools rests on a three-step
+inference. The AFC fare class flags each ticket as student
+(\textit{HS-SV}) or non-student. Each ticket carries the boarding stop
+identifier, which resolves through the stop master to geographic
+coordinates. Schools are matched to stops by walking distance with a
+threshold of 400 meters (corresponding to a five-minute walk at
+typical urban speed), using a two-stage geocoding scheme: the eight
+largest universities are hand-verified against their published
+main-campus coordinates and serve as the Phase-1 ground truth;
+remaining schools are geocoded to district granularity through a
+name-and-address lookup and marked with a verified-or-stubbed flag in
+the school dimension. Student tickets whose boarding stop is more than
+400 meters from every known school are reported under an
+\textit{unattributed} bucket on the school-aware views. Phase-2 work
+completes the geocoding to at least 60 of 64 schools (criterion P4 in
+Section~\ref{sec:concl:future}). The school-to-route treemap and the
+school-routeness classifier operate at full strength on the
+hand-verified subset and at reduced confidence elsewhere; the user
+interface surfaces the verified-or-stubbed flag on every school view.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{School-Aware Demand visualizations (ordered by persona breadth)}
+  \label{tab:viz:school}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
+    \hline
+    \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
+    \hline
+    2.1 & School constellation (volume $\times$ peak\% $\times$ routes $\times$ equity color)  & A (T6 bubble)     & S O A & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs\textperiodcentered Exp \\
+    2.2 & School$\rightarrow$route treemap with drill                                            & A (T2 treemap)    & S O A & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs \\
+    2.4 & School proximity map with walking circles                                              & A (T9 point map)  & S A   & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Enc\textperiodcentered Abs\textperiodcentered Exp \\
+    2.3 & Weekly fare-class heatmap (student / non-student / side-by-side modes)                & A (T4 calendar)   & O A   & Ready   & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The four-canvas theme replaces an earlier seven-canvas draft that
+carried four overlapping school-to-route attribution views (ranked
+bar, bipartite graph, Sankey, treemap). The redundancy was resolved
+through the persona-breadth scoring of the design specification: the
+bipartite graph and the student-flow Sankey were dropped (the
+bipartite fails the entity-detail panel's Connect realization
+cleanly; the Sankey duplicates the treemap's hierarchical reading and
+falls below the three-persona breadth threshold), the school-routeness
+parallel coordinates was folded into the school constellation
+(parcoords required polyline tracing that fails the front-door
+readability test, while the constellation encodes the same four
+dimensions on a more readable primitive), and the top-schools ranked
+bar was replaced by the same constellation. The remaining four
+canvases each occupy a distinct visual primitive (bubble scatter,
+treemap, annotated point map, calendar heatmap), satisfying the one-primitive-per-theme constraint.
+
+The school constellation is the theme's principal primitive because it
+encodes four school attributes (total student boardings, morning-peak
+share, number of serving routes, equity flag) on a single bubble
+scatter, with quadrants self-labeling (universities versus
+high-peak schools versus underserved schools). The equity color
+channel surfaces the school-equity gap visible in the AFC student-fare
+share and is the analytical surface no surveyed
+tool~(Chapter~\ref{chapter:related}) currently provides for Ho Chi
+Minh City. The school$\rightarrow$route treemap exposes the
+hierarchical attribution (school $\rightarrow$ dominant routes) and
+supports a drill-in affordance that re-tiles the inner rectangles
+when a school cell is clicked. The proximity map and the weekly
+fare-class heatmap complete the theme with spatial-equity and
+temporal-pattern lenses respectively.
+
+\subsection*{Spatial Connectivity}
+\label{sec:solution:viz:spatial}
+
+The Spatial and Connectivity theme asks how the network covers the
+city and how it feeds Metro Line~1. The three canvases are ordered by
+persona breadth (Table~\ref{tab:viz:spatial}): the multi-layer hex
+map and the Bus$\leftrightarrow$Metro Sankey are the front-door
+charts (both serve all three personas with appropriate filter
+defaults); the accessibility isochrone follows as the deeper
+passenger-and-authority view. The former Voronoi and standalone
+district cartogram are folded into the multi-layer canvas as
+toggleable layers per the persona-breadth pruning of the design
+specification, on the rationale that they answered single-persona
+questions and were better served as layers on the existing map than as
+standalone canvases.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Spatial and Connectivity visualizations (ordered by persona breadth)}
+  \label{tab:viz:spatial}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
+    \hline
+    \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
+    \hline
+    3.1 & Multi-layer hex map (toggleable: density \textperiodcentered{} per-stop demand \textperiodcentered{} ghost stops \textperiodcentered{} district cartogram) & A (T9 hex)   & S O A & Effort  & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs\textperiodcentered Exp \\
+    3.2 & Bus$\leftrightarrow$Metro Sankey \textit{(indicative)}   & A (T10 Sankey)  & S O A & Caveat  & Sel\textperiodcentered Fil\textperiodcentered Abs \\
+    3.4 & Accessibility isochrone from chosen origin               & A (T17 iso)     & S A   & Effort  & Sel\textperiodcentered Fil\textperiodcentered Enc\textperiodcentered Abs\textperiodcentered Exp \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The multi-layer hex map is the theme's structural anchor. Hexagonal
+binning at H3 resolution~\cite{h3} controls for the district-area
+bias that a conventional choropleth would introduce; the city's
+twenty-four urban districts vary in area by more than an order of
+magnitude, so a uniform-area aggregation is the only spatially-honest
+encoding for boarding density. The four toggleable layers (route
+network polylines, hex density, per-stop demand dots, ghost-stop
+overlay, plus the folded-in district cartogram outline) keep the
+spatial frame constant while answering five sub-questions on one
+canvas; the alternative of five separate maps would fragment attention
+and prevent the cross-layer reading (whether ghost stops cluster in
+high-density areas, whether underserved districts overlap with
+ghost stops) that is the analytical purpose. The
+Bus$\leftrightarrow$Metro Sankey carries the intermodal-flow reading;
+the \textit{indicative} qualifier in the chart's title acknowledges
+that the Metro Line~1 arrival schedule is a hard-coded fallback,
+with the analytical bus side measured from the real GPS+AFC pipeline.
+The isochrone polygons answer the passenger-centric accessibility
+question (how far can a rider reach from a chosen origin in ten,
+twenty, or thirty minutes); the Voronoi tessellation previously
+considered for this slot answered a stop-centric catchment question
+that the multi-layer canvas's per-stop demand layer already surfaces.
+
+\subsection*{Financial Operations}
+\label{sec:solution:viz:financial}
+
+The Financial and Operations theme asks about revenue, ridership
+concentration, operator concentration, payment-channel adoption, and
+intervention impact. The four canvases (Table~\ref{tab:viz:financial})
+are ordered by persona breadth, with the operator constellation
+serving as the front door because it folds three previously-separate
+operator views (ranked scorecard, market-structure treemap,
+operator-route marimekko) into a single four-channel bubble scatter.
+This theme is the catalog's clearest case of operator-and-authority
+focus; the student persona has weak engagement with financial
+indicators, so the theme's breadth scoring is two-out-of-three on
+most charts.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Financial and Operations visualizations (ordered by persona breadth)}
+  \label{tab:viz:financial}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
+    \hline
+    \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
+    \hline
+    4.2 & Operator constellation (share $\times$ rev/trip $\times$ fleet $\times$ on-time color)  & A (T6 bubble)        & O A & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs\textperiodcentered Exp \\
+    4.1 & P\&L quadrant (waste $\times$ rev/trip $\times$ volume $\times$ company)                & B (T6 quadrant)      & O A & Effort  & Sel\textperiodcentered Fil\textperiodcentered Enc\textperiodcentered Abs\textperiodcentered Exp \\
+    4.3 & Payment-channel streamgraph                                                              & A (T3 streamgraph)   & O A & Ready   & Sel\textperiodcentered Fil\textperiodcentered Abs \\
+    4.4 & Free-fare student-day lift waterfall + synthetic-control overlay                         & B (T13 waterfall)    & O   & Effort  & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Abs \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The operator constellation upgrades a previously-considered operator
+scorecard (ranked bar) into a four-channel bubble scatter: market
+share on the X axis, average revenue per trip on the Y axis, fleet
+count as bubble size, and average on-time \% as bubble color
+(gradient green to red). This single chart answers both C-Q3 (peer
+ranking on shared corridors) and A-Q6 (operator market structure)
+that were previously split across two canvases, and folds in the
+Herfindahl concentration reading that was previously a separate
+market-structure treemap. The P\&L quadrant exposes the two-axis
+trade-off between ghost-trip waste and revenue per trip with the four
+interpretive regions self-labeling (high-waste-high-revenue overhead
+routes, low-waste-low-revenue social routes, and the bleeding-route
+quadrant in the bottom-left). The payment-channel streamgraph shows
+the cash dominance and digital growth over the 90-day window with a
+symmetric baseline treating each channel equally. The free-fare
+student-day lift waterfall is reframed from the original
+``Promotion DiD'' framing because the \texttt{promotion\_code} field
+is 99\% null in \texttt{afc.payments}; the free-pass fare class is
+populated in \texttt{afc.tickets.fare\_class} and serves as the
+proxy intervention event for the difference-in-differences design
+(\cite{abadie2005did}, with synthetic-control routes drawn from same-archetype
+peers per the methodology of Section~\ref{sec:foundations:methods:did}).
+
+\subsection*{Network Health}
+\label{sec:solution:viz:network}
+
+The Network Health and Performance theme asks about network-wide
+reliability and anomalies. Reliability is reported following the
+QoS-1, QoS-2, QoS-3 decomposition surveyed in
+Chapter~\ref{chapter:foundations}~\cite{srisakaokul2023}; anomalies
+are reported on an annotated timeline with an adjustable threshold.
+The theme holds at two canvases (the soft three-chart floor is
+relaxed for this theme) on the rationale that reliability and
+anomalies together provide the full analytical coverage of the
+network-health question; the former service-day calendar that
+appeared in earlier drafts duplicates the temporal reading of the
+network pulse and is cut per the persona-breadth pruning.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Network Health and Performance visualizations (ordered by persona breadth)}
+  \label{tab:viz:network}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
+    \hline
+    \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
+    \hline
+    5.2 & QoS small-multiples scatter (3 mini-scatters, one per QoS-1, QoS-2, QoS-3 dimension)~\cite{srisakaokul2023} & A (T1 small-mult) & S O A & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Abs \\
+    5.1 & Network pulse with anomaly bands + threshold slider                                                          & A (T3 timeline)   & O A   & Ready   & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Enc\textperiodcentered Abs \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The QoS small-multiples scatter is the theme's front-door chart
+because it serves all three personas with a single primitive: the
+student reads which dimension their route fails on, the operator
+diagnoses which dimension their fleet underperforms on, the authority
+sees the cross-operator pattern of weakness. The decomposition into
+three mini-scatters (one per QoS dimension) is the Tufte
+small-multiples primitive applied to a categorical decomposition; a
+single composite QoS score would hide the dimensional analysis that
+is the whole point of the QoS framework. The network pulse with
+anomaly bands carries the calendar-anchored anomaly reading: the long
+horizontal time axis surfaces the Tết and April-30 shocks, the
+adjustable threshold slider exposes the parameter dependence of
+anomaly detection rather than presenting it as a binary fact about
+the network. Earlier drafts considered a separate volume-composition
+treemap and a service-day calendar; the treemap moved to the
+Financial and Operations theme as the operator constellation, and the
+service-day calendar was cut as a single-persona view.
+
+\subsection*{Route Detail}
+\label{sec:solution:viz:routes}
+
+The Route Detail theme is the destination for single-route deep-dive
+analysis. Other themes use routes as units of cross-route comparison
+(the route-by-hour heatmap, the route constellation, the QoS
+small-multiples, the operator constellation, the P\&L quadrant);
+Route Detail is where the user goes once a specific route has been
+identified, typically via deep-link from clicking a route bubble in
+one of those cross-route views. The theme's three canvases decompose
+the chosen route across its stops and across its operating day
+(Table~\ref{tab:viz:routes}); per the persona-breadth ordering, the
+per-stop reliability box plot is the front-door view because it
+serves all three personas (student boarding-time anxiety, operator
+dispatch diagnosis, authority bottleneck detection), while the
+deeper operations views (dual-axis stop chart, Marey diagram) sit
+below.
+
+\begin{table}[!htbp]
+  \centering
+  \caption{Route Detail visualizations (ordered by persona breadth)}
+  \label{tab:viz:routes}
+  \footnotesize
+  \renewcommand{\arraystretch}{1.25}
+  \begin{tabularx}{\linewidth}{c X p{2.5cm} c c p{2.8cm}}
+    \hline
+    \textbf{\#} & \textbf{Chart and primitive} & \textbf{Tier (rubric)} & \textbf{Breadth} & \textbf{Data} & \textbf{Yi categories} \\
+    \hline
+    6.4 & Per-stop arrival-time box plot along the route                                                    & A (T5 box plot)     & S O A & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Abs \\
+    6.3 & Stop-by-stop boardings + door-dwell dual-axis bar+line                                            & B (T1 dual-axis)    & O A   & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Enc\textperiodcentered Abs \\
+    6.2 & Marey time-distance trip diagram + dwell heatmap composite~\cite{marey1885,linzeng2014}          & C (T-Marey)         & O A   & Phase 2 & Sel\textperiodcentered Fil\textperiodcentered Rec\textperiodcentered Abs \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+The per-stop arrival-time box plot is the canonical reliability
+primitive at the single-route level: each box surfaces the median,
+the inter-quartile range, the whiskers, and the outliers of arrival
+deviation at that stop, so wide IQR identifies the unreliable stops
+and outliers identify the days that warrant root-cause investigation.
+The stop-by-stop dual-axis chart pairs boarding magnitude (bar
+height) with door-open ratio (overlaid line) so the operator can
+cross-reference busy stops with skipped stops on the same chart. The
+Marey time-distance diagram~\cite{linzeng2014}, invented for railway
+scheduling by Marey in 1885~\cite{marey1885}, plots time on the
+horizontal axis and distance along the route on the vertical, with
+each trip drawn as a polyline; the slope encodes speed and the
+horizontal gap between consecutive polylines exposes bunching. The
+proposed system augments the Marey diagram with two additions drawn
+from Lin and Zeng~\cite{linzeng2014}: time-check stops are overlaid
+as horizontal reference bands because dwell at those stops is the
+dominant contributor to schedule variance, and consecutive trips whose
+headway falls below the bunching threshold are automatically
+annotated. A dwell-heatmap strip below the Marey shares the time
+axis and exposes per-stop dwell as a color gradient, completing the
+operational picture on a single canvas. The earlier-considered UMAP
+route constellation, set-intersection matrix, multi-route parallel
+coordinates, single-route table, pairwise stop-delay scatter, and
+period-comparison slopegraph were either folded into the cross-route
+constellation of the Demand and Crowding theme, replaced by the
+entity-detail panel, or cut on persona-breadth grounds; the design
+specification §11.6 records the disposition of each.
+
+The six visualization primitives considered and rejected are recorded
+in Section~E.1, where Table~\ref{tab:viz:rejected} pairs each rejection
+with the applicable chart and three worked comparisons on actual fare
+and route data.
+
+\section*{E.5 Methodology Side-Panels}
+\label{sec:solution:viz:methodology}
+
+A meta-view overlays every chart whose output depends on a model
+parameter, a clustering choice, a threshold, or a data caveat. The
+Methodology Side-Panel is an overlay on the existing chart canvas,
+not a separate canvas in the catalog; it exposes the algorithm, its
+inputs, its accuracy on a held-out sample, and the records excluded by
+any pre-processing rule. Charts with a Methodology Side-Panel include
+the anomaly detector (with its decomposition residual distribution
+and the threshold-slider sensitivity reading), the QoS scoring (with
+its on-path tolerance and rounding-box decimal per
+Section~\ref{sec:foundations:qos}), the school constellation (with
+its three-step attribution inference and the verified-or-stubbed flag
+per Section~\ref{sec:solution:viz:school}), the free-fare day lift
+waterfall (with its synthetic-control matching procedure per
+Section~\ref{sec:foundations:methods:did}), and the route constellation
+(with its archetype-clustering algorithm and stability index). The
+side-panel pattern follows the algorithm-transparency idea of Lin and
+Zeng~\cite{linzeng2014}, who compare four arrival-time algorithms on
+three measures and report each algorithm's inputs alongside its
+outputs.
+
+The two red-flag data caveats cataloged in
+Section~\ref{sec:solution:dataset:quality} and the design
+specification §12.3 are surfaced through the Methodology Side-Panel
+of their respective charts. Chart 3.2 Bus$\leftrightarrow$Metro
+Sankey (indicative) carries a side-panel block exposing the
+hard-coded Metro Line 1 schedule fallback drawn from MAUR's published
+spec, with a citation to the spec source; the chart title's
+\textit{indicative} qualifier carries forward into PNG and PDF exports
+of the chart. Chart 4.4 free-fare student-day lift waterfall carries
+a side-panel block explaining that the chart's intervention dimension
+is the free-pass fare class (populated in
+\texttt{afc.tickets.fare\_class}) rather than the
+\texttt{afc.payments.promotion\_code} field (which is 99\% null), and
+that the chart can extend to operator promotions in Phase 2 if the
+\texttt{promotion\_code} field is partially salvaged.
+
+Figure~\ref{fig:viz:methodpanel} shows the side-panel layout for the
+free-fare day lift waterfall as a concrete instance of the pattern.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.92\linewidth]{images/diagrams/viz_method_panel.png}
+\caption{Methodology Side-Panel layout, instantiated for chart 4.4 (free-fare student-day lift waterfall).}
+\label{fig:viz:methodpanel}
+\end{figure}

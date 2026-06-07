@@ -1,26 +1,26 @@
 \section{Coordinated Interaction}
 \label{sec:foundations:mcv}
 
-The interaction-design literature for analytical visualisation
+The interaction-design literature for analytical visualization
 converges on three reference points. Shneiderman's information-seeking
 mantra (\textit{overview first, zoom and filter, details on
 demand})~\cite{shneiderman1996eyes} sets the task-level architecture
 the proposed system's Hub--Theme--Chart--Entity-Detail layering
-follows. Yi, Kang, Stasko, and Jacko organise the interaction techniques
-of information visualisation into seven user-intent categories: Select,
+follows. Yi, Kang, Stasko, and Jacko organize the interaction techniques
+of information visualization into seven user-intent categories: Select,
 Explore, Reconfigure, Encode, Abstract/Elaborate, Filter, and
 Connect~\cite{yi2007interaction}. Heer and Shneiderman group those
 techniques into three umbrellas: data-and-view specification, view
 manipulation, and process-and-provenance support, with twelve concrete
 task types underneath~\cite{heer2012interactive}. Together the three
-references establish that an interactive chart is not characterised by
+references establish that an interactive chart is not characterized by
 its primitive (bar, scatter, heatmap) but by the set of user intents it
 supports: a chart that allows no Select, no Filter, and no Connect is a
 display widget rather than an analytical surface.
 
 Within this space, the Multiple Coordinated Views (MCV) pattern is one
 specific composition of the Yi categories. An MCV interface presents
-the same dataset through several visualisations simultaneously and
+the same dataset through several visualizations simultaneously and
 propagates user interaction in one view to all of the others. The
 defining property is coordination: selecting an entity in one chart,
 whether by clicking a mark or by dragging a rectangular selection
@@ -37,14 +37,14 @@ view, typically by dragging a rectangular brush over a region of the
 plot or by clicking individual marks. Linking is the immediate
 propagation of that selection to all coordinated views, so that the
 brushed records are visually distinguished in every view in which they
-appear. The combination is what gives MCV its analytical leverage: a
+appear. The combination is what gives MCV its analytical value: a
 brush drawn across a range of one axis in a parallel-coordinates plot
 becomes, in the linked map view, the highlighted spatial footprint of
 the records that fall within that range, without any explicit query
 having been written.
 
 The model imposes design trade-offs. Coordinated propagation is
-powerful but expensive: every view must re-render on every brush event,
+effective but expensive: every view must re-render on every brush event,
 which can degrade interactive latency on large datasets. The pattern
 also presupposes that several sibling charts are visible on the screen
 at the same time; user interfaces that render one chart per canvas
@@ -67,14 +67,14 @@ charts whose relationship to the current selection would be incidental.
 Section~\ref{sec:solution:interaction} selects from this design space.
 It retains MCV as intellectual lineage and adopts the Yi (2007)
 seven-category taxonomy as the criterion for chart inclusion (every
-chart in the catalogue must support Select, Filter, and a Connect
-realisation as a minimum). However, the proposed system implements
+chart in the catalog must support Select, Filter, and a Connect
+realization as a minimum). However, the proposed system implements
 the Connect category not as simultaneous cross-chart propagation but as
 a single click-to-entity-detail panel: clicking any entity in any
 chart opens a side panel containing a multi-chart summary of that
-entity. This realisation is consistent with the system's one-chart-per-canvas
+entity. This realization is consistent with the system's one-chart-per-canvas
 shell, which would render MCV's simultaneous-brushing semantics
 invisible to the reader, and is grounded in the Heer and
 Shneiderman~\cite{heer2012interactive} observation that the
-view-manipulation umbrella admits several Connect realisations of
+view-manipulation umbrella admits several Connect realizations of
 different visibility and cost.

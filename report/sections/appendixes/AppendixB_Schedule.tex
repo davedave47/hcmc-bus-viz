@@ -2,7 +2,7 @@
 \label{appendix:schedule}
 \addcontentsline{toc}{chapter}{Appendix B: Detailed Schedule}
 
-This appendix expands the Phase Two roadmap of Section~\ref{sec:future:roadmap} with per-phase outputs, per-phase acceptance criteria, a risk register, and the planned user-evaluation timeline.
+This appendix expands the Phase Two roadmap of Section~\ref{sec:concl:future} with per-phase outputs, per-phase acceptance criteria, a risk register, and the planned user-evaluation timeline.
 
 \section*{B.1 Deliverables and Acceptance Criteria per Phase}
 
@@ -66,10 +66,10 @@ Table~\ref{tab:appB:risk} records the six risks tracked across Phase Two. Likeli
 \hline
 \textbf{Risk} & \textbf{Likelihood} & \textbf{Impact} & \textbf{Mitigation} \\
 \hline
-Chart-load latency exceeds the interactive budget on the heatmap or hex-grid endpoint. & Medium & High & Pre-materialise Gold aggregate tables; restrict the analytical surface to read from the aggregate layer only. \\
+Chart-load latency exceeds the interactive budget on the heatmap or hex-grid endpoint. & Medium & High & Pre-materialize Gold aggregate tables; restrict the analytical surface to read from the aggregate layer only. \\
 GPS pull is delayed or unavailable beyond P9. & Medium & Medium & Keep the one-day local GPS extract as a fallback; defer the full reliability scorecard until the pull lands. \\
 School geocoding completes below the 60-of-64 target. & Medium & Medium & Backfill to district-level approximation and mark each school with a verified-or-stubbed flag. \\
-Visualisation primitives fail to render at catalogue scale. & Low & High & Render each primitive on the largest expected entity set during P2; pre-bin or down-sample where needed. \\
+Visualization primitives fail to render at catalog scale. & Low & High & Render each primitive on the largest expected entity set during P2; pre-bin or down-sample where needed. \\
 Schema mismatch between AFC and GPS expands during Phase Two. & Medium & Medium & Treat the AFC \texttt{route\_no} as canonical; tag routes as GPS-only or AFC-only on the route dimension. \\
 Loss of access to operational data during user evaluation. & Low & High & Snapshot the warehouse to a fixed read-only build before the evaluation window opens. \\
 \hline

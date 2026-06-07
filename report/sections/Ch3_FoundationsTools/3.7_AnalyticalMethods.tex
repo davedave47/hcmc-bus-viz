@@ -2,12 +2,12 @@
 \label{sec:foundations:methods}
 
 The proposed system applies several analytical and statistical methods
-beyond the visualisation primitives and the warehouse architecture.
+beyond the visualization primitives and the warehouse architecture.
 Algorithmic parameters and implementation details are left to the
 per-chart Methodology Side-Panel of
 Section~\ref{sec:solution:viz:methodology}.
 
-\noindent\textbf{MoSCoW Prioritisation.}
+\noindent\textbf{MoSCoW Prioritization.}
 The MoSCoW scheme partitions candidate requirements into four tiers:
 Must have, Should have, Could have, and Won't have (this time).
 Section~\ref{sec:solution:problem:questions} uses the scheme to tag
@@ -56,13 +56,13 @@ treatment effect under the parallel-trends assumption.
 When no clean control group exists in the data, a matched comparison
 set is constructed from untreated entities whose pre-treatment
 trajectory resembles the treated entity. The proposed system uses a
-$k$-nearest-neighbour matched-control heuristic in the UMAP archetype
+$k$-nearest-neighbor matched-control heuristic in the UMAP archetype
 space of Section~\ref{sec:solution:viz:routes}: each treated route is
-matched against its $k=5$ nearest neighbours of the same archetype,
+matched against its $k=5$ nearest neighbors of the same archetype,
 and the average of their pre-and-post trajectories serves as the
 counterfactual. This heuristic adapts the matched-comparison idea to
 the UMAP embedding; it does not implement Abadie's convex-weighted
-synthetic-control estimator \cite{abadie2005did}, which optimises
+synthetic-control estimator \cite{abadie2005did}, which optimizes
 donor weights on the pre-treatment trajectory to satisfy a
 parallel-trends criterion that is not verified here.
 Figure~\ref{fig:foundations:did} illustrates the construction.
@@ -77,7 +77,7 @@ Figure~\ref{fig:foundations:did} illustrates the construction.
 \subsection{Concentration Index}
 \label{sec:foundations:methods:hhi}
 
-The Herfindahl-Hirschman Index (HHI) summarises market concentration
+The Herfindahl-Hirschman Index (HHI) summarizes market concentration
 as the sum of squared market shares across firms
 \cite{rhoades1993herfindahl}. For $n$ firms with shares $s_1, s_2,
 \dots, s_n$ (each $s_i$ between 0 and 1), the index is

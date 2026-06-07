@@ -1,18 +1,18 @@
-\section{Visualisation Primitives}
+\section{Visualization Primitives}
 \label{sec:foundations:primitives}
 
-A visualisation primitive is a reusable chart form with a fixed visual
+A visualization primitive is a reusable chart form with a fixed visual
 grammar: a defined set of axes, marks, and encodings that together
-support a particular kind of analytical reading. The catalogue below
+support a particular kind of analytical reading. The catalog below
 introduces the primitives drawn on later in the report. Each primitive
 is described in terms of what it is, when it is used, and what kind of
 analytical claim it supports; the specific choice of which primitive
 serves which question in the platform is deferred to Chapter
-\ref{chapter:solution}.
+\ref{chapter:design}.
 
 \begin{table}[!htbp]
 \centering
-\caption{Visualisation primitives selected for the platform}
+\caption{Visualization primitives selected for the platform}
 \label{tab:foundations:primitives}
 \footnotesize
 \renewcommand{\arraystretch}{1.25}
@@ -39,31 +39,29 @@ Table~\ref{tab:foundations:primitives} lists the ten primitives selected
 for the platform together with the analytical question each one
 supports. Three further primitives (pie chart, three-dimensional bar
 chart, choropleth keyed to administrative regions) were considered and
-rejected; the rejection reasons are catalogued in
+rejected; the rejection reasons are cataloged in
 Section~\ref{sec:solution:viz:alt} where each is paired with the chart
-in the catalogue that displaces it. The detailed reasoning per
+in the catalog that displaces it. The detailed reasoning per
 primitive (when each is chosen for which theme) appears in
 Section~\ref{sec:solution:viz}.
 
 \subsection{Chart Selection}
 \label{sec:foundations:primitives:rubric}
 
-The catalogue in Table~\ref{tab:foundations:primitives} answers \textit{what
+The catalog in Table~\ref{tab:foundations:primitives} answers \textit{what
 primitives exist}. A separate question is \textit{which primitive to choose
 for which analytical task}. The mapping is not an aesthetic preference;
 it follows from a body of perception research and task-classification
 theory that constrains the chart designer's choice once the analytical
 task and the data shape are fixed.
 
-\subsubsection*{Theoretical Foundations}
-
-Four lines of evidence ground the rubric.
+\noindent\textbf{Theoretical foundations.} Four lines of evidence ground the rubric.
 
 \textbf{Perception ranking of visual channels.}
 Elementary perceptual tasks chart readers perform are ordered from
 most to least accurate as position along a common scale, position
 along non-aligned scales, length, direction (slope or angle from
-vertical), angle, area, volume, and colour saturation
+vertical), angle, area, volume, and color saturation
 \cite{cleveland1984}. Primitives that encode the analytical quantity
 through position (bar, dot, scatter) are read more accurately than
 primitives that encode it through area (treemap, bubble) or angle
@@ -89,7 +87,7 @@ volume rank below position and length in the perception ordering
 \cite{cleveland1984}; every chart whose visual encoding is bar length
 must start its value axis at zero \cite{knaflic2015}; and every chart
 must surface its finding within three to eight seconds of first
-contact through an action title and a single focal accent colour
+contact through an action title and a single focal accent color
 \cite{knaflic2015}.
 
 \textbf{Multiple Coordinated Views (MCV).}
@@ -102,12 +100,10 @@ have no clean way to encode a sparse selection (Sankey,
 polar-coordinate radar) and admits them only as single charts that
 do not coordinate with siblings.
 
-\subsubsection*{Decision Matrix}
-
-The rubric prescribes one primitive per combination of analytical task
+\noindent\textbf{Decision matrix.} The rubric prescribes one primitive per combination of analytical task
 and data shape. The eighteen tasks group into five families
 (comparison, distribution and relationship, temporal, spatial, and
-flow / set / decomposition). Each family is summarised below as a
+flow / set / decomposition). Each family is summarized below as a
 small table; an explanatory paragraph precedes each table. Throughout,
 \emph{T$n$} denotes the rubric row referenced from the per-theme
 selection of Section~\ref{sec:solution:viz}.
@@ -133,7 +129,7 @@ T1  & Compare magnitudes (top-$k$)         & Ranked horizontal bar              
 T2  & Show hierarchical composition         & Treemap                                                        & Pie: loses hierarchy; donut: arc length unreliable \\
 T7  & Reveal multi-dimensional structure     & Parallel coordinates with brushing                             & Radar: one chart per entity; heatmap: loses entity identity \\
 T8  & Reveal cluster structure in high-dim   & 2-D UMAP projection scatter~\cite{umap}                        & PCA: linear only; t-SNE: no global structure; dendrogram: forces hierarchy \\
-T12 & Show two-period change                 & Slopegraph (paired ranked bar if many crosses)                 & Bar with delta colour: compresses change to one number \\
+T12 & Show two-period change                 & Slopegraph (paired ranked bar if many crosses)                 & Bar with delta color: compresses change to one number \\
 \hline
 \end{tabularx}
 \end{table}
@@ -197,7 +193,7 @@ geometry.
 visual area of each district is proportional to a chosen numeric
 (typically total boardings) rather than to physical land area.
 Surfaces the question \emph{which district carries the most volume}
-without forcing the reader to mentally normalise by physical size.
+without forcing the reader to mentally normalize by physical size.
 \item \textbf{T16, Voronoi tessellation}. Partitions the plane
 into polygons such that each polygon contains the area closer to its
 associated point (stop) than to any other point. Answers \emph{which
@@ -211,7 +207,7 @@ in origin and destination.
 \end{itemize}
 
 \textbf{Family E: Flow, sets, and decomposition (T10, T11, T13, T18).}
-The remaining four primitives serve specialised analytical readings:
+The remaining four primitives serve specialized analytical readings:
 flow between source and sink categories (T10), multi-valued set
 membership (T11), additive decomposition of a single change (T13),
 and variable-width composition across two categorical axes (T18).
@@ -241,9 +237,7 @@ share within the first. Preferred over a stacked bar of equal widths
 when both axes carry meaningful magnitude.
 \end{itemize}
 
-\subsubsection*{Overlay Rules}
-
-Four constraints overlay the matrix and apply across every row.
+\noindent\textbf{Overlay rules.} Four constraints overlay the matrix and apply across every row.
 
 \begin{itemize}
 \item Pie, donut, and three-dimensional encodings are excluded under
@@ -265,12 +259,10 @@ forces every chart inside a theme to answer with a different lens
 rather than the same lens on different data.
 \end{itemize}
 
-\subsubsection*{Use of the Rubric}
-
-Section~\ref{sec:solution:viz} cites a row of
+\noindent\textbf{Use of the rubric.} Section~\ref{sec:solution:viz} cites a row of
 the rubric (Tables~\ref{tab:foundations:rubric:compare} and
 \ref{tab:foundations:rubric:time} and the spatial paragraphs that follow)
-for each chart canvas in the catalogue. The per-theme tables in that section trace every chart to
+for each chart canvas in the catalog. The per-theme tables in that section trace every chart to
 the row that prescribes it; cases in which two charts trace to the
 same row are admitted only when the one-primitive-per-theme constraint permits it (the two
 charts answer different analytical questions in different themes,

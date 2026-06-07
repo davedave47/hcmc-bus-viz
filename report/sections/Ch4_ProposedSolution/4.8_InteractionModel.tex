@@ -1,15 +1,15 @@
 \section{Interaction Model}
 \label{sec:solution:interaction}
 
-An analytical surface composed of independent visualisations is less
+An analytical surface composed of independent visualizations is less
 useful than the same surface with coordinated interactions across
-visualisations. The user expects three behaviours: a click on an
+visualizations. The user expects three behaviors: a click on an
 analytical entity opens a multi-chart summary in one place; an unusual
 point carries an explanatory hint; the user's filter and selection
 choices persist as they navigate through the theme. The proposed
 system meets these expectations by composing three interaction
 patterns into a single layer. The first is the click-to-entity-detail
-panel, which realises the Connect category of the Yi (2007)
+panel, which realizes the Connect category of the Yi (2007)
 seven-category taxonomy~\cite{yi2007interaction} without simultaneous
 cross-chart propagation. The second is a set of visual-storytelling
 invariants applied per chart. The third is a theme-scoped state model
@@ -31,13 +31,13 @@ simultaneously rendered siblings is not visible to the reader. A
 coordination model that requires invisible state changes to several
 charts the user cannot currently see would expend implementation
 complexity for no perceptible analytical gain. The literature
-recognises that the Connect intent admits several realisations of
+recognizes that the Connect intent admits several realizations of
 different visibility and
 cost~\cite{heer2012interactive,yi2007interaction}; the proposed system
-selects the simplest realisation that the one-chart-per-canvas shell
+selects the simplest realization that the one-chart-per-canvas shell
 can support.
 
-The selected realisation is the click-to-entity-detail panel. Every
+The selected realization is the click-to-entity-detail panel. Every
 clickable analytical entity in any chart, that is, a route, a stop, a
 school, an operating company, a calendar day, a time-of-day cell, a
 hexagonal-bin cell, or a vehicle, has the same primary click
@@ -71,7 +71,7 @@ QoS scorecard for the route. The selection \texttt{\{route: 152\}} is
 written to the theme's selection dictionary. The user closes the
 panel and navigates within the theme to chart 1.3 (route constellation);
 the constellation loads with route 152's bubble already highlighted
-and the surrounding bubbles (the nearest archetype neighbours) brought
+and the surrounding bubbles (the nearest archetype neighbors) brought
 to the foreground. No chart re-rendered while invisible; every chart
 renders the active selection on first paint.
 
@@ -105,10 +105,10 @@ intermediate empty state.
 \label{sec:solution:interaction:storytelling}
 
 Visual storytelling is the second composed pattern. The proposed
-system adopts the three storytelling devices catalogued in
+system adopts the three storytelling devices cataloged in
 Section~\ref{sec:foundations:storytelling} (three-act spine, action
 title with supporting subtitle, three-to-eight-second readability
-gate) as enforceable invariants on every chart in the catalogue, and
+gate) as enforceable invariants on every chart in the catalog, and
 adds a fourth: a zero-baseline rule for any chart whose visual
 encoding is bar length. The zero-baseline rule follows from the same de-clutter
 principle and rules out a known misreading mechanism in published bar
@@ -120,20 +120,18 @@ titled \emph{``Route 152 carries four times the median morning-peak
 ridership''} with the subtitle \emph{``Boardings per hour, top thirty
 routes, weekdays January to March 2026''} reads to its finding within
 seconds; the title carries the conclusion, the subtitle carries the
-variables. The default palette is muted; saturated colour marks the
+variables. The default palette is muted; saturated color marks the
 single element the title points at; on-chart annotations (a label, a
 circle, a reference line) underline the same finding inline.
 
-The four invariants are a uniform contract across the catalogue. A
-single shared chart-style helper applies the muted-grey-with-single-
+The four invariants are a uniform contract across the catalog. A
+single shared chart-style helper applies the muted-gray-with-single-
 accent palette, suppresses unnecessary grid lines and chart borders,
 enforces the title-and-subtitle hierarchy, and enforces the zero
 baseline on bar-encoded charts at chart-construction time rather than
 at rendering time.
 
-\subsubsection*{One Primitive per Theme}
-
-A sixth invariant constrains the catalogue at the theme level rather
+\noindent\textbf{One primitive per theme.} A sixth invariant constrains the catalog at the theme level rather
 than at the per-chart level: within any single analytical theme, no two
 chart canvases use the same visual primitive from the Chart Selection
 Rubric (Section~\ref{sec:foundations:primitives:rubric}). If the same primitive is required
@@ -162,7 +160,7 @@ different primitive from the rubric. Second, the constraint forces the
 designer to use the full breadth of the rubric: a theme that comprises
 only ranked bars and stacked timelines is not analytically rich enough
 to occupy its theme slot. Third, the constraint is theme-scoped, not
-catalogue-scoped: the same primitive is freely reused across themes
+catalog-scoped: the same primitive is freely reused across themes
 (four ranked bars across four themes form consistent visual
 vocabulary~\cite{liu2022}; two ranked bars within one theme is
 duplication).
@@ -172,7 +170,7 @@ and Crowding theme carries an action title above the chart, "Thirty
 routes carry eighty percent of morning crowding and all peak at the
 same hour", and a supporting subtitle below it, "Boardings per hour,
 top thirty routes by volume, weekdays January to March 2026". The body
-of the heatmap uses a muted blue-to-grey palette for the bulk of cells;
+of the heatmap uses a muted blue-to-gray palette for the bulk of cells;
 the cells in the morning-peak column of the thirty highest-volume
 routes are rendered in a saturated orange that matches the action
 title. A short text annotation arrow points from the title to the
@@ -185,7 +183,7 @@ chart simultaneously, without having to scan the matrix unaided.
 The entity-detail panel is the load-bearing object of the coordination
 model of Section~\ref{sec:solution:interaction:mcv}. Its design
 parameters fix the system's interaction grammar more than any
-individual chart does, because every chart in the catalogue defers to
+individual chart does, because every chart in the catalog defers to
 the panel on the question \textit{``what happens when the user clicks''}.
 The panel surfaces in two complementary forms. The default form is a
 side panel that slides in from the right and occupies approximately
@@ -216,12 +214,12 @@ provenance flag where applicable (the school dimension uses this flag
 because only the eight largest universities are hand-verified per
 Section~\ref{sec:solution:themes:six}), and a single close button. The
 footer carries two affordances: an export-as-PDF button that captures
-the panel content and a copy-shareable-link button that serialises the
+the panel content and a copy-shareable-link button that serializes the
 active state into the browser URL so the panel content can be
 reproduced from a hyperlink (this satisfies functional requirement
 R10).
 
-Two universal close affordances are honoured: clicking the close button
+Two universal close affordances are honored: clicking the close button
 in the header dismisses the panel, and clicking on empty space outside
 the panel also dismisses it. Re-clicking on a different entity while
 the panel is open replaces the panel content with the new entity
@@ -254,7 +252,7 @@ small number of contracts. The coordination model
 every click on a clickable entity in any chart opens the
 entity-detail panel for the clicked entity. The visual-storytelling
 invariants (Section~\ref{sec:solution:interaction:storytelling}) fix
-the chart-construction contract: every chart in the catalogue carries
+the chart-construction contract: every chart in the catalog carries
 an action title, a supporting subtitle, a muted default palette with a
 single saturated accent on the focal element, and a zero baseline on
 any bar-encoded chart. The entity-detail panel
@@ -270,17 +268,17 @@ dictionary survives navigation between charts within the theme, so the
 next chart the user opens always renders against the user's active
 context on its first paint. Cross-theme navigation occurs only through
 the panel's footer deep-link, which migrates the relevant state slice
-to the destination theme. This compositional structure realises the
+to the destination theme. This compositional structure realizes the
 Yi (2007) Connect category through the panel and through state
 persistence, rather than through simultaneous cross-chart propagation;
 the result is a coherent surface in which the user can move from a
 network-wide question to a single-entity answer without leaving the
 theme and without losing the context that brought them there. The
-interaction layer is what makes the catalogue of
+interaction layer is what makes the catalog of
 Section~\ref{sec:solution:viz} an analytical platform rather than a
 collection of independent charts.
 
-Four interaction patterns were considered and rejected in favour of the composition above; the cases are catalogued in Appendix~E, Section~E.2.
+Four interaction patterns were considered and rejected in favor of the composition above; the cases are cataloged in Appendix~E, Section~E.2.
 
 \subsection{Rationale}
 \label{sec:solution:summary}
@@ -288,11 +286,11 @@ Four interaction patterns were considered and rejected in favour of the composit
 The proposed system responds to the requirements of Section~\ref{sec:solution:problem} through the following composition of decisions.
 
 \begin{enumerate}
-\item The Medallion warehouse architecture (Section~\ref{sec:solution:architecture}) keeps the analytical query path within the latency budget (N1) and ensures consistent identifier reconciliation across all themes (N3, N4).
+\item The Medallion warehouse architecture (Section~\ref{sec:arch:medallion}) keeps the analytical query path within the latency budget (N1) and ensures consistent identifier reconciliation across all themes (N3, N4).
 \item The six analytical themes (Section~\ref{sec:solution:themes}) cover the functional capabilities R1 through R10 by partitioning the analytical surface along user-question boundaries rather than user-role boundaries.
-\item The visualisation catalogue (Section~\ref{sec:solution:viz}) selects established primitives whose suitability is grounded in the literature surveyed in Chapter~\ref{chapter:foundations}.
-\item The interaction model (click-to-entity-detail panel as the Yi (2007) Connect realisation, visual storytelling as per-chart invariants, theme-scoped state for navigation continuity) bounds the user's cognitive load by routing every entity click to a single panel and reserving cross-theme navigation for the panel's explicit deep-link footer.
-\item The validity boundaries of Section~\ref{sec:solution:validity} are encoded in the catalogue, so no chart makes a claim the underlying data cannot support.
+\item The visualization catalog (Section~\ref{sec:solution:viz}) selects established primitives whose suitability is grounded in the literature surveyed in Chapter~\ref{chapter:foundations}.
+\item The interaction model (click-to-entity-detail panel as the Yi (2007) Connect realization, visual storytelling as per-chart invariants, theme-scoped state for navigation continuity) bounds the user's cognitive load by routing every entity click to a single panel and reserving cross-theme navigation for the panel's explicit deep-link footer.
+\item The validity boundaries of Section~\ref{sec:solution:validity} are encoded in the catalog, so no chart makes a claim the underlying data cannot support.
 \end{enumerate}
 
-The composition is the principal contribution of Phase One. Chapter~\ref{chapter:implementation} documents the parts of the proposed system that are already implemented; Chapter~\ref{chapter:future} sketches the implementation plan for the remainder.
+The composition is the principal contribution of Phase One. Chapter~\ref{chapter:implementation} documents the parts of the proposed system that are already implemented; Chapter~\ref{chapter:conclusion} sketches the implementation plan for the remainder.

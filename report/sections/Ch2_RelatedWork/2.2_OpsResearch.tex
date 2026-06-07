@@ -21,12 +21,12 @@ offline; the indicators are reported as descriptive statistics across the studie
 rather than as inputs to a real-time alerting system.
 
 Figure~\ref{fig:related:qos} illustrates the three indicators on a
-stylised route trajectory.
+stylized route trajectory.
 
 \begin{figure}[!htbp]
 \centering
 \includegraphics[width=0.96\linewidth]{images/diagrams/related_qos_panels.png}
-\caption{The three QoS indicators on a stylised route trajectory.}
+\caption{The three QoS indicators on a stylized route trajectory.}
 \label{fig:related:qos}
 \end{figure}
 
@@ -48,16 +48,16 @@ Derevitskiy and colleagues \cite{derevitskiy2016} present an aggregate-based met
 treats the urban bus fleet as a distributed traffic-sensing substrate. The method
 aggregates raw GPS pings emitted by the bus fleet into edge-speed estimates over the
 city's road graph; where no bus currently operates on a given road segment, the method
-propagates an estimate from neighbouring segments using a macroscopic travel-time model
+propagates an estimate from neighboring segments using a macroscopic travel-time model
 that incorporates the effect of traffic signals and the time of day. The reported mean
-absolute percentage error is approximately 20 percent at distances under 15 kilometres,
+absolute percentage error is approximately 20 percent at distances under 15 kilometers,
 which the authors argue is acceptable for many planning-support applications.
 
 The construction is relevant to the present project because the same GPS feed used to
 compute the reliability indicators of Section \ref{sec:related:ops:qos} could, in
 principle, be used to derive a city-wide traffic-speed map at no additional data cost.
 The Phase One scope of the present project does not implement this construction; the
-construction is recorded in Chapter \ref{chapter:future} as a candidate extension that
+construction is recorded in Chapter \ref{chapter:conclusion} as a candidate extension that
 becomes feasible once the full GPS time window of the source dataset is available for
 processing.
 
@@ -76,7 +76,7 @@ trips on the same route.
 
 Two ideas from the study transfer to the present project. The first is the construction
 of a per-trip time-distance trajectory, which serves as the data primitive behind one of
-the visualisation primitives catalogued in the present report (see Section
+the visualization primitives cataloged in the present report (see Section
 \ref{sec:foundations:primitives}). The second is the empirical observation that
 stop-level dwell time carries an unusually large share of the variance in arrival error;
 this observation motivates the inclusion of stop-level dwell measurement among the

@@ -4,12 +4,12 @@
 Analytical workloads on operational data benefit from separating
 concerns into discrete layers between the raw inputs and the
 analytical surface. The Medallion pattern from
-\cite{databricksMedallion} popularised this idea as three layers ,
+\cite{databricksMedallion} popularized this idea as three layers ,
 Bronze, Silver, and Gold; and the proposed system adopts that
 three-tier vocabulary at the architectural level. The internal
-organisation of the Silver tier and the materialisation policy of
+organization of the Silver tier and the materialization policy of
 the Gold tier are design choices the project makes inside the
-canonical layout, and Section~\ref{sec:solution:architecture}
+canonical layout, and Section~\ref{sec:arch:medallion}
 records the specific instantiation. The canonical three-layer form
 gives each of three recurring concerns (schema heterogeneity,
 identifier reconciliation, and query-time efficiency) a single home
@@ -24,7 +24,7 @@ applied to make the data readable; its concern is schema heterogeneity,
 that is, accepting whatever shape each source happens to emit without
 forcing a uniform model on it at ingestion time. The Silver layer applies
 conformed definitions: entities that appear in multiple sources under
-different identifiers are reconciled, dates and times are normalised to a
+different identifiers are reconciled, dates and times are normalized to a
 common representation, and the data is cast into the shape an analyst
 would draw on a whiteboard. Its concern is identifier reconciliation. The
 Gold layer holds aggregated, query-ready tables that correspond directly
@@ -43,10 +43,10 @@ workload, in which analysts write ad-hoc Structured Query Language (SQL)
 against a flexible warehouse, tolerates on-demand aggregation: the
 warehouse cannot pre-compute every possible query, so it pre-computes a
 small set of conformed facts and dimensions and lets each user query
-materialise its own result. A fixed analytical catalogue, in which a
+materialize its own result. A fixed analytical catalog, in which a
 known set of charts is rendered by an application, rewards
 pre-computation: every chart corresponds to a known query, and the cost
-of materialising the result of that query once at build time is repaid
+of materializing the result of that query once at build time is repaid
 many times over each time a user opens the chart.
 
 A second trade-off concerns the number of layers itself. Too few layers
@@ -55,7 +55,7 @@ schema change in one source forces edits across the entire pipeline and
 the meaning of a column at the analytical surface depends on details of
 how the source emits it. Too many layers adds maintenance cost without
 analytical value: each additional layer introduces another set of
-materialised tables to keep in sync with the layers above and below it,
+materialized tables to keep in sync with the layers above and below it,
 without necessarily improving the queries the analytical surface
 ultimately serves. A practical architecture introduces exactly as many
 layers as are needed to give each concern a single home, and no more.
@@ -67,12 +67,12 @@ layers as are needed to give each concern a single home, and no more.
 \label{fig:foundations:layered}
 \end{figure}
 
-Chapter \ref{chapter:solution} describes the specific Medallion
+Chapter \ref{chapter:architecture} describes the specific Medallion
 instantiation chosen for the present project, in which the Silver
-tier is internally organised as a dimensional model (one dimension
+tier is internally organized as a dimensional model (one dimension
 table per conformed entity plus narrow fact views shaped through
-them) and the Gold tier is materialised as pre-computed aggregate
-tables --- one per chart in the analytical catalogue, so that every
+them) and the Gold tier is materialized as pre-computed aggregate
+tables --- one per chart in the analytical catalog, so that every
 chart can be served by a single inexpensive query.
-Section~\ref{sec:solution:architecture} records the seven Gold tables
+Section~\ref{sec:arch:medallion} records the seven Gold tables
 and the twelve Silver dimensions that compose this instantiation.

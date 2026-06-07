@@ -12,8 +12,8 @@
 > - `pipeline/` — the **data pipeline** (dbt + Dagster over BigQuery/DuckDB). Designed; build pending.
 > - `demo/` — the Phase-1 prototype (FastAPI + Jinja + HTMX + Plotly). The reference the new
 >   code ports from and the current source of `db/bus.duckdb`. Superseded once the new stack reaches parity.
-> - `report/` — the Phase-1 report (LaTeX, xelatex + biber). See §9.
-> - `deck/` — Phase-1 defence deck: `capstone_defence.pptx` (source of truth) + `.pdf` + assets.
+> - `report/` — the report (LaTeX, xelatex + biber): Ch1–5 foundation + Ch6–9 Phase-2 scaffold. See §9.
+> - `deck/` — defence deck: `capstone_defence.pptx` (source of truth) + `.pdf` + assets.
 > - `docs/specs/chart-catalogue.md` — the canonical 20-chart catalogue + interaction model
 >   (**chart truth**; §5 summarises it). `docs/specs/bigquery-deployment.md` — GCP setup + env contract.
 > - `docs/conventions/` — `report-writing.md` + `diagrams.md` (draw.io; sources in `docs/diagrams/`).
@@ -56,17 +56,42 @@ cd frontend && pnpm dev          # http://localhost:5173
 
 To free a port use `fuser -k <port>/tcp` (NOT `pkill -f uvicorn` — self-match risk).
 
+### Phase-2 grading targets (graduation thesis)
+
+Phase 2 is the **graduation project (đồ án tốt nghiệp)**, graded out of 100 by both a **reviewer
+(phản biện)** and a **council member (hội đồng)** on near-identical weightings (sources:
+`docs/project/Rubric1.md` reviewer, `docs/project/Rubric2.md` council). Delivery and evaluation
+dominate, so every backlog item ties to one of these and the Definition of Done is written to satisfy them:
+
+- **Delivered results vs the committed task — 50 pts (both).** ≥95% of the task built and working
+  earns full marks; the single largest lever. Scope the work to *finish* a well-defined task, not
+  to maximise breadth.
+- **Product evaluation — 10 pts (both).** The built system is tested or experimented against its
+  requirements; every delivered feature carries an evaluation.
+- **Real-world benefits with concrete evidence — 5 pts (both).**
+- **Multiple solutions + justified choice — 5 pts (both).** Capture alternatives + rationale for
+  each significant tool/chart/architecture decision (reviewer Part II also rewards an architecture
+  pattern justified against other patterns, and modeling across multiple software views).
+- **Presentation — council 30 (slides 10 · delivery 10 · defense Q&A 10), reviewer 15 (5/5/5).**
+- **Report — writing 10 + references (≥5, properly cited) 5** (reviewer Part III).
+- **Bonus 10** (publication, awards, outstanding results).
+
+Work is run in **Scrum** (`docs/scrum/`): a rubric-tagged backlog, a Definition of Done with four
+per-sprint deliverable tracks (code/tools · documents · report · deck), and weekly sprints. The
+weekly deck reports to the supervisor; the decks distill into the final defense deck.
+
 ---
 
 ## 1 · Problem
 
-> HCMC's bus network produces ~17.8 M AFC boarding events per quarter + ~50 days of GPS
-> telemetry per release window, yet **no accessible tool turns either stream into operational
+> HCMC's bus network produces a **continuously-growing** stream of AFC boarding events and GPS
+> telemetry (the current local sample is ~17.9 M AFC rows, but production ingests far more over
+> time — see invariant #14), yet **no accessible tool turns either stream into operational
 > insight** for the people the network serves. Existing apps (BusMap, GoBus!, MultiGo) do
 > real-time passenger routing — they don't answer "how reliable is route 72?", "where is the
 > network undersupplied?", or "what does the data say about us as riders?". This project builds
-> an **analytical & visualisation platform** over the historical GPS + AFC record, for both the
-> operations side (planners, operators) and the rider side (passengers, businesses).
+> an **analytical & visualisation platform** over the continuously-growing GPS + AFC record, for
+> both the operations side (planners, operators) and the rider side (passengers, businesses).
 
 **Big idea:** make the network's **performance, equity, and shocks** visible to planners,
 operators, and passengers through 20 coordinated charts, with schools and students as the focus.
@@ -343,16 +368,18 @@ busanalytics/
 
 ---
 
-## 9 · Report — Phase-1 deliverable (`report/`)
+## 9 · Report (`report/`)
 
-LaTeX (xelatex + biber), `\documentclass[12pt]{report}`, Times New Roman, ~174 pages. Front matter →
-**Ch1** Introduction → **Ch2** Related Work → **Ch3** Theoretical Background (7 §) → **Ch4** Proposed
-Solution (8 §, largest) → **Ch5** Prototype Implementation → **Ch6** Future Work → **Ch7** Conclusion
-→ references → **Appendices A–E** (DDL + field inventories + data-quality observations · schedule +
-risk register · benchmarks · story scenes · rejected primitives). Title *"Studying and Developing
-Tools to Analyze and Visualize Bus Data"*; supervisor Assoc. Prof. Thoai Nam; student Huynh Thanh Duy
-2252114. `\imageplaceholder{type}{what}{capture}` marks un-captured figures. The report describes the
-Phase-1 Medallion prototype; the S2 revision (§11) re-aligns it to the Phase-2 architecture.
+LaTeX (xelatex + biber), `\documentclass[12pt]{report}`, Times New Roman, ~124 pages, compiles clean
+(0 undefined refs). Nine chapters structured to the Phase-2 grading targets (§0): **Ch1** Introduction
+→ **Ch2** Related Work → **Ch3** Theoretical Background → **Ch4** Problem Analysis & Dataset → **Ch5**
+System Design → **Ch6** Data Architecture → **Ch7** Implementation *(delivered results, Câu 1)* →
+**Ch8** Evaluation *(product evaluation, Câu 4)* → **Ch9** Conclusion & Future Work → references →
+**Appendices A · B · D · E** (data/DDL + field inventories + detailed EDA · schedule + risk register ·
+story scenes · visualization & interaction design detail). Ch1–5 are the reused, cleaned foundation;
+**Ch6–9 are scaffolds to write Phase-2 into**. Title *"Studying and Developing Tools to Analyze and
+Visualize Bus Data"*; supervisor Assoc. Prof. Thoai Nam; student Huynh Thanh Duy 2252114. Every
+writing/figure/table decision follows `docs/conventions/report-writing.md`.
 
 ---
 
